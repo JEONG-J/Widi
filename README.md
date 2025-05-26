@@ -13,9 +13,9 @@
 ## 👥 멤버
 | 루카 | 자니 | 지나 | 제옹 | 마이 | 미르 |
 |:------:|:------:|:------:|:------:|:------:|:------:|
-| 사진1 | 사진2 | 사진3 | <img src="https://github.com/user-attachments/assets/ca4b041b-723d-444d-a339-b12866ba8029" width="200"/> | 사진5 | 사진6 |
+| 사진1 | 사진2 | 사진3 | <img src="https://github.com/user-attachments/assets/ca4b041b-723d-444d-a339-b12866ba8029" width="200"/> | <img src="https://github.com/user-attachments/assets/de0c7ae7-9a62-425b-8fe9-cfb7483fbcd5" width="200"/> | 사진6 |
 | 도메인 | 도메인 | 디자인 | 테크 | 테크 | 테크 |
-| [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [제옹의 깃허브](https://github.com/JEONG-J) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) |
+| [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [제옹의 깃허브](https://github.com/JEONG-J) | [마이의 깃허브](https://github.com/wjdalswl) | [GitHub](깃허브 링크) |
 
 <br>
 
