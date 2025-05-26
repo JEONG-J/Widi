@@ -15,7 +15,7 @@
 |:------:|:------:|:------:|:------:|:------:|:------:|
 | 사진1 | 사진2 | 사진3 | <img src="https://github.com/user-attachments/assets/ca4b041b-723d-444d-a339-b12866ba8029" width="200"/> | 사진5 | 사진6 |
 | 도메인 | 도메인 | 디자인 | 테크 | 테크 | 테크 |
-| [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) |
+| [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [제옹의 깃허브](https://github.com/JEONG-J) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) |
 
 <br>
 
@@ -44,7 +44,7 @@ Swift 6.0
 ## ⚒️ 개발 환경
 * Front : SwiftUI
 * 버전 및 이슈 관리 : Github, Github Issues
-* 협업 툴 : Discord, Notion
+* 협업 툴 : Notion, Miro
 
 <br>
 
@@ -72,7 +72,6 @@ Swift 6.0
 <div align="left">
 <img src="https://img.shields.io/badge/Miro-FFFC00.svg?style=for-the-badge&logo=Miro&logoColor=050038" />
 <img src="https://img.shields.io/badge/Notion-white.svg?style=for-the-badge&logo=Notion&logoColor=000000" />
-<img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white" />
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" />
 </div>
 
