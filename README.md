@@ -13,9 +13,9 @@
 ## 👥 멤버
 | 루카 | 자니 | 지나 | 제옹 | 마이 | 미르 |
 |:------:|:------:|:------:|:------:|:------:|:------:|
-| <img src="https://github.com/user-attachments/assets/63045316-eee0-40f2-b4c1-81cd53826b6c" width="200"/> | 사진2 | 사진3 | <img src="https://github.com/user-attachments/assets/de6b25e5-3c7b-4cf9-adb5-aca674ee7159" width="200"/> | <img src="https://github.com/user-attachments/assets/de0c7ae7-9a62-425b-8fe9-cfb7483fbcd5" width="200"/> | <img src="https://github.com/user-attachments/assets/698333b9-31bf-44bd-a327-06e07b248e38" width="200"/> |
+| <img src="https://github.com/user-attachments/assets/63045316-eee0-40f2-b4c1-81cd53826b6c" width="200"/> | <img src="https://github.com/user-attachments/assets/2e11e852-cb4b-42a1-a231-e390f0247faa" width="200"> | 사진3 | <img src="https://github.com/user-attachments/assets/de6b25e5-3c7b-4cf9-adb5-aca674ee7159" width="200"/> | <img src="https://github.com/user-attachments/assets/de0c7ae7-9a62-425b-8fe9-cfb7483fbcd5" width="200"/> | <img src="https://github.com/user-attachments/assets/698333b9-31bf-44bd-a327-06e07b248e38" width="200"/> |
 | 도메인 | 도메인 | 디자인 | 테크 | 테크 | 테크 |
-| [루카의 깃허브](https://github.com/Joshuuakeem) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [제옹의 깃허브](https://github.com/JEONG-J) | [마이의 깃허브](https://github.com/wjdalswl) | [미르의 깃허브](https://github.com/miru3930?tab=repositories) |
+| [루카의 깃허브](https://github.com/Joshuuakeem) | [자니의 깃허브](https://github.com/cchangss) | [GitHub](깃허브 링크) | [제옹의 깃허브](https://github.com/JEONG-J) | [마이의 깃허브](https://github.com/wjdalswl) | [미르의 깃허브](https://github.com/miru3930?tab=repositories) |
 
 <br>
 
