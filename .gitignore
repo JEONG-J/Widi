@@ -129,4 +129,4 @@ iOSInjectionProject/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,swift,cocoapods
 # Firebase configuration
-GoogleService-Info.plist
+**/GoogleService-Info.plist
