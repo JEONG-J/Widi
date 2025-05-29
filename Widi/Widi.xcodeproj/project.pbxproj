@@ -10,9 +10,22 @@
 		5CCD31C02DE6D9AA00E56207 /* Widi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Widi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5C3EF9812DE8235400330F25 /* Exceptions for "Widi" folder in "Widi" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5CCD31BF2DE6D9AA00E56207 /* Widi */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5CCD31C22DE6D9AA00E56207 /* Widi */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5C3EF9812DE8235400330F25 /* Exceptions for "Widi" folder in "Widi" target */,
+			);
 			path = Widi;
 			sourceTree = "<group>";
 		};
@@ -256,6 +269,7 @@
 				DEVELOPMENT_TEAM = 8B8B4462NV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WIDI;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -285,6 +299,7 @@
 				DEVELOPMENT_TEAM = 8B8B4462NV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WIDI;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
