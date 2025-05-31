@@ -33,7 +33,7 @@ struct CustomAlert: View {
             
             bottomButton
         }
-        .frame(width: 272)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 20)
         .padding(.top, 24)
         .padding(.bottom, 16)
@@ -41,7 +41,6 @@ struct CustomAlert: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color.white)
                 .shadow(color: Color(red: 0.17, green: 0.17, blue: 0.18).opacity(0.06), radius: 10, x: 0, y: 8)
-                .blur(radius: 15)
         }
     }
     
@@ -59,6 +58,9 @@ struct CustomAlert: View {
     /// Alert 하단 버튼 그룹
     private var bottomButton: some View {
         HStack(spacing: 8) {
+            
+            Spacer()
+            
             ForEach(AlertButton.allCases, id: \.self) { btn in
                 Button(action: {
                     action(for: btn)()
@@ -70,7 +72,7 @@ struct CustomAlert: View {
                 })
             }
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(alignment: .trailing)
         .font(.btn)
     }
     
@@ -88,9 +90,17 @@ struct CustomAlert: View {
 }
 
 #Preview {
-    CustomAlert(onCancel: {
-        print("hello")
-    }, onDelete: {
-        print("hello")
-    })
+    ZStack {
+        Color.black
+        
+        CustomAlert(onCancel: {
+            print("hello")
+        }, onDelete: {
+            print("hello")
+        })
+        
+        // TODO: - Alert 사이즈 고정으로 가져갈지 동적으로 가져갈지 정하기
+        .safeAreaPadding(.leading, 41)
+        .safeAreaPadding(.trailing, 39)
+    }
 }
