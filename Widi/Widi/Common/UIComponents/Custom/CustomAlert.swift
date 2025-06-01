@@ -11,18 +11,25 @@ struct CustomAlert: View {
     
     // MARK: - Property
     
+    var alertButtonType: AlertButtonType
     var onCancel: () -> Void
-    var onDelete: () -> Void
+    var onRight: () -> Void
     
     // MARK: - Init
     
     /// 취소 또는 삭제 초기화
     /// - Parameters:
+    ///   - alertButtonType: Alert 타입 지정
     ///   - onCancel: 취소 액션
-    ///   - onDelete: 삭제 액션
-    init(onCancel: @escaping () -> Void, onDelete: @escaping () -> Void) {
+    ///   - onRight: 오른쪽 버튼 액션
+    init(
+        alertButtonType: AlertButtonType,
+        onCancel: @escaping () -> Void,
+        onRight: @escaping () -> Void
+    ) {
+        self.alertButtonType = alertButtonType
         self.onCancel = onCancel
-        self.onDelete = onDelete
+        self.onRight = onRight
     }
     
     // MARK: - Body
@@ -47,11 +54,13 @@ struct CustomAlert: View {
     /// Alert 상단 텍스트
     private var topContents: some View {
         VStack(alignment: .leading, spacing: 12, content: {
-            ForEach(AlertTopText.allCases, id: \.self) { btn in
-                Text(btn.text)
-                    .font(btn.font)
-                    .foregroundStyle(btn.color)
-            }
+            Text(alertButtonType.title)
+                .foregroundStyle(Color.black)
+                .font(.h3)
+            
+            Text(alertButtonType.subtitle)
+                .foregroundStyle(Color.gray40)
+                .font(.b2)
         })
     }
     
@@ -61,7 +70,7 @@ struct CustomAlert: View {
             
             Spacer()
             
-            ForEach(AlertButton.allCases, id: \.self) { btn in
+            ForEach(alertButtonType.buttons, id: \.self) { btn in
                 Button(action: {
                     action(for: btn)()
                 }, label: {
@@ -83,8 +92,8 @@ struct CustomAlert: View {
         switch button {
         case .cancelText:
             return onCancel
-        case .deleteText:
-            return onDelete
+        default:
+            return onRight
         }
     }
 }
@@ -93,10 +102,10 @@ struct CustomAlert: View {
     ZStack {
         Color.black
         
-        CustomAlert(onCancel: {
-            print("hello")
-        }, onDelete: {
-            print("hello")
+        CustomAlert(alertButtonType: .leave, onCancel: {
+            print("Hello")
+        }, onRight: {
+            print("Hello")
         })
         
         // TODO: - Alert 사이즈 고정으로 가져갈지 동적으로 가져갈지 정하기
