@@ -24,8 +24,5 @@ struct FriendResponse: Codable, FriendDTO, Identifiable {
     var id: UUID = .init()
     var name: String
     var birthDay: String
-    var experiencePoint: Int
-    var eggInfo: EggDTO?
-    var characterINfo: CharacterDTO?
+    let experienceDTO: ExperienceDTO
 }
-

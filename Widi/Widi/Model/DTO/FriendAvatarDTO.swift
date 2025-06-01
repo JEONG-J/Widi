@@ -18,3 +18,9 @@ struct EggDTO: Codable {
 struct CharacterDTO: Codable {
     var imageURL: String
 }
+
+struct ExperienceDTO: Codable {
+    var experiencePoint: Int
+    var eggInfo: EggDTO?
+    var characterInfo: CharacterDTO?
+}
