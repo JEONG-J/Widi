@@ -18,9 +18,9 @@ enum AlertButton: ButtonTextProtocol, CaseIterable {
     var text: String {
         switch self {
         case .cancelText:
-            return cancelText
+            return cancel
         case .logout:
-            return deleteText
+            return logout
         case .withdraw:
             return withdraw
         case .delete:
