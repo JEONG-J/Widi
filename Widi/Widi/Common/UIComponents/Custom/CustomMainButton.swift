@@ -18,7 +18,7 @@ struct CustomMainButton: View {
     
     /// CustomMainButton
     /// - Parameters:
-    ///   - type: basic(저장하기, 다음으로), skip(건너뛰기) 중 택 1
+    ///   - type: next(다음으로), skip(건너뛰기) 중 택 1
     ///   - action: 버튼 클릭 시 액션
     init(
         type: MainButtonType,
@@ -48,10 +48,7 @@ struct CustomMainButton: View {
 
 #Preview {
     CustomMainButton(
-        type: .basic(
-            type: .next,
-            isDisabled: true
-        ),
+        type: .next(isDisabled: true),
         action: { print("1번 버튼 클릭됨") }
     )
     .disabled(true)
@@ -59,10 +56,7 @@ struct CustomMainButton: View {
     .padding(.horizontal, 16)
     
     CustomMainButton(
-        type: .basic(
-            type: .next,
-            isDisabled: false
-        ),
+        type: .next(isDisabled: false),
         action: { print("2번 버튼 클릭됨") }
     )
     .frame(width: .infinity)
@@ -76,10 +70,7 @@ struct CustomMainButton: View {
         .frame(width: .infinity)
         
         CustomMainButton(
-            type: .basic(
-                type: .next,
-                isDisabled: true
-            ),
+            type: .next(isDisabled: true),
             action: { print("3번 버튼 클릭됨") }
         )
         .disabled(true)
@@ -95,10 +86,7 @@ struct CustomMainButton: View {
         .frame(width: .infinity)
         
         CustomMainButton(
-            type: .basic(
-                type: .next,
-                isDisabled: false
-            ),
+            type: .next(isDisabled: false),
             action: { print("4번 버튼 클릭됨") }
         )
         .frame(width: .infinity)
