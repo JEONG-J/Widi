@@ -10,6 +10,8 @@ import SwiftUI
 /// 커스텀 네비게이션 바  컴포넌트
 struct CustomNavigationBar: View {
     
+    // MARK: - Enum
+    
     /// 앞에 위치한 버튼을 선택할 수 있는 enum
     enum LeadingType {
         case arrowLeft(arrowLeft: () -> Void)
@@ -24,15 +26,22 @@ struct CustomNavigationBar: View {
         case grayComplete(complete: () -> Void)
         case redComplete(complete: () -> Void)
         case none
+        case delete(delete: () -> Void)
     }
     
-    /// 앞에 위치한 버튼을 선택받는다.
+    // MARK: - Properties
+    
     private let leadingType: LeadingType
-    /// 뒤에 위치한 버튼을 선택받는다.
     private let trailingType: TrailingType
-    /// 네비게이션 title이 필요한 경우 받는다.
     private let title: String?
     
+    // MARK: - Init
+    
+    /// CustomNavigationBar
+    /// - Parameters:
+    ///   - leadingType: 앞에 위치한 버튼 선택
+    ///   - trailingType: 뒤에 위치한 버튼 선택
+    ///   - title: 네비게이션 title
     init(leadingType: LeadingType,
          trailingType: TrailingType,
          title: String? = nil) {
@@ -40,6 +49,8 @@ struct CustomNavigationBar: View {
         self.trailingType = trailingType
         self.title = title
     }
+    
+    // MARK: - Body
     
     var body: some View {
         ZStack {
@@ -51,6 +62,8 @@ struct CustomNavigationBar: View {
             }
         }
     }
+    
+    // MARK: - SubViews
     
     /// 네비게이션 title을 파라미터로 받으면 띄워주는 View
     @ViewBuilder
@@ -91,8 +104,12 @@ struct CustomNavigationBar: View {
             CompleteButton(colorName: .oragne30, action: complete)
         case .none:
             EmptyView()
+        case .delete(let delete):
+            IconCircleButton(imageName: "delete", action: delete)
         }
     }
+    
+    // MARK: - Components
     
     /// 원 안에 아이콘이 들어가는 컴포넌트
     private struct IconCircleButton: View {
@@ -155,8 +172,47 @@ struct CustomNavigationBar: View {
 #Preview {
     ZStack {
         CustomNavigationBar(
-            leadingType: .close(close: {}),
+            leadingType: .arrowLeft(arrowLeft: {}),
+            trailingType: .editDelete(edit: {}, delete: {})
+        )
+    }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .arrowLeft(arrowLeft: {}),
+            trailingType: .close(close: {})
+        )
+    }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .arrowLeft(arrowLeft: {}),
+            trailingType: .grayComplete(complete: {})
+        )
+    }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .arrowLeft(arrowLeft: {}),
             trailingType: .redComplete(complete: {})
         )
     }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .arrowLeft(arrowLeft: {}),
+            trailingType: .none
+        )
+    }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .arrowLeft(arrowLeft: {}),
+            trailingType: .editDelete(edit: {}, delete: {}),
+            title: "자니"
+        )
+    }
+    ZStack {
+        CustomNavigationBar(
+            leadingType: .close(close: {}),
+            trailingType: .delete(delete: {})
+        )
+    }
+    
+    Spacer()
 }
