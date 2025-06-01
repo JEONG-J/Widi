@@ -46,7 +46,7 @@ struct CustomAlert: View {
         .padding(.bottom, 16)
         .background {
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
+                .fill(Color.whiteBlack)
                 .shadow(color: Color(red: 0.17, green: 0.17, blue: 0.18).opacity(0.06), radius: 10, x: 0, y: 8)
         }
     }

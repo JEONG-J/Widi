@@ -40,7 +40,7 @@ struct Cell: View {
     
     private var textColor: Color {
         if isSelected {
-            return Color.white
+            return Color.whiteBlack
         } else {
             return Color.gray60
         }
