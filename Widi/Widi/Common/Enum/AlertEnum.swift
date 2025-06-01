@@ -33,7 +33,7 @@ enum AlertButton: ButtonTextProtocol, CaseIterable {
         case .cancelText:
             return Color.gray40
         default:
-            return Color.oragne30
+            return Color.orange30
         }
     }
 }
