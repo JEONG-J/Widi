@@ -32,7 +32,7 @@ struct DiariesAddButton: View {
             Image(.plus)
                 .renderingMode(.template)
                 .resizable()
-                .foregroundStyle(Color.white)
+                .foregroundStyle(Color.whiteBlack)
                 .padding(14)
                 .background(Color.orange30)
                 .clipShape(Circle())
