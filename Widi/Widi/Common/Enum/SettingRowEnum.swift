@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum SettingRowType {
-    case toggle(isOn: Binding<Bool>, description: String? = nil)
+    case toggle(isOn: Binding<ToggleOptionDTO>, description: String? = nil)
     case navigation
     case version(text: String)
 

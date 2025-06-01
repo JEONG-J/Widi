@@ -12,14 +12,20 @@ struct SettingRow: View {
     // MARK: - Property
     
     private let type: SettingRowType
+    private let onToggleChanged: ((Bool) -> Void)?
     
     // MARK: - Init
     
     /// SettingRow
     /// - Parameters:
     ///   - type: toggle, navigation, version 중 택 1
-    init(type: SettingRowType) {
+    ///   - onToggleChanged: 토글 상태 변경 시 호출할 클로저
+    init(
+        type: SettingRowType,
+        onToggleChanged: ((Bool) -> Void)? = nil
+    ) {
         self.type = type
+        self.onToggleChanged = onToggleChanged
     }
     
     // MARK: - Body
@@ -65,12 +71,15 @@ struct SettingRow: View {
     @ViewBuilder
     private var rightContents: some View {
         switch type {
-        case .toggle(let isOn, _):
-            Toggle("", isOn: isOn)
+        case .toggle(let option, _):
+            Toggle("", isOn: option.toggle)
                 .labelsHidden()
                 .toggleStyle(
                     SwitchToggleStyle(tint: Color.orange30)
                 )
+                .onChange(of: option.toggle.wrappedValue) {
+                    onToggleChanged?(option.toggle.wrappedValue)
+                }
         case .navigation:
             Image(.chevronForward)
                 .resizable()
@@ -83,16 +92,20 @@ struct SettingRow: View {
     }
 }
 
+
 #Preview {
-    @Previewable @State var isPushEnabled = true
+    @Previewable @State var toggleOption = ToggleOptionDTO(toggle: true)
     @Previewable @State var isModalPresented = false
     
     VStack(spacing: 0) {
         SettingRow(
             type: .toggle(
-                isOn: $isPushEnabled,
+                isOn: $toggleOption,
                 description: "모든 알림 전송이 일시 중단돼요"
-            )
+            ),
+            onToggleChanged: { isOn in
+                print("Toggle 상태 바뀜: \(isOn)")
+            }
         )
         
         SettingRow(type: .navigation)
