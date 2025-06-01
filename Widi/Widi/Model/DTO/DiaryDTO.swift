@@ -10,25 +10,25 @@ import SwiftUI
 
 /// 일기 공통 속성
 protocol DiaryDTO {
-    var title: String { get set }
+    var title: String? { get set }
     var content: String { get set }
-    var picture: Data? { get set } // Optional 넣어놨습니다.
+    var pictures: [Data]? { get set } // Optional 넣어놨습니다.
     var diaryDate: String { get set }
 }
 
 /// 일기 생성
 struct DiaryRequest: Codable, DiaryDTO {
-    var title: String
+    var title: String?
     var content: String
-    var picture: Data?
+    var pictures: [Data]?
     var diaryDate: String
 }
 
 /// 일기 조회
 struct DiaryResponse: Codable, DiaryDTO, Identifiable {
     var id: UUID = .init()
-    var title: String
+    var title: String?
     var content: String
-    var picture: Data?
+    var pictures: [Data]?
     var diaryDate: String // 일기의 실제 날짜
 }
