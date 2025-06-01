@@ -156,7 +156,7 @@ struct CustomNavigationBar: View {
     ZStack {
         CustomNavigationBar(
             leadingType: .close(close: {}),
-            trailingType: .editDelete(edit: {}, delete: {})
+            trailingType: .redComplete(complete: {})
         )
     }
 }
