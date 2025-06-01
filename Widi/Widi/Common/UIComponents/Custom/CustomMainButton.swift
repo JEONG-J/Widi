@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct CustomMainButton: View {
-
+    
     // MARK: - Properties
-
+    
     private let type: MainButtonType
     private let action: () -> Void
-
+    
     // MARK: - Init
     
     /// CustomMainButton
@@ -27,9 +27,9 @@ struct CustomMainButton: View {
         self.type = type
         self.action = action
     }
-
+    
     // MARK: - Body
-
+    
     var body: some View {
         Button(action: {
             action()
@@ -39,8 +39,10 @@ struct CustomMainButton: View {
                 .font(.h2)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(type.backgroundColor)
-                .cornerRadius(26)
+                .background {
+                    RoundedRectangle(cornerRadius: 26)
+                        .fill(type.backgroundColor)
+                }
                 .shadow1()
         }
     }
