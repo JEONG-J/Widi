@@ -52,7 +52,6 @@ struct DiaryPreviewCard: View {
                         .scaledToFill()
                         .frame(width: 86, height: .infinity)
                         .clipped()
-                        .background(.blue)
                 }
                 
             }
