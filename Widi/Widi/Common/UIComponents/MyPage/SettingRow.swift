@@ -12,7 +12,6 @@ struct SettingRow: View {
     // MARK: - Property
     
     private let type: SettingRowType
-    private let onToggleChanged: ((Bool) -> Void)?
     
     // MARK: - Init
     
@@ -20,12 +19,8 @@ struct SettingRow: View {
     /// - Parameters:
     ///   - type: toggle, navigation, version 중 택 1
     ///   - onToggleChanged: 토글 상태 변경 시 호출할 클로저
-    init(
-        type: SettingRowType,
-        onToggleChanged: ((Bool) -> Void)? = nil
-    ) {
+    init(type: SettingRowType) {
         self.type = type
-        self.onToggleChanged = onToggleChanged
     }
     
     // MARK: - Body
@@ -42,10 +37,6 @@ struct SettingRow: View {
             }
             .padding(.leading, 4)
             .padding(.trailing, 12)
-            
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(.gray20)
         }
         .contentShape(Rectangle())
     }
@@ -54,9 +45,8 @@ struct SettingRow: View {
     @ViewBuilder
     private var leftContents: some View {
         VStack(alignment: .leading, spacing: 3) {
-            // TODO: - pretendard-medium, size: 18로 디자인 시스템에 없는 폰트 -> 확인 필요
             Text(type.title)
-                .font(.h4)
+                .font(.etc)
                 .foregroundStyle(.gray80)
             
             if let description = type.description {
@@ -71,15 +61,16 @@ struct SettingRow: View {
     @ViewBuilder
     private var rightContents: some View {
         switch type {
-        case .toggle(let option, _):
+        case .toggle(let option, _, _):
             Toggle("", isOn: option.toggle)
                 .labelsHidden()
                 .toggleStyle(
                     SwitchToggleStyle(tint: Color.orange30)
                 )
-                .onChange(of: option.toggle.wrappedValue) {
-                    onToggleChanged?(option.toggle.wrappedValue)
+                .onChange(of: option.toggle.wrappedValue) { oldValue, newValue in
+                    type.onToggleChanged?(oldValue, newValue)
                 }
+            
         case .navigation:
             Image(.chevronForward)
                 .resizable()
@@ -97,23 +88,28 @@ struct SettingRow: View {
     @Previewable @State var toggleOption = ToggleOptionDTO(toggle: true)
     @Previewable @State var isModalPresented = false
     
+    let settings: [SettingRowType] = [
+        .toggle(
+            isOn: $toggleOption,
+            description: "모든 알림 전송이 일시 중단돼요",
+            onToggleChanged: { oldValue, newValue in
+                print("푸시알림 토글 변경 old: \(oldValue) -> new: \(newValue)")
+                toggleOption.toggle = newValue
+            }
+        ),
+        .navigation,
+        .version(text: "25.4.2")
+    ]
+    
     VStack(spacing: 0) {
-        SettingRow(
-            type: .toggle(
-                isOn: $toggleOption,
-                description: "모든 알림 전송이 일시 중단돼요"
-            ),
-            onToggleChanged: { isOn in
-                print("Toggle 상태 바뀜: \(isOn)")
+        ForEach(Array(settings.enumerated()), id: \.offset) { index, rowType in
+            SettingRow(type: rowType)
+            
+            if index < settings.count - 1 {
+                Divider()
+                    .foregroundStyle(.gray20)
             }
-        )
-        
-        SettingRow(type: .navigation)
-            .onTapGesture {
-                isModalPresented = true
-            }
-        
-        SettingRow(type: .version(text: "25.4.2"))
+        }
     }
     .padding(.horizontal, 16)
     .sheet(isPresented: $isModalPresented) {
