@@ -20,9 +20,10 @@ struct CalendarComponents: View {
             headerController
             calendarGrid
         })
-        .background(.clear)
+        .background(Color.whiteBlack)
     }
     
+    /// 달력 상단 컨트롤러
     private var headerController: some View {
         HStack(content: {
             Text(viewModel.currentMonth, formatter: calendarHeaderDateFormatter)
@@ -44,11 +45,13 @@ struct CalendarComponents: View {
                     Image(.right)
                 })
             })
+            .padding(6)
         })
         .padding(.leading, 26)
         .padding(.trailing, 20)
     }
     
+    /// 달력 하단 날짜 그리드
     private var calendarGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8, content: {
             ForEach(localizedWeekdaySymbols.indices, id: \.self) { index in
@@ -91,6 +94,5 @@ struct CalendarComponents: View {
     VStack {
         CalendarComponents()
             .safeAreaPadding(.horizontal, 16)
-            .frame(width: 400)
     }
 }
