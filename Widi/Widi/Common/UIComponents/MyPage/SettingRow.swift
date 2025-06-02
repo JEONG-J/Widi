@@ -103,7 +103,15 @@ struct SettingRow: View {
     
     VStack(spacing: 0) {
         ForEach(Array(settings.enumerated()), id: \.offset) { index, rowType in
-            SettingRow(type: rowType)
+            switch rowType {
+            case .navigation:
+                SettingRow(type: rowType)
+                    .onTapGesture {
+                        isModalPresented = true
+                    }
+            default:
+                SettingRow(type: rowType)
+            }
             
             if index < settings.count - 1 {
                 Divider()
