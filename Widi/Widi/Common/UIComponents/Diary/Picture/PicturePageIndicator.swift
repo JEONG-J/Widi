@@ -12,8 +12,8 @@ struct PicturePageIndicator: View {
     
     // MARK: - Properties
     
-    var numberOfPages: Int
-    var currentPage: Int
+    let numberOfPages: Int
+    @Binding var currentPage: Int // 바뀌는 값으로 부모에게 값을 계속 주입받아야 하므로 Binding을 사용했다.
     
     // MARK: - Init
     
@@ -21,9 +21,9 @@ struct PicturePageIndicator: View {
     /// - Parameters:
     ///   - numberOfPages: 총 사진 페이지 수
     ///   - currentPage: 현재 사진 페이지의 인덱스
-    init(numberOfPages: Int, currentPage: Int) {
+    init(numberOfPages: Int, currentPage: Binding<Int>) {
         self.numberOfPages = numberOfPages
-        self.currentPage = currentPage
+        self._currentPage = currentPage
     }
     
     // MARK: - Body
@@ -39,6 +39,8 @@ struct PicturePageIndicator: View {
 }
 
 #Preview {
-    PicturePageIndicator(numberOfPages: 5, currentPage: 3)
+    @Previewable @State var index = 1
+    PicturePageIndicator(numberOfPages: 5, currentPage: $index)
         .frame(height: 10)
 }
+
