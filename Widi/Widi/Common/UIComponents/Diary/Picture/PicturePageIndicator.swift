@@ -32,13 +32,13 @@ struct PicturePageIndicator: View {
         HStack (spacing: 8) {
             ForEach(0..<numberOfPages, id: \.self) { index in
                 Circle()
-                    .foregroundColor(index == currentPage ? .orange30: .gray20)
+                    .foregroundStyle(index == currentPage ? .orange30: .gray20)
             }
         }
     }
 }
 
-#Preview {
+#Preview(traits: .sizeThatFitsLayout) {
     @Previewable @State var index = 1
     PicturePageIndicator(numberOfPages: 5, currentPage: $index)
         .frame(height: 10)
