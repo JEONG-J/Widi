@@ -61,6 +61,7 @@ struct CustomAlert: View {
             Text(alertButtonType.subtitle)
                 .foregroundStyle(Color.gray50)
                 .font(.b2)
+                .lineSpacing(2.0)
         })
     }
     

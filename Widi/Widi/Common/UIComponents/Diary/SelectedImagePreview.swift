@@ -19,6 +19,11 @@ struct SelectedImagePreview: View {
     
     // MARK: - Init
     
+    /// 이미지 미리보기 초기화
+    /// - Parameters:
+    ///   - diaryImage: 사진 타입 설정
+    ///   - onDelete: 삭제 액션
+    ///   - showFullImage: 이미 상세 화면 보이기
     init(diaryImage: DiaryImage, onDelete: @escaping () -> Void, showFullImage: Bool = false) {
         self.diaryImage = diaryImage
         self.onDelete = onDelete
@@ -50,6 +55,8 @@ struct SelectedImagePreview: View {
         })
     }
     
+    /// 다이어리 이미지 타입에 따라 분리
+    /// - Returns: 서버 및 로컬 이미지 분리
     private func displayImage() -> some View {
         Group {
             switch diaryImage {
@@ -66,7 +73,19 @@ struct SelectedImagePreview: View {
                     .resizable()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: 132)
+        .aspectRatio(1, contentMode: .fill)
+        .frame(maxWidth: 132, maxHeight: 132)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .border(Color.red)
     }
+}
+
+#Preview {
+    HStack {
+        SelectedImagePreview(diaryImage: .server("https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp"), onDelete: {
+            print("hello")
+        }, showFullImage: false)
+    }
+    .safeAreaPadding(.horizontal, 16)
+    .frame(height: 132)
 }
