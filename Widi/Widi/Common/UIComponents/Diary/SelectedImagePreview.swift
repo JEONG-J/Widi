@@ -74,9 +74,8 @@ struct SelectedImagePreview: View {
             }
         }
         .aspectRatio(1, contentMode: .fill)
-        .frame(maxWidth: 132, maxHeight: 132)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .border(Color.red)
     }
 }
 
