@@ -44,7 +44,7 @@ struct DiaryPreviewCard: View {
                     .padding(.bottom, 4)
             }
             
-            Text(trimmedContent(diaryData.content).customLineBreak())
+            Text(diaryData.content.customLineBreak())
                 .lineLimit(diaryData.title == nil ? 3 : 2)
                 .lineSpacing(1.6)
                 .multilineTextAlignment(.leading)
@@ -72,20 +72,10 @@ struct DiaryPreviewCard: View {
                         .controlSize(.small)
                 }).retry(maxCount: 2, interval: .seconds(2))
                 .resizable()
-                .scaledToFill()
-                .frame(width: 86, height: .infinity)
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 86)
+                .frame(maxHeight: .infinity)
                 .clipped()
-        }
-    }
-    
-    // - MARK: Methods
-    
-    private func trimmedContent(_ content: String, maxCharacters: Int = 71) -> String {
-        if content.count > maxCharacters {
-            let index = content.index(content.startIndex, offsetBy: maxCharacters)
-            return String(content[..<index]) + "..."
-        } else {
-            return content
         }
     }
 }
@@ -97,7 +87,7 @@ struct DiaryPreviewCard: View {
                 id: UUID(),
                 title: "학식당에서",
                 content: "명상의 힘은 마음을 가라앉히고 내면의 평화를 찾는 방법을 제공합니다. 정기적인 명상은 스트레스를 줄이고 집중력을 향상시키는 방법입니다.",
-                pictures:  ["https://i.namu.wiki/i/yzxvPP2u3vcW4IpzOPGLEDn24IA_1V4nUGUy6hOaFGDQ5JH3mqVQyCnk4bZU4MZVzovE3AuHGeToAZIM7zCb_A.webp"],
+                pictures:  ["https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp"],
                 diaryDate: "2025 / 05 / 24"
             ),
             DiaryResponse(
