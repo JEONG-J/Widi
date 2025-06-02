@@ -91,5 +91,6 @@ struct CalendarComponents: View {
     VStack {
         CalendarComponents()
             .safeAreaPadding(.horizontal, 16)
+            .frame(width: 400)
     }
 }

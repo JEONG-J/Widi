@@ -55,11 +55,11 @@ struct CustomAlert: View {
     private var topContents: some View {
         VStack(alignment: .leading, spacing: 12, content: {
             Text(alertButtonType.title)
-                .foregroundStyle(Color.black)
+                .foregroundStyle(Color.gray80)
                 .font(.h3)
             
             Text(alertButtonType.subtitle)
-                .foregroundStyle(Color.gray40)
+                .foregroundStyle(Color.gray50)
                 .font(.b2)
         })
     }
