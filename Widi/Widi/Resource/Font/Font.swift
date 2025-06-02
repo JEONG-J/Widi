@@ -71,4 +71,9 @@ extension Font {
     static var cap2: Font {
         return .pretendard(type: .regular, size: 12)
     }
+    
+    // MARK: - Etc
+    static var etc: Font {
+        return .pretendard(type: .medium, size: 18)
+    }
 }
