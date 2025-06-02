@@ -10,22 +10,15 @@ import SwiftUI
 struct FriendInfoView: View {
     
     // MARK: - Property
-    
-    private let friendInfoData: FriendResponse
-    private var infoItems: [FriendInfoItem] {
-        [
-            .diaryCount(friendInfoData.experienceDTO.experiencePoint),
-            .birthday(friendInfoData.birthDay),
-            .hatchProgress(friendInfoData.experienceDTO.experiencePoint)
-        ]
-    }
-    
+
+    private let infoItems: [FriendInfoItem]
+
     // MARK: - Init
     
     /// FriendInfoView
     /// - Parameter friendInfoData: 친구 정보 조회 데이터
     init(friendInfoData: FriendResponse) {
-        self.friendInfoData = friendInfoData
+        self.infoItems = FriendInfoItem.makeItems(from: friendInfoData)
     }
     
     // MARK: - Body
