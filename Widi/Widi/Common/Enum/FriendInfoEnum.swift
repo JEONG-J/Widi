@@ -20,4 +20,28 @@ enum FriendInfoItem {
             return "부화까지"
         }
     }
+    
+    var valueText: String? {
+        switch self {
+        case .diaryCount(let count):
+            return "\(count)개"
+        case .birthday(let date):
+            return date
+        case .hatchProgress:
+            return nil
+        }
+    }
+    
+    var hatchProgressValue: Int? {
+        guard case let .hatchProgress(progress) = self else { return nil }
+        return progress
+    }
+    
+    static func makeItems(from response: FriendResponse) -> [FriendInfoItem] {
+        return [
+            .diaryCount(response.experienceDTO.experiencePoint),
+            .birthday(response.birthDay),
+            .hatchProgress(response.experienceDTO.experiencePoint)
+        ]
+    }
 }

@@ -47,7 +47,7 @@ struct FriendInfoView: View {
                 .padding(.horizontal, 24)
             }
         }
-        .padding(.vertical, 12.5)
+        .padding(.vertical, 13)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.whiteBlack.opacity(0.3))
@@ -58,22 +58,17 @@ struct FriendInfoView: View {
     /// FriendInfoItem 타입에 따라 그려주는 ViewBuilder
     @ViewBuilder
     private func contentView(for item: FriendInfoItem) -> some View {
-        switch item {
-        case .diaryCount(let count):
-            Text("\(count)개")
+        if let valueText = item.valueText {
+            Text(valueText)
                 .font(.h2)
                 .foregroundStyle(.gray80)
-        case .birthday(let birthday):
-            Text(birthday)
-                .font(.h2)
-                .foregroundStyle(.gray80)
-        case .hatchProgress(let progress):
+        } else if let progress = item.hatchProgressValue {
             HatchProgressDotsView(progress: progress)
         }
     }
 }
 
-struct HatchProgressDotsView: View {
+fileprivate struct HatchProgressDotsView: View {
     private var progress: Int
     private let total: Int
     
@@ -95,7 +90,7 @@ struct HatchProgressDotsView: View {
                 .padding(.vertical, 6)
             } else {
                 Text("🍄")
-                    .font(.pretendard(type: .semibold, size: 28))
+                    .font(.h1)
             }
         }
     }
