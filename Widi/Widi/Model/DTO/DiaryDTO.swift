@@ -12,7 +12,7 @@ import SwiftUI
 protocol DiaryDTO {
     var title: String? { get set }
     var content: String { get set }
-    var pictures: [Data]? { get set } // Optional 넣어놨습니다.
+    var pictures: [String]? { get set } // Optional 넣어놨습니다.
     var diaryDate: String { get set }
 }
 
@@ -20,7 +20,7 @@ protocol DiaryDTO {
 struct DiaryRequest: Codable, DiaryDTO {
     var title: String?
     var content: String
-    var pictures: [Data]?
+    var pictures: [String]?
     var diaryDate: String
 }
 
@@ -29,6 +29,6 @@ struct DiaryResponse: Codable, DiaryDTO, Identifiable {
     var id: UUID = .init()
     var title: String?
     var content: String
-    var pictures: [Data]?
+    var pictures: [String]?
     var diaryDate: String // 일기의 실제 날짜
 }

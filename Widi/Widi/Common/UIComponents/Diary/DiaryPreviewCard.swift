@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct DiaryPreviewCard: View {
     
@@ -24,49 +25,61 @@ struct DiaryPreviewCard: View {
     // - MARK: Body
     
     var body: some View {
-        VStack {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    if let title = diaryData.title {
-                        Text(title)
-                            .lineLimit(1)
-                            .font(.h3)
-                            .foregroundStyle(.gray80)
-                    }
-                    
-                    Text(trimmedContent(diaryData.content).customLineBreak())
-                        .lineLimit(diaryData.title == nil ? 3 : 2)
-                        .font(.b1)
-                        .foregroundStyle(.gray80)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 12)
-                    
-                    Text(diaryData.diaryDate)
-                        .font(.b2)
-                        .foregroundStyle(.gray40)
-                }
-                
-                if let firstImage = diaryData.pictures?.first.flatMap({ UIImage(data: $0) }) {
-                    Image(uiImage: firstImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 86, height: .infinity)
-                        .clipped()
-                }
-                
+        HStack(spacing: 16) {
+            diaryTextContent
+            diaryImage
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 28)
+        .frame(maxHeight: .infinity, alignment: .center)
+    }
+    
+    var diaryTextContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let title = diaryData.title {
+                Text(title)
+                    .lineLimit(1)
+                    .font(.h3)
+                    .foregroundStyle(.gray80)
+                    .padding(.bottom, 4)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 28)
-            .frame(maxHeight: .infinity, alignment: .center)
-
-            Divider()
-                .background(Color.gray20)
+            
+            Text(trimmedContent(diaryData.content).customLineBreak())
+                .lineLimit(diaryData.title == nil ? 3 : 2)
+                .lineSpacing(1.6)
+                .multilineTextAlignment(.leading)
+                .font(.b1)
+                .foregroundStyle(.gray80)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 16)
+            
+            Text(diaryData.diaryDate)
+                .font(.b2)
+                .foregroundStyle(.gray40)
+        }
+    }
+    
+    /// 일기 이미지 캐시 처리
+    @ViewBuilder
+    private var diaryImage: some View {
+        if let urlString = diaryData.pictures?.first,
+           let url = URL(string: urlString) {
+            KFImage(url)
+                .downsampling(size: .init(width: 400, height: 400))
+                .cacheOriginalImage()
+                .placeholder({
+                    ProgressView()
+                        .controlSize(.small)
+                }).retry(maxCount: 2, interval: .seconds(2))
+                .resizable()
+                .scaledToFill()
+                .frame(width: 86, height: .infinity)
+                .clipped()
         }
     }
     
     // - MARK: Methods
     
-    @inline(__always)
     private func trimmedContent(_ content: String, maxCharacters: Int = 71) -> String {
         if content.count > maxCharacters {
             let index = content.index(content.startIndex, offsetBy: maxCharacters)
@@ -84,14 +97,14 @@ struct DiaryPreviewCard: View {
                 id: UUID(),
                 title: "학식당에서",
                 content: "명상의 힘은 마음을 가라앉히고 내면의 평화를 찾는 방법을 제공합니다. 정기적인 명상은 스트레스를 줄이고 집중력을 향상시키는 방법입니다.",
-                pictures: [UIImage.checkmark.pngData()].compactMap { $0 },
+                pictures:  ["https://i.namu.wiki/i/yzxvPP2u3vcW4IpzOPGLEDn24IA_1V4nUGUy6hOaFGDQ5JH3mqVQyCnk4bZU4MZVzovE3AuHGeToAZIM7zCb_A.webp"],
                 diaryDate: "2025 / 05 / 24"
             ),
             DiaryResponse(
                 id: UUID(),
                 title: nil,
                 content: "명상의 힘은 마음을 가라앉히고 내면의 평화를 찾는 방법을 제공합니다. 정기적인 명상은 스트레스를 줄이고 집중력을 향상시키는 방법입니다.",
-                pictures: [UIImage.checkmark.pngData()].compactMap { $0 },
+                pictures: ["https://i.namu.wiki/i/yzxvPP2u3vcW4IpzOPGLEDn24IA_1V4nUGUy6hOaFGDQ5JH3mqVQyCnk4bZU4MZVzovE3AuHGeToAZIM7zCb_A.webp"],
                 diaryDate: "2025 / 05 / 24"
             ),
             DiaryResponse(
@@ -110,6 +123,9 @@ struct DiaryPreviewCard: View {
                         DiaryPreviewCard(
                             diaryData: diary
                         )
+                        
+                        Divider()
+                            .background(Color.gray20)
                     }
                     .frame(height: 171)
                     .listRowSeparator(.hidden)
