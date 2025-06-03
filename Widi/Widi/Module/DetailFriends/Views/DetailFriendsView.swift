@@ -102,8 +102,21 @@ fileprivate extension DetailFriendsView {
                         isActionSheetPresented = false
                     }
                 }
-            CustomActionSheet(buttons: viewModel.actionSheetButtons)
-                .frame(width: 200)
+            
+            FriendDropDown(onSelect: { selected in
+                switch selected {
+                case .search:
+                    // TODO: - 바텀시트 등장
+                    print("검색")
+                case .edit:
+                    // TODO: - 네비게이션 연결
+                    print("편집")
+                case .delete:
+                    // TODO: - 서버 호출 및 네비게이션 연결
+                    print("삭제")
+                }
+            })
+            .padding(.horizontal, 22)
         }
     }
     
