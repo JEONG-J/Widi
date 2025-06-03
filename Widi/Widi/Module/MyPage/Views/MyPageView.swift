@@ -71,21 +71,22 @@ struct MyPageView: View {
     }
     
     /// 설정 리스트
-    // TODO: 마이가 만든것처럼 만들까요?
     private var settingRow: some View {
         
         let settings: [SettingRowType] = [
             .toggle(
-                // TODO: GPT 코드, 공부 필요.
                 isOn: $myPageViewModel.toggleOption,
                 description: settingRowNavigationDescription,
                 onToggleChanged: myPageViewModel.toggleOnOff
             ),
             .navigation,
-            .version(text: myPageViewModel.appVersion)
+            .version(text: myPageViewModel.appVersion!)
         ]
         
         return VStack(spacing: 0) {
+            
+            Divider()
+            
             ForEach(Array(settings.enumerated()), id: \.offset) { index, rowType in
                 switch rowType {
                 case .navigation:
@@ -97,10 +98,8 @@ struct MyPageView: View {
                     SettingRow(type: rowType)
                 }
                 
-                if index < settings.count - 1 {
-                    Divider()
-                        .foregroundStyle(.gray20)
-                }
+                Divider()
+                    .foregroundStyle(.gray20)
             }
         }
         .sheet(isPresented: $myPageViewModel.isModalPresented) {
@@ -129,5 +128,3 @@ struct Mypage_Preview: PreviewProvider {
     }
 
 }
-
-
