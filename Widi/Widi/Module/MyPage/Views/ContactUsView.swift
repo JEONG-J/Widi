@@ -12,24 +12,24 @@ struct ContactUsView: View {
     @State var emailText: String = ""
     @State var contactText: String = ""
     
-    func complete() {
-        
-    }
+    func complete() {}
     
     var body: some View {
-        VStack(spacing: 22) {
+        VStack(alignment: .leading, spacing: 22) {
             modalBar
             contactContent
         }
         .safeAreaPadding(.horizontal, 16)
         .safeAreaPadding(.top, 16)
-        Spacer()
     }
     
     private var modalBar: some View {
         HStack {
             Image(.naviClose)
+                .padding(8)
+            
             Spacer()
+            
             Button {
                 complete()
             } label: {
@@ -37,23 +37,43 @@ struct ContactUsView: View {
                     .font(.h4)
                     .foregroundStyle(.gray40)
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 9)
+                    .padding(.vertical, 10)
             }
         }
     }
     
     private var contactContent: some View {
-        VStack(spacing: 40) {
+        VStack(alignment: .leading, spacing: 40) {
             Text(contactDescriptionText)
                 .font(.h2)
                 .foregroundStyle(.gray80)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            VStack(spacing: 12) {
-                TextField(emailPlaceHolderText, text: $emailText)
-                    .background(.background)
-                TextField(contactPlaceHolderText, text: $contactText)
-            }
+            
+            textInputComponents
         }
+    }
+    
+    private var textInputComponents: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            TextField("Email", text: $emailText, prompt: placeholder())
+                .padding(.vertical, 12)
+                .padding(.horizontal , 16)
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .inset(by: 0.5)
+                        .fill(Color.background)
+                        .stroke(Color.gray10, style: .init(lineWidth: 1))
+                }
+            
+            TextEditor(text: $contactText)
+                .contactTextEditorStyle(text: $contactText, placeholder: contactPlaceHolderText)
+                .padding(.bottom, 10)
+        }
+    }
+    
+    private func placeholder() -> Text {
+        Text(emailPlaceHolderText)
+            .font(.b1)
+            .foregroundStyle(Color.gray40)
     }
 }
 
