@@ -154,7 +154,7 @@ fileprivate extension DetailFriendsView {
     
     /// 일기 리스트
     var diaryList: some View {
-        VStack {
+        VStack(spacing: 0) {
             ForEach(Array(viewModel.diaries.enumerated()), id: \.element.id) { index, diary in
                 DiaryRowView(
                     diary: diary,
