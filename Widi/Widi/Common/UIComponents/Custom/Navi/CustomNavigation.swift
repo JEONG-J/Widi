@@ -1,49 +1,104 @@
 //
-//  CustomNavigation.swift
+//  CustomNavigation].swift
 //  Widi
 //
-//  Created by Apple Coding machine on 6/2/25.
+//  Created by Apple Coding machine on 6/3/25.
 //
 
 import SwiftUI
 
-struct CustomNavigationIcon: View {
+struct CustomNavigation: View {
     
-    let navigationIcon: NavigationIcon
-    let action: () -> Void
+    // MARK: - Property
     
-    init(navigationIcon: NavigationIcon, action: @escaping () -> Void) {
-        self.navigationIcon = navigationIcon
-        self.action = action
+    let config: NavigationBarConfig
+    let leftAction: (NavigationIcon) -> Void
+    let rightAction: (NavigationIcon) -> Void
+    
+    // MARK: - Init
+    
+    /// 네비게이션 커스텀 타입으로 분리
+    /// - Parameters:
+    ///   - config: 네비게이션 타입 선택
+    ///   - leftAction: 왼쪽 네비게이션 버튼 액션 지정
+    ///   - rightAction: 오른쪽 네비게이션 버튼 액션 지정
+    init(
+        config: NavigationBarConfig,
+         leftAction: @escaping (NavigationIcon) -> Void,
+         rightAction: @escaping (NavigationIcon) -> Void
+    ) {
+        self.config = config
+        self.leftAction = leftAction
+        self.rightAction = rightAction
     }
     
+    // MARK: - Body
+    
     var body: some View {
-        Button(action: {
-            action()
-        }, label: {
-            if navigationIcon.isTextButton, let title = navigationIcon.title {
-                Text(title)
-                    .font(.h4)
-                    .foregroundStyle(navigationIcon.foregroundColor)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(Color.whiteBlack)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .shadow1()
-            } else if let image = navigationIcon.image {
-                image
-                    .fixedSize()
-                    .padding(8)
-                    .background(Color.whiteBlack)
-                    .clipShape(Circle())
-                    .shadow1()
+        HStack {
+            leftIcon
+            
+            Spacer()
+            
+            centerTitle
+            
+            Spacer()
+            
+            rightIcon
+        }
+    }
+    
+    /// 왼쪽 아이콘
+    private var leftIcon: some View {
+        HStack(spacing: 12, content: {
+            ForEach(config.left, id: \.self) { icon in
+                CustomNavigationIcon(navigationIcon: icon, action: {
+                    leftAction(icon)
+                })
             }
         })
+    }
+    
+    /// 오른쪽 아이콘
+    private var rightIcon: some View {
+        HStack(spacing: 12, content: {
+            ForEach(config.right, id: \.self) { icon in
+                CustomNavigationIcon(navigationIcon: icon, action: {
+                    rightAction(icon)
+                })
+            }
+        })
+    }
+    
+    /// 중간 타이틀
+    @ViewBuilder
+    private var centerTitle: some View {
+        if let title = config.center {
+            Text(title)
+                .font(.h4)
+                .foregroundStyle(Color.black)
+        }
     }
 }
 
 #Preview {
-    CustomNavigationIcon(navigationIcon: .complete(type: .select, isEmphasized: true), action: {
-        print("hello")
-    })
+    CustomNavigation(
+        config: .backAndClose,
+        leftAction: { icon in
+            switch icon {
+            case .backArrow:
+                print("Back tapped")
+            default:
+                break
+            }
+        },
+        rightAction: { icon in
+            switch icon {
+            case .closeX:
+                print("xx")
+            default:
+                break
+            }
+        }
+    )
 }
