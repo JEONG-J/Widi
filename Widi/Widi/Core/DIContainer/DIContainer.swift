@@ -11,7 +11,7 @@ class DIContainer: ObservableObject {
     @Published var navigationRouter: NavigationRouter
     
     init(
-        navigationRouter: NavigationRouter
+        navigationRouter: NavigationRouter = .init()
     ) {
         self.navigationRouter = navigationRouter
     }

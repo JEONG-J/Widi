@@ -14,8 +14,8 @@ struct NavigationRoutingView: View {
     
     var body: some View {
         switch destination {
-        case .test:
-            Text("11")
+        case .addFriendView:
+            AddFriendView()
         }
     }
 }
