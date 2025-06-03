@@ -103,9 +103,7 @@ struct MyPageView: View {
             }
         }
         .sheet(isPresented: $myPageViewModel.isModalPresented) {
-            Text("문의하기 모달 열림!")
-                .font(.largeTitle)
-                .padding()
+            ContactUsView()
         }
     }
 }
