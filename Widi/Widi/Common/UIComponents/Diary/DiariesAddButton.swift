@@ -38,6 +38,8 @@ struct DiariesAddButton: View {
                 .clipShape(Circle())
         }
         .aspectRatio(1, contentMode: .fit)
+        .shadow(color: Color(red: 0.63, green: 0.77, blue: 0.91).opacity(0.2), radius: 8, x: 0, y: 8)
+        .shadow(color: Color(red: 0.17, green: 0.27, blue: 0.48).opacity(0.08), radius: 1, x: 0, y: 2)
     }
 }
 
