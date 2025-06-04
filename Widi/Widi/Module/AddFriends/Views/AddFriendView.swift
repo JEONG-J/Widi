@@ -31,6 +31,8 @@ struct AddFriendView: View {
     
     // MARK: - Function
     
+    /// 텍스트 필드 분기처리
+    /// - Returns: 분기로 처리된 텍스트 필드 뷰
     @ViewBuilder
     private func returnContents() -> some View {
         switch viewModel.currentPage {
@@ -41,6 +43,8 @@ struct AddFriendView: View {
         }
     }
     
+    /// 메인버튼 분기 처리
+    /// - Returns: 페이지에 맞도록 메인 버튼 분기처리
     @ViewBuilder
     private func returnMainButton() -> some View {
         Group {
@@ -146,6 +150,9 @@ struct AddFriendView: View {
         }
     }
     
+    /// 생일 날짜 자동 입력 함수
+    /// - Parameter input: 생일 숫자 입력
+    /// - Returns: / 로 분리된 날짜 데이터 반환
     private func formatBirthdayInput(_ input: String) -> String {
         let digits = input.filter { $0.isNumber }
 
