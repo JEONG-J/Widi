@@ -15,6 +15,7 @@ enum NavigationBarConfig: Hashable {
     case closeAndComplete(type: NavigationIcon.TextActionType, isEmphasized: Bool) // 왼쪽 x 닫기 버튼 오른쪽 완료 텍스트 버튼
     case backTitleAndEditTrash(title: String) // 왼쪽 화살표 가운데 타이틀 오른쪽 수정버튼 및 쓰레기 버튼
     case backAndComplete(isEmphasized: Bool) // 왼쪽 화살표, 오른쪽 완료 텍스트 버튼
+    case backAndTitleComplete(title: String, isEmphasized: Bool) // 왼쪽 화살표, 오른쪽 완료 텍스트 버튼
     case closeAndTrash // 왼쪽 x 닫기, 오른쪽 쓰레기
     case backAndClose // 왼쪽 화살표, 오른쪽 x 버튼
     
@@ -25,7 +26,7 @@ enum NavigationBarConfig: Hashable {
             return []
         case .closeOnly, .closeAndComplete, .closeAndTrash:
             return [.closeX]
-        case .backOnly, .backAndContextMenu, .backTitleAndEditTrash, .backAndComplete, .backAndClose:
+        case .backOnly, .backAndContextMenu, .backTitleAndEditTrash, .backAndComplete, .backAndClose, .backAndTitleComplete:
             return [.backArrow]
         }
     }
@@ -45,7 +46,7 @@ enum NavigationBarConfig: Hashable {
             return [.complete(type: type, isEmphasized: isEmphasized)]
         case .backTitleAndEditTrash:
             return [.edit, .trash]
-        case .backAndComplete(let isEmphasized):
+        case .backAndComplete(let isEmphasized), .backAndTitleComplete(_, let isEmphasized):
             return [.complete(type: .complete, isEmphasized: isEmphasized)]
         case .closeAndTrash:
             return [.trash]
@@ -57,7 +58,7 @@ enum NavigationBarConfig: Hashable {
     /// 타이틀
     var center: String? {
         switch self {
-        case .backTitleAndEditTrash(let title):
+        case .backTitleAndEditTrash(let title), .backAndTitleComplete(let title, _):
             return title
         default:
             return nil

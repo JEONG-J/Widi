@@ -11,11 +11,11 @@ struct AddFriendView: View {
     
     @Bindable var viewModel: AddFriendsViewModel = .init()
     @EnvironmentObject var container: DIContainer
-    @FocusState var isFocused: Bool
     
     var body: some View {
         VStack(alignment: .center, spacing: 52, content: {
             topNavigation(value: viewModel.currentPage)
+                .padding(.bottom, 12)
             
             returnContents()
             
@@ -62,6 +62,8 @@ struct AddFriendView: View {
         .padding(.bottom, 16)
     }
     
+    /// 두 번째 페이지 텍스트 필드 그룹
+    /// - Returns: 두 번째 페이지 텍스트 필드 뷰 반환
     @ViewBuilder
     private func secondPageMainButton() -> some View {
         HStack(alignment: .center, spacing: 10, content: {
@@ -86,7 +88,7 @@ struct AddFriendView: View {
                 .font(.h4)
                 .foregroundStyle(Color.gray50)
             
-            TextField("", text: value, prompt: makePlaceholder(text: field.placeholder) as? Text)
+            TextField(field.placeholder, text: value, prompt: makePlaceholder(text: field.placeholder) as? Text)
                 .font(.h1)
                 .foregroundStyle(Color.gray80)
                 .multilineTextAlignment(.center)
@@ -96,11 +98,7 @@ struct AddFriendView: View {
                         value.wrappedValue = formatBirthdayInput(new)
                     }
                 })
-                .focused($isFocused)
         })
-        .task {
-            isFocused = true
-        }
     }
     
     /// 텍스트 필드 내부 placeholder
@@ -108,11 +106,9 @@ struct AddFriendView: View {
     /// - Returns: Text 반환
     @ViewBuilder
     private func makePlaceholder(text: String) -> some View {
-        if !isFocused {
-            Text(text)
-                .font(.h1)
-                .foregroundStyle(Color.gray30)
-        }
+        Text(text)
+            .font(.h1)
+            .foregroundStyle(Color.gray30)
     }
     
     /// 상단 네비게이션 분기 처리

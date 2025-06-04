@@ -13,4 +13,18 @@ class AddFriendsViewModel {
     
     var friendsName: String = ""
     var friendsBirthDay: String = ""
+    
+    var diaryTitle: String = ""
+    var diaryContents: String = "" {
+        didSet {
+            diaryIsEmphasized = !diaryContents.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+    
+    var diaryIsEmphasized: Bool = false
+    
+    
+    public func addFriendsAndDiary() {
+        print("완료")
+    }
 }
