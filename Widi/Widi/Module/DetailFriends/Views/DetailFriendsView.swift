@@ -10,7 +10,7 @@ import SwiftUI
 struct DetailFriendsView: View {
     
     // MARK: - Properties
-    
+
     @Bindable private var viewModel: DetailFriendsViewModel
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
@@ -18,6 +18,7 @@ struct DetailFriendsView: View {
     
     private let naviHeight: CGFloat = 56
     private let headerHeight: CGFloat = 209
+
     
     // MARK: - Init
     
@@ -39,9 +40,10 @@ struct DetailFriendsView: View {
                 .ignoresSafeArea(edges: .bottom)
             }
             addButton
-            actionSheetOverlay
+            dropDownOverlay
         }
-        .background(FriendDetailBackground())
+        .detailFriendViewBG()
+       
     }
 }
 
@@ -64,14 +66,13 @@ fileprivate extension DetailFriendsView {
             rightAction: { icon in
                 switch icon {
                 case .contextMenu:
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         isActionSheetPresented = true
                     }
                 default:
                     break
                 }
             }
-            
         )
         .padding(.horizontal, 16)
         .frame(height: naviHeight)
@@ -92,13 +93,13 @@ fileprivate extension DetailFriendsView {
     
     /// 일기 검색, 친구 수정, 친구 삭제 액션시트
     @ViewBuilder
-    var actionSheetOverlay: some View {
+    var dropDownOverlay: some View {
         if isActionSheetPresented {
             Color.clear
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         isActionSheetPresented = false
                     }
                 }
@@ -117,6 +118,7 @@ fileprivate extension DetailFriendsView {
                 }
             })
             .padding(.horizontal, 22)
+            .transition(.scale(scale: 0.7, anchor: .topTrailing).combined(with: .opacity))
         }
     }
     
@@ -149,13 +151,14 @@ fileprivate extension DetailFriendsView {
                 Section {
                     diaryList
                 } header: {
-                    PinnedHeaderView()
+                    pinnedHeaderView()
                         .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
                         .modifier(OffsetModifier(offset: $headerOffsets.1))
                 }
             }
             
             Spacer()
+                .frame(minHeight: 120)
         }
         .frame(minHeight: UIScreen.main.bounds.height - topSafeArea - naviHeight - headerHeight)
         .background(Color.whiteBlack.opacity(0.8))
@@ -165,14 +168,24 @@ fileprivate extension DetailFriendsView {
         .sheet()
     }
     
+    /// 스티키 헤더 뷰, 일기 리스트 상단 그라데이션 뷰
+    /// - Returns: 일기리스트 세션 헤더
+    func pinnedHeaderView() -> some View {
+        LinearGradient(
+            gradient: Gradient(colors: [.whiteBlack.opacity(0.7), .clear]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 36)
+    }
+    
     /// 일기 리스트
     var diaryList: some View {
         VStack(spacing: 0) {
             ForEach(Array(viewModel.diaries.enumerated()), id: \.element.id) { index, diary in
+                
                 DiaryRowView(
                     diary: diary,
-                    index: index,
-                    totalCount: viewModel.diaries.count,
                     offset: Binding(
                         get: { diariesOffsets[diary.id] ?? 0 },
                         set: { diariesOffsets[diary.id] = $0 }
@@ -183,87 +196,15 @@ fileprivate extension DetailFriendsView {
                         diariesOffsets[diary.id] = nil
                     }
                 )
-            }
-        }
-        .offset(y: -48)
-    }
-}
-
-/// DiaryPreviewCard에 Divider  긋고, DeleteButtonView랑 중첩한 일기 카드
-fileprivate struct DiaryRowView: View {
-    let diary: DiaryResponse
-    let index: Int
-    let totalCount: Int
-    @Binding var offset: CGFloat
-    @Binding var allOffsets: [UUID: CGFloat]
-    let deleteAction: () -> Void
-    private let deleteButtonWidth: CGFloat = 68
-    
-    var body: some View {
-        ZStack(alignment: .trailing) {
-            VStack(spacing: 0) {
-                DiaryPreviewCard(diaryData: diary)
-                    .frame(height: 171)
-                    .offset(x: offset)
-                    .simultaneousGesture(
-                        DragGesture()
-                            .onChanged { value in
-                                handleDragChanged(value)
-                            }
-                            .onEnded { value in
-                                handleDragEnded(value)
-                            }
-                    )
+                .frame(height: 171)
                 
-                if index < totalCount - 1 {
+                if index < viewModel.diaries.count - 1 {
                     Divider()
                         .background(Color.gray20)
+                    
                 }
             }
-            
-            if abs(offset) > 30 {
-                DeleteButtonView {
-                    deleteAction()
-                }
-            }
-        }
-        .animation(.easeInOut, value: offset)
-    }
-    
-    /// 드래그 중 액션, 드래그 범위 제한
-    /// - Parameter value: 드래그 값
-    private func handleDragChanged(_ value: DragGesture.Value) {
-        if abs(value.translation.width) > abs(value.translation.height) {
-            if value.translation.width < 0 {
-                closeOtherCards(except: diary.id)
-                offset = max(value.translation.width, -deleteButtonWidth)
-            } else {
-                offset = 0
-            }
-        }
-    }
-    
-    /// 드래그 멈춘 후 액션, 드래그 값 기반으로 삭제 버튼 열릴지, 닫힐 지 결정
-    /// - Parameter value: 드래그 값
-    private func handleDragEnded(_ value: DragGesture.Value) {
-        if abs(value.translation.width) > abs(value.translation.height) {
-            withAnimation {
-                if value.translation.width < -deleteButtonWidth / 2 {
-                    offset = -deleteButtonWidth
-                } else {
-                    offset = 0
-                }
-            }
-        }
-    }
-    
-    /// 일기 카드가 열릴때, 열려있는 다른 카드 닫히게 함
-    /// - Parameter id: 현재 드래그 중인 일기 카드 id
-    private func closeOtherCards(except id: UUID) {
-        for key in allOffsets.keys {
-            if key != id {
-                allOffsets[key] = 0
-            }
+            .offset(y: -48)
         }
     }
 }
@@ -305,44 +246,6 @@ fileprivate struct HeaderView: View {
             .offset(y: -minY)
         }
         .frame(height: headerHeight)
-    }
-}
-
-/// 스티키 헤더 뷰, 일기 리스트 상단 그라데이션 뷰
-fileprivate struct PinnedHeaderView: View {
-    var body: some View {
-        HStack {
-            LinearGradient(
-                gradient: Gradient(colors: [.whiteBlack.opacity(1.0), .clear]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
-        .frame(height: 48)
-    }
-}
-
-/// 삭제 버튼 뷰
-fileprivate struct DeleteButtonView: View {
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: {
-            withAnimation {
-                action()
-            }
-        }) {
-            Image(.delete)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 28, height: 28)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(width: 68)
-        .frame(maxHeight: .infinity)
-        .background(Color.red30)
-        .transition(.move(edge: .trailing))
     }
 }
 

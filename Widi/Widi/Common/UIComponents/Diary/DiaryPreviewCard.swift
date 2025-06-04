@@ -71,7 +71,7 @@ struct DiaryPreviewCard: View {
                     .cacheOriginalImage()
                     .placeholder {
                         ProgressView()
-                            .controlSize(.small)
+                            .controlSize(.regular)
                     }
                     .retry(maxCount: 2, interval: .seconds(2))
                     .resizable()
@@ -83,7 +83,7 @@ struct DiaryPreviewCard: View {
                 if let pictures = diaryData.pictures, pictures.count > 1 {
                     Image(.image)
                         .resizable()
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .frame(width: 20, height: 20)
                         .padding(.trailing, 2)
                         .padding(.top, 4)
