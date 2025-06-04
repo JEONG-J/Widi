@@ -28,8 +28,10 @@ struct CustomTextEditor: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .padding(.top, 12)
+            .padding(.horizontal, padding)
+            .padding(.bottom, padding)
             .focused($isFocused)
-            .padding(padding)
             .background(alignment: .topLeading, content: {
                 if text.isEmpty && !isFocused {
                     Text(placeholder)
