@@ -11,8 +11,7 @@ import SwiftUI
 struct WidiApp: App {
     var body: some Scene {
         WindowGroup {
-            AddFriendView(viewModel: .init())
-                .environmentObject(DIContainer())
+            ContactUsView()
         }
     }
 }
