@@ -12,7 +12,7 @@ struct MyPageView: View {
     
     // MARK: - Property
     
-    @Bindable private var myPageViewModel: MyPageViewModel = .init()
+    @State var myPageViewModel: MyPageViewModel = .init()
     
     // MARK: - Body
     var body: some View {
