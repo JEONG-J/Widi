@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddDiaryView: View {
     
@@ -17,11 +18,35 @@ struct AddDiaryView: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 12, content: {
+        VStack(spacing: 8, content: {
             topController
+            middleContents
             bottomContents
         })
         .background(Color.background)
+        .overlay(alignment: .bottom, content: {
+            DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
+                .safeAreaPadding(.horizontal, 16)
+        })
+        .sheet(isPresented: $viewModel.isShowCalendar, content: {
+            SheetCalendarView(viewModel: viewModel)
+                .presentationCornerRadius(24)
+                .presentationDetents([.medium])
+        })
+        .photosPicker(
+            isPresented: $viewModel.isShowImagePicker,
+            selection: $viewModel.photoImages,
+            maxSelectionCount: 5,
+            matching: .images)
+        .onChange(of: viewModel.photoImages, { oldValue, newValue in
+            Task {
+                await viewModel.convertSelectedPhotosToUIImage()
+            }
+        })
+        
+        .task {
+            viewModel.simpleDateString(from: .now)
+        }
     }
     
     /// 상단 네비게이션 컨트롤러
@@ -48,11 +73,29 @@ struct AddDiaryView: View {
         .safeAreaPadding(.horizontal, 16)
     }
     
+    @ViewBuilder
+    private var middleContents: some View {
+        if !viewModel.diaryImages.isEmpty {
+            ScrollView(.horizontal, content: {
+                LazyHStack(spacing: 6, content: {
+                    ForEach(Array(viewModel.diaryImages.enumerated()), id: \.offset) { index, image in
+                        SelectedImagePreview(diaryImage: image, onDelete: {
+                            viewModel.diaryImages.remove(at: index)
+                            viewModel.photoImages.remove(at: index)
+                        })
+                    }
+                })
+            })
+            .frame(height: 132)
+            .contentMargins(.horizontal, 16)
+            .contentMargins(.bottom, 8)
+        }
+    }
     /// 하단 일기 내용 작성 컨텐츠
     private var bottomContents: some View {
         VStack(alignment: .leading, spacing: 28, content: {
             Group {
-                Text(simpleDateString())
+                Text(viewModel.dateString)
                     .font(.cap1)
                     .foregroundStyle(Color.gray40)
                 
@@ -79,18 +122,6 @@ struct AddDiaryView: View {
         .sheet()
     }
     
-    /// 현재 날짜 데이터 가져오기
-    /// - Returns: 오늘 날짜 년 월 일 가져오기
-    private func simpleDateString() -> String {
-        let calendar = Calendar.current
-        let date = Date()
-        
-        let year = calendar.component(.year, from: date) % 100
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        
-        return "\(year)년 \(month)월 \(day)일"
-    }
     
     /// 제목 텍스트 필드 제목 입력
     /// - Returns: placeholder
