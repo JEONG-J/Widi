@@ -17,13 +17,13 @@ struct HomeDragView: View {
         VStack(alignment: .center, spacing: 20, content: {
             dragIndicator
             
-            VStack(alignment: .center, spacing: 5, content: {
+            VStack(alignment: .center, spacing: 16, content: {
                 topController
+                
                 ScrollView(.vertical, content: {
-                    
                     bottomContents
                 })
-                .contentMargins(.top, 36)
+                .padding(.bottom, 48)
             })
             
             Spacer()
@@ -58,6 +58,7 @@ struct HomeDragView: View {
                 container.navigationRouter.push(to: .addFriendView)
             })
         }
+        .padding(.bottom, 20)
     }
     
     /// 하단 친구리스트 영역
