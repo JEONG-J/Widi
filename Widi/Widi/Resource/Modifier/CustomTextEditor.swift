@@ -10,7 +10,6 @@ import SwiftUI
 struct CustomTextEditor: ViewModifier {
     
     // MARK: - Property
-    @FocusState private var isFocused: Bool
     @Binding var text: String
     let placeholder: String
     let background: Color
@@ -28,14 +27,14 @@ struct CustomTextEditor: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .padding(.top, 12)
-            .padding(.horizontal, padding)
+            .padding(.top, 8)
+            .padding(.horizontal, padding - 4)
             .padding(.bottom, padding)
-            .focused($isFocused)
             .background(alignment: .topLeading, content: {
-                if text.isEmpty && !isFocused {
+                if text.isEmpty {
                     Text(placeholder)
-                        .padding(padding)
+                        .padding(.horizontal, padding)
+                        .padding(.vertical, padding - 1)
                         .font(.b1)
                         .foregroundStyle(Color.gray40)
                 }

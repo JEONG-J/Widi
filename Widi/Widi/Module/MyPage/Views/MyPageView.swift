@@ -17,20 +17,34 @@ struct MyPageView: View {
     // MARK: - Body
     var body: some View {
         VStack {
-            VStack(spacing:46) {
-                topName
-                settingRow
-            }
-            .padding(.top, 24)
+            topContents
+            
             Spacer()
-            logOutButton
-                .padding(.bottom, 29)
-            deleteAccountButton
+            
+            buttonContetns
+            
         }
         .safeAreaPadding(.horizontal, 16)
         .safeAreaPadding(.top, 24)
         .safeAreaPadding(.bottom, 51)
+        .background(Color.background)
+        .sheet(isPresented: $myPageViewModel.isModalPresented) {
+            ContactUsView()
+                .presentationCornerRadius(24)
+        }
     }
+    
+    // MARK: - Top
+    
+    /// 상단 + 중앙 컨텐츠
+    private var topContents: some View {
+        VStack(spacing: 46) {
+            topName
+            middleContents
+        }
+        .padding(.top, 24)
+    }
+    
     
     /// 유저 이름 뷰
     private var topName: some View {
@@ -40,38 +54,10 @@ struct MyPageView: View {
             .padding(.leading, 4)
     }
     
-    /// 로그아웃 버튼
-    // TODO: - 지나의 도움 필요! 사이즈 너무 작음
-    private var logOutButton: some View {
-        Button {
-            myPageViewModel.logOutAction()
-        } label: {
-            Text(logoutText)
-                .font(.cap1)
-                .foregroundStyle(.white)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 60)
-                .background {
-                    RoundedRectangle(cornerRadius:8)
-                        .fill(Color.gray70)
-                }
-        }
-    }
+    // MARK: - Middle
     
-    /// 탈퇴하기 버튼
-    private var deleteAccountButton: some View {
-        Button {
-            myPageViewModel.deleteAccountAction()
-        } label: {
-            Text(deleteAccountText)
-                .font(.cap2)
-                .foregroundStyle(.black)
-                .underline(true, pattern: .solid)
-        }
-    }
-    
-    /// 설정 리스트
-    private var settingRow: some View {
+    /// 중앙 컨텐츠 리스트 버트
+    private var middleContents: some View {
         
         let settings: [SettingRowType] = [
             .toggle(
@@ -102,8 +88,46 @@ struct MyPageView: View {
                     .foregroundStyle(.gray20)
             }
         }
-        .sheet(isPresented: $myPageViewModel.isModalPresented) {
-            ContactUsView()
+    }
+    
+    // MARK: - Bottom
+    
+    private var buttonContetns: some View {
+        VStack(spacing: 29) {
+            logOutButton
+            
+            deleteAccountButton
+        }
+        .frame(height: 93)
+        .safeAreaPadding(.horizontal, 97)
+    }
+    
+    /// 로그아웃 버튼
+    private var logOutButton: some View {
+        Button {
+            myPageViewModel.logOutAction()
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray70)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                
+                Text(logoutText)
+                    .font(.btn)
+                    .foregroundStyle(.white)
+            }
+        }
+    }
+    
+    /// 탈퇴하기 버튼
+    private var deleteAccountButton: some View {
+        Button {
+            myPageViewModel.deleteAccountAction()
+        } label: {
+            Text(deleteAccountText)
+                .font(.cap2)
+                .foregroundStyle(.black)
+                .underline(true, pattern: .solid)
         }
     }
 }
@@ -120,9 +144,9 @@ struct Mypage_Preview: PreviewProvider {
     static var previews: some View {
         ForEach(devices, id: \.self) { device in
             MyPageView()
-            .previewDevice(PreviewDevice(rawValue: device))
-            .previewDisplayName(device)
+                .previewDevice(PreviewDevice(rawValue: device))
+                .previewDisplayName(device)
         }
     }
-
+    
 }

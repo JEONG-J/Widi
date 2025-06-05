@@ -51,25 +51,25 @@ extension Font {
     
     // MARK: - Body
     static var b1: Font {
-        return .pretendard(type: .medium, size: 16)
+        return .pretendard(type: .regular, size: 16)
     }
     
     static var b2: Font {
-        return .pretendard(type: .medium, size: 14)
+        return .pretendard(type: .regular, size: 14)
     }
     
     // MARK: - Button
     static var btn: Font {
-        return .pretendard(type: .semibold, size: 14)
+        return .pretendard(type: .semibold, size: 15)
     }
     
     // MARK: - Caption
     static var cap1: Font {
-        return .pretendard(type: .medium, size: 12)
+        return .pretendard(type: .semibold, size: 14)
     }
     
     static var cap2: Font {
-        return .pretendard(type: .regular, size: 12)
+        return .pretendard(type: .regular, size: 14)
     }
     
     // MARK: - Etc
