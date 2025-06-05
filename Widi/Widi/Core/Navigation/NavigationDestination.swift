@@ -9,4 +9,6 @@ import Foundation
 
 enum NavigationDestination: Equatable, Hashable {
     case addFriendView
+    case addDiaryView
+    case detailDiaryView
 }

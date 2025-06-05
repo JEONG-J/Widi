@@ -98,22 +98,45 @@ struct WriteDiaryBackground: ViewModifier {
 }
 
 extension View {
+    /// 배경 타원 생성
+    /// - Parameters:
+    ///   - color: 타원 색상
+    ///   - width: 타원 넓이
+    ///   - height: 타원 높이
+    ///   - rotation: 회전율
+    ///   - x: offset 적용시킬 x 값
+    ///   - y: offset 적용시킬 y 값
+    /// - Returns: 타원모양 도형
     func backgroundShape(color: Color, width: CGFloat, height: CGFloat, rotation: Double, x: CGFloat, y: CGFloat) -> some View {
         self.modifier(BackgroundShape(color: color, width: width, height: height, rotation: rotation, x: x, y: y))
     }
     
+    /// 타원 위에 깔 배경 블러 생성
+    /// - Returns: 블러 뷰
     func backgroundBlur() -> some View {
         self.modifier(BackgroundBlur())
     }
     
+    /// View에 친구 상세 배경 입힘
+    /// 사용법:
+    /// ` content.detailFriendViewBG()`
+    /// - Returns: 친구 상세 뷰 배경
     func detailFriendViewBG() -> some View {
         self.modifier(DetailFriendBackground(screenSize: getScreenSize()))
     }
     
+    /// View에 친구 추가 배경 입힘
+    /// 사용법:
+    /// ` content.addFriendViewBG()`
+    /// - Returns: 친구 추가 뷰 배경
     func addFriendViewBG() -> some View {
         self.modifier(AddFriendBackground())
     }
     
+    /// View에 일기 작성 배경 입힘
+    /// 사용법:
+    /// ` content.writeDiaryViewBG()`
+    /// - Returns: 일기 작성 뷰 배경
     func writeDiaryViewBG() -> some View {
         self.modifier(WriteDiaryBackground())
     }
