@@ -64,18 +64,31 @@ struct DiaryPreviewCard: View {
     private var diaryImage: some View {
         if let urlString = diaryData.pictures?.first,
            let url = URL(string: urlString) {
-            KFImage(url)
-                .downsampling(size: .init(width: 400, height: 400))
-                .cacheOriginalImage()
-                .placeholder({
-                    ProgressView()
-                        .controlSize(.small)
-                }).retry(maxCount: 2, interval: .seconds(2))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 86)
-                .frame(maxHeight: .infinity)
-                .clipped()
+            
+            ZStack(alignment: .topTrailing) {
+                KFImage(url)
+                    .downsampling(size: .init(width: 400, height: 400))
+                    .cacheOriginalImage()
+                    .placeholder {
+                        ProgressView()
+                            .controlSize(.regular)
+                    }
+                    .retry(maxCount: 2, interval: .seconds(2))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 86)
+                    .frame(maxHeight: .infinity)
+                    .clipped()
+                
+                if let pictures = diaryData.pictures, pictures.count > 1 {
+                    Image(.image)
+                        .resizable()
+                        .foregroundStyle(.white)
+                        .frame(width: 20, height: 20)
+                        .padding(.trailing, 2)
+                        .padding(.top, 4)
+                }
+            }
         }
     }
 }
@@ -87,7 +100,8 @@ struct DiaryPreviewCard: View {
                 id: UUID(),
                 title: "학식당에서",
                 content: "명상의 힘은 마음을 가라앉히고 내면의 평화를 찾는 방법을 제공합니다. 정기적인 명상은 스트레스를 줄이고 집중력을 향상시키는 방법입니다.",
-                pictures:  ["https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp"],
+                pictures:  ["https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp",
+                            "https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp"],
                 diaryDate: "2025 / 05 / 24"
             ),
             DiaryResponse(

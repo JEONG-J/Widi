@@ -11,10 +11,6 @@ struct CalendarComponents: View {
     
     @Bindable var viewModel: CalendarViewModel
     
-    init() {
-        self.viewModel = .init()
-    }
-    
     var body: some View {
         VStack(spacing: 12, content: {
             headerController
@@ -70,9 +66,8 @@ struct CalendarComponents: View {
                 Cell(calendarDay: calendarDay, isSelected: isSelectedDate, viewModel: viewModel)
             }
         })
-        .frame(height: 352, alignment: .top)
+        .frame(alignment: .top)
         .padding(.horizontal, 16)
-        .padding(.bottom, 20)
     }
     
     /// 요일 이름 한글로 가져오기
@@ -92,7 +87,7 @@ struct CalendarComponents: View {
 
 #Preview {
     VStack {
-        CalendarComponents()
+        CalendarComponents(viewModel: .init())
             .safeAreaPadding(.horizontal, 16)
     }
 }
