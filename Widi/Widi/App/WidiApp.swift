@@ -11,8 +11,7 @@ import SwiftUI
 struct WidiApp: App {
     var body: some Scene {
         WindowGroup {
-            AddDiaryView(viewModel: .init())
-                .environmentObject(DIContainer())
+            DetailFriendUpdateView()
         }
     }
 }

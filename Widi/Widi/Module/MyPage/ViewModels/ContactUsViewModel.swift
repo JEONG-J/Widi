@@ -45,9 +45,6 @@ class ContactUsViewModel {
     
     // TODO: - 문의 내용 보내기 필요
     /// 문의 내용 서버 전송
-    /// - Parameters:
-    ///   - eamilText: 이메일 값
-    ///   - contactText: 문의 내용 값
     func complete() {
     }
     

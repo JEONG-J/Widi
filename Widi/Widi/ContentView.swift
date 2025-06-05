@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var text: String = ""
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-            Text("Hello, world!".customLineBreak())
-                .lineSpacing(1.6)
-                .foregroundStyle(.tint)
-                .font(.h1)
+            TextField(text: $text, label: {
+                Text("!1")
+            })
+            .keyboardType(.numberPad)
+            .onChange(of: text, { old, new in
+                text = ConvertDataFormat.shared.formatBirthdayInput(new)
+                
+            })
         }
         .padding()
     }
