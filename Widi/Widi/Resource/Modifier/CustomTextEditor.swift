@@ -27,13 +27,14 @@ struct CustomTextEditor: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .padding(.top, 12)
-            .padding(.horizontal, padding)
+            .padding(.top, 8)
+            .padding(.horizontal, padding - 4)
             .padding(.bottom, padding)
             .background(alignment: .topLeading, content: {
                 if text.isEmpty {
                     Text(placeholder)
-                        .padding(padding + 5)
+                        .padding(.horizontal, padding)
+                        .padding(.vertical, padding - 1)
                         .font(.b1)
                         .foregroundStyle(Color.gray40)
                 }
