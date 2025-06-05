@@ -149,7 +149,7 @@ struct AddFriendView: View {
     /// 생일 날짜 자동 입력 함수
     /// - Parameter input: 생일 숫자 입력
     /// - Returns: / 로 분리된 날짜 데이터 반환
-    private func formatBirthdayInput(_ input: String) -> String {
+    func formatBirthdayInput(_ input: String) -> String {
         let digits = input.filter { $0.isNumber }
 
         var result = ""
