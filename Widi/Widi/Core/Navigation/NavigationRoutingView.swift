@@ -21,5 +21,6 @@ struct NavigationRoutingView: View {
             ContentView()
         case .detailDiaryView:
             DetailDiaryView()
+        }
     }
 }
