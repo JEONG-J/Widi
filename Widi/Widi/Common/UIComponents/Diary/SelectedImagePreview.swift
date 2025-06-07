@@ -60,7 +60,7 @@ struct SelectedImagePreview: View {
     private func displayImage() -> some View {
         Group {
             switch diaryImage {
-            case .local(let image):
+            case .local(let image, _):
                 image
                     .resizable()
             case .server(let string):

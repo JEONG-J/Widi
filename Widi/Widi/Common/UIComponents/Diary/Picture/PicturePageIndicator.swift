@@ -33,6 +33,7 @@ struct PicturePageIndicator: View {
             ForEach(0..<numberOfPages, id: \.self) { index in
                 Circle()
                     .foregroundStyle(index == currentPage ? .orange30: .gray20)
+                    .frame(width: 8, height: 8)
             }
         }
     }

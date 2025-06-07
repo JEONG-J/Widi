@@ -32,6 +32,8 @@ struct CustomNavigationIcon: View {
                     .shadow1()
             } else if let image = navigationIcon.image {
                 image
+                    .renderingMode(.template)
+                    .foregroundStyle(Color.gray60)
                     .fixedSize()
                     .padding(8)
                     .background(Color.whiteBlack)
