@@ -10,22 +10,19 @@ import SwiftUI
 struct DiaryImageScrollView: View {
     let images: [DiaryImage]
     let mode: DiaryMode
-    let onDelete: (DiaryImage) -> Void
-    
-    
-    init(images: [DiaryImage], mode: DiaryMode, onDelete: @escaping (DiaryImage) -> Void) {
-        self.images = images
-        self.mode = mode
-        self.onDelete = onDelete
-    }
+    let onDelete: (Int) -> Void
+    let onSelect: (DiaryImage) -> Void
     
     var body: some View {
         ScrollView(.horizontal, content: {
             LazyHStack(spacing: 6, content: {
                 ForEach(Array(images.enumerated()), id: \.offset) { index, image in
                     SelectedImagePreview(diaryImage: image,
-                                         onDelete: { onDelete(image) },
-                                         showDeleteButton: mode != .read)
+                                         onDelete: { onDelete(index) },
+                                         showDeleteButton: mode != .read,
+                                         onSelect: { image in
+                        onSelect(image)
+                    })
                 }
             })
         })

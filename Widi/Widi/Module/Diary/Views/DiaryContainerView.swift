@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-struct DiaryContainerView<Header: View, Content: View, ImageScroll: View, VM: DiaryViewModelProtocol> : View {
-    @ObservedObject var viewModel: VM
+struct DiaryContainerView<Header: View, Content: View, ImageScroll: View> : View {
     
     @ViewBuilder var header: () -> Header
     @ViewBuilder var imageScroll: () -> ImageScroll
@@ -24,5 +23,6 @@ struct DiaryContainerView<Header: View, Content: View, ImageScroll: View, VM: Di
             
             content()
         })
+        .background(Color.background)
     }
 }

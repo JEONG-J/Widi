@@ -7,10 +7,11 @@
 
 import Foundation
 
+@Observable
 class DetailDiaryViewModel: DiaryViewModelProtocol {
     
-    @Published var diary: DiaryResponse? = nil
-    @Published var diaryImages: [DiaryImage] = []
+    var diary: DiaryResponse? = nil
+    var diaryImages: [DiaryImage] = []
     
     var diaryMode: DiaryMode
     

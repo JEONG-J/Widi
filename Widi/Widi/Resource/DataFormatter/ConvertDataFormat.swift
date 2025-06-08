@@ -28,4 +28,16 @@ class ConvertDataFormat {
         
         return result
     }
+    
+    /// 현재 날짜 데이터 가져오기
+    /// - Returns: 오늘 날짜 년 월 일 가져오기
+    func simpleDateString(from date: Date) -> String {
+        let calendar = Calendar.current
+        
+        let year = calendar.component(.year, from: date) % 100
+        let month = calendar.component(.month, from: date)
+        let day = calendar.component(.day, from: date)
+        
+        return "\(year)년 \(month)월 \(day)일"
+    }
 }

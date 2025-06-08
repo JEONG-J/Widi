@@ -46,7 +46,7 @@ struct SearchDiaryView: View {
                 UIApplication.shared.hideKeyboard()
             }
             .navigationDestination(isPresented: $moveNavi, destination: {
-                DetailDiaryView()
+                Text("11")
             })
         }
     }

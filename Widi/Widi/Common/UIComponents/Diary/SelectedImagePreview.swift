@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 
+/// 이미지 미리보기
 struct SelectedImagePreview: View {
     
     // MARK: - Property
@@ -15,8 +16,7 @@ struct SelectedImagePreview: View {
     let diaryImage: DiaryImage
     let onDelete: () -> Void
     let showDeleteButton: Bool
-    
-    @State var showFullImage: Bool
+    let onSelect: (DiaryImage) -> Void
     
     // MARK: - Init
     
@@ -25,12 +25,12 @@ struct SelectedImagePreview: View {
     ///   - diaryImage: 사진 타입 설정
     ///   - onDelete: 삭제 액션
     ///   - showDeleteButton: 삭제 버튼 유무
-    ///   - showFullImage: 이미 상세 화면 보이기
-    init(diaryImage: DiaryImage, onDelete: @escaping () -> Void, showDeleteButton: Bool, showFullImage: Bool = false) {
+    ///   - onSelect: 선택한 이미지 넘기기
+    init(diaryImage: DiaryImage, onDelete: @escaping () -> Void, showDeleteButton: Bool, onSelect: @escaping (DiaryImage) -> Void) {
         self.diaryImage = diaryImage
         self.onDelete = onDelete
         self.showDeleteButton = showDeleteButton
-        self.showFullImage = showFullImage
+        self.onSelect = onSelect
     }
     
     // MARK: - Body
@@ -38,7 +38,7 @@ struct SelectedImagePreview: View {
     var body: some View {
         ZStack(alignment: .topTrailing, content: {
             Button(action: {
-                showFullImage.toggle()
+                onSelect(diaryImage)
             }, label: {
                 displayImage()
             })
@@ -51,10 +51,6 @@ struct SelectedImagePreview: View {
                     .clipShape(Circle())
                     .padding(8)
             })
-        })
-        // TODO: - 풀스크린 이미지 뷰 만들기
-        .fullScreenCover(isPresented: $showFullImage, content: {
-            Text("풀 스크린 이미지 뷰 등장하기")
         })
     }
     
@@ -80,14 +76,4 @@ struct SelectedImagePreview: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
-}
-
-#Preview {
-    HStack {
-        SelectedImagePreview(diaryImage: .server("https://i.namu.wiki/i/4HF0qDNbaYaUTHCyJJTMPJ9ADmbXdc4C6ahEqIxURdzOeBZqIxzY69Xu9EbP3qlX-kCCunsBwAZpSvccoHLiFGcdpbHaeBz2QpFDzVrAoc6PFvj_ieSeVQwvn-gMKveZAj-EtVaxqdf7G6Q2zSXDnw.webp"), onDelete: {
-            print("hello")
-        }, showFullImage: false)
-    }
-    .safeAreaPadding(.horizontal, 16)
-    .frame(height: 132)
 }
