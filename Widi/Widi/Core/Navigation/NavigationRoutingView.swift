@@ -20,7 +20,7 @@ struct NavigationRoutingView: View {
         case .addDiaryView:
             ContentView()
         case .detailDiaryView:
-            DetailDiaryView()
+            Text("11")
         }
     }
 }

@@ -8,51 +8,79 @@
 import SwiftUI
 import PhotosUI
 
+/// 다이어리 생성 뷰
 struct AddDiaryView: View {
     
     // MARK: - Property
     
-    @Bindable var viewModel: AddFriendsViewModel
+    @Bindable var viewModel: CreateDiaryViewModel
     @EnvironmentObject var container: DIContainer
+    
+    init(friendsRequest: FriendRequest) {
+        self.viewModel = .init(friendRequest: friendsRequest)
+    }
     
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 8, content: {
+        DiaryContainerView(header: {
             topController
-            middleContents
+        }, imageScroll: {
+            if !viewModel.diaryImages.isEmpty {
+                DiaryImageScrollView(images: viewModel.diaryImages, mode: .write,
+                                     onDelete: { index in
+                    viewModel.photoImages.remove(at: index)
+                    viewModel.diaryImages.remove(at: index)
+                }, onSelect: { image in
+                    viewModel.selectedImage = image
+                })
+            }
+        }, content: {
             bottomContents
         })
-        .background(Color.background)
+        
         .overlay(alignment: .bottom, content: {
             DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
                 .safeAreaPadding(.horizontal, 16)
         })
+        
+        .fullScreenCover(item: $viewModel.selectedImage, content: { _ in
+            DetailImageView(images: $viewModel.diaryImages,
+                            selectedImage: $viewModel.selectedImage,
+                            onDeleteServerImage: { url in
+                print(url)
+            }, onDeleteLocalImage: { index in
+                viewModel.photoImages.remove(at: index)
+            })
+        })
+        
         .sheet(isPresented: $viewModel.isShowCalendar, content: {
             SheetCalendarView(viewModel: viewModel)
                 .presentationCornerRadius(24)
                 .presentationDetents([.medium])
         })
+        
         .photosPicker(
             isPresented: $viewModel.isShowImagePicker,
             selection: $viewModel.photoImages,
             maxSelectionCount: 5,
             matching: .images)
+        
         .onChange(of: viewModel.photoImages, { oldValue, newValue in
             Task {
                 await viewModel.convertSelectedPhotosToUIImage()
             }
         })
-        
+    
         .task {
-            viewModel.simpleDateString(from: .now)
+            viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: .now)
         }
     }
     
     /// 상단 네비게이션 컨트롤러
     private var topController: some View {
         CustomNavigation(
-            config: .backAndTitleComplete(title: viewModel.friendsName, isEmphasized: viewModel.diaryIsEmphasized),
+            config: .backAndTitleComplete(title: viewModel.friendsRequest.name, isEmphasized: viewModel.diaryIsEmphasized),
             leftAction: { icon in
                 switch icon {
                 case .backArrow:
@@ -73,24 +101,6 @@ struct AddDiaryView: View {
         .safeAreaPadding(.horizontal, 16)
     }
     
-    @ViewBuilder
-    private var middleContents: some View {
-        if !viewModel.diaryImages.isEmpty {
-            ScrollView(.horizontal, content: {
-                LazyHStack(spacing: 6, content: {
-                    ForEach(Array(viewModel.diaryImages.enumerated()), id: \.offset) { index, image in
-                        SelectedImagePreview(diaryImage: image, onDelete: {
-                            viewModel.diaryImages.remove(at: index)
-                            viewModel.photoImages.remove(at: index)
-                        })
-                    }
-                })
-            })
-            .frame(height: 132)
-            .contentMargins(.horizontal, 16)
-            .contentMargins(.bottom, 8)
-        }
-    }
     /// 하단 일기 내용 작성 컨텐츠
     private var bottomContents: some View {
         VStack(alignment: .leading, spacing: 28, content: {
@@ -144,6 +154,6 @@ extension AddDiaryView {
 }
 
 #Preview {
-    AddDiaryView(viewModel: .init())
+    AddDiaryView(friendsRequest: .init(name: "하하", birthDay: "199"))
         .environmentObject(DIContainer())
 }

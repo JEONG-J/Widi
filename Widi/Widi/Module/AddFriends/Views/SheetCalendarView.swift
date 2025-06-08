@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SheetCalendarView: View {
     
-    @Bindable var viewModel: AddFriendsViewModel
+    @Bindable var viewModel: CreateDiaryViewModel
     @State var calendarViewModel: CalendarViewModel = .init()
     
     var body: some View {
@@ -47,5 +47,5 @@ struct SheetCalendarView: View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    SheetCalendarView(viewModel: .init())
+    SheetCalendarView(viewModel: .init(friendRequest: .init(name: "11", birthDay: "11")))
 }
