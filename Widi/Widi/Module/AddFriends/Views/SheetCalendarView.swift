@@ -38,7 +38,7 @@ struct SheetCalendarView: View {
             
             CustomNavigationIcon(navigationIcon: .complete(type: .select, isEmphasized: true), action: {
                 Task {
-                    viewModel.simpleDateString(from: calendarViewModel.selectedDate)
+                    viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: calendarViewModel.selectedDate)
                     viewModel.isShowCalendar.toggle()
                 }
             })
