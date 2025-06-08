@@ -20,7 +20,6 @@ struct AddDiaryView: View {
     var body: some View {
         VStack(spacing: 8, content: {
             topController
-            middleContents
             bottomContents
         })
         .background(Color.background)
@@ -73,24 +72,6 @@ struct AddDiaryView: View {
         .safeAreaPadding(.horizontal, 16)
     }
     
-    @ViewBuilder
-    private var middleContents: some View {
-        if !viewModel.diaryImages.isEmpty {
-            ScrollView(.horizontal, content: {
-                LazyHStack(spacing: 6, content: {
-                    ForEach(Array(viewModel.diaryImages.enumerated()), id: \.offset) { index, image in
-                        SelectedImagePreview(diaryImage: image, onDelete: {
-                            viewModel.diaryImages.remove(at: index)
-                            viewModel.photoImages.remove(at: index)
-                        })
-                    }
-                })
-            })
-            .frame(height: 132)
-            .contentMargins(.horizontal, 16)
-            .contentMargins(.bottom, 8)
-        }
-    }
     /// 하단 일기 내용 작성 컨텐츠
     private var bottomContents: some View {
         VStack(alignment: .leading, spacing: 28, content: {

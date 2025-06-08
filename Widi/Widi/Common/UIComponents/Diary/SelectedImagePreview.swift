@@ -14,6 +14,7 @@ struct SelectedImagePreview: View {
     
     let diaryImage: DiaryImage
     let onDelete: () -> Void
+    let showDeleteButton: Bool
     
     @State var showFullImage: Bool
     
@@ -23,10 +24,12 @@ struct SelectedImagePreview: View {
     /// - Parameters:
     ///   - diaryImage: 사진 타입 설정
     ///   - onDelete: 삭제 액션
+    ///   - showDeleteButton: 삭제 버튼 유무
     ///   - showFullImage: 이미 상세 화면 보이기
-    init(diaryImage: DiaryImage, onDelete: @escaping () -> Void, showFullImage: Bool = false) {
+    init(diaryImage: DiaryImage, onDelete: @escaping () -> Void, showDeleteButton: Bool, showFullImage: Bool = false) {
         self.diaryImage = diaryImage
         self.onDelete = onDelete
+        self.showDeleteButton = showDeleteButton
         self.showFullImage = showFullImage
     }
     
