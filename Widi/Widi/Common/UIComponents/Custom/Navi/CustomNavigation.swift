@@ -82,23 +82,46 @@ struct CustomNavigation: View {
 }
 
 #Preview {
+
     CustomNavigation(
-        config: .backAndClose,
+        config: .backTitleAndEditTrash(title: "Hello"),
         leftAction: { icon in
             switch icon {
             case .backArrow:
-                print("Back tapped")
+                print("backArrow가 눌렸습니다.")
             default:
                 break
             }
         },
         rightAction: { icon in
             switch icon {
-            case .closeX:
-                print("xx")
+            case .edit:
+                print("pencil가 눌렸습니다.")
+            case .trash:
+                print("trash가 눌렸습니다.")
             default:
                 break
             }
         }
     )
+    
+//    CustomNavigation(
+//        config: .backAndClose,
+//        leftAction: { icon in
+//            switch icon {
+//            case .backArrow:
+//                print("Back tapped")
+//            default:
+//                break
+//            }
+//        },
+//        rightAction: { icon in
+//            switch icon {
+//            case .closeX:
+//                print("xx")
+//            default:
+//                break
+//            }
+//        }
+//    )
 }
