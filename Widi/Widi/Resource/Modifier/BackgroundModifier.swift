@@ -140,7 +140,7 @@ extension View {
     /// 사용법:
     /// ` content.writeDiaryViewBG()`
     /// - Returns: 일기 작성 뷰 배경
-    func ㅁ() -> some View {
+    func writeDiaryViewBG() -> some View {
         self.modifier(WriteDiaryBackground(screenSize: getScreenSize()))
     }
 }
