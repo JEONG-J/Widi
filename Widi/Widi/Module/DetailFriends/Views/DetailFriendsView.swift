@@ -34,15 +34,16 @@ struct DetailFriendsView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            GeometryReader { geometry in
-                VStack {
-                    navigationBar
-                    scrollContent(topSafeArea: geometry.safeAreaInsets.top)
-                }
-                .ignoresSafeArea(edges: .bottom)
-            }
-            addButton
-            dropDownOverlay
+            Text("11")
+//            GeometryReader { geometry in
+//                VStack {
+//                    navigationBar
+//                    scrollContent(topSafeArea: geometry.safeAreaInsets.top)
+//                }
+//                .ignoresSafeArea(edges: .bottom)
+//            }
+//            addButton
+//            dropDownOverlay
         }
         .detailFriendViewBG()
     }
@@ -76,7 +77,6 @@ fileprivate extension DetailFriendsView {
             }
         )
         .padding(.horizontal, 16)
-        .frame(height: naviHeight)
     }
     
     /// 일기 추가 버튼

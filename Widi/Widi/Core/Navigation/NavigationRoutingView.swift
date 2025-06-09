@@ -16,9 +16,8 @@ struct NavigationRoutingView: View {
         switch destination {
         case .addFriendView:
             AddFriendView()
-            // TODO: - 일기 추가 뷰로 ㅅ정
         case .addDiaryView:
-            ContentView()
+            Text("12")
         case .detailDiaryView:
             Text("11")
         }

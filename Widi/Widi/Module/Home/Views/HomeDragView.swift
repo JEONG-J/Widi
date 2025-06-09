@@ -12,7 +12,11 @@ struct HomeDragView: View {
     @Bindable var viewModel: HomeViewModel
     @EnvironmentObject var container: DIContainer
     
-    // MARK: - Indicator
+    init() {
+        self.viewModel = .init()
+    }
+    
+    // MARK: - Body
     var body: some View {
         VStack(alignment: .center, spacing: 20, content: {
             dragIndicator
@@ -28,7 +32,6 @@ struct HomeDragView: View {
             
             Spacer()
         })
-        .shadow1()
         .safeAreaPadding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
         .background {
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
@@ -36,6 +39,10 @@ struct HomeDragView: View {
                 .shadow(color: Color(red: 0.56, green: 0.56, blue: 0.58).opacity(0.05), radius: 4, x: 0, y: -14)
         }
         .ignoresSafeArea()
+        .navigationDestination(for: NavigationDestination.self) { destination in
+            NavigationRoutingView(destination: destination)
+                .environmentObject(container)
+        }
     }
     
     /// 드래그 인디케이터
@@ -106,6 +113,6 @@ extension HomeDragView {
 
 
 #Preview {
-    HomeDragView(viewModel: .init())
+    HomeDragView()
         .environmentObject(DIContainer())
 }
