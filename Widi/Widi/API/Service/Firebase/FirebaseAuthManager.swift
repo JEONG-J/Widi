@@ -10,7 +10,7 @@ import FirebaseAuth
 import AuthenticationServices
 
 class FirebaseAuthManager {
-    static let shared = FirebaseAuthManager()
+    
     func signInWithAppleCredential(_ appleIDCredential: ASAuthorizationAppleIDCredential) async throws -> User {
         guard let identityToken = appleIDCredential.identityToken,
               let tokenString = String(data: identityToken, encoding: .utf8) else {

@@ -9,10 +9,13 @@ import Foundation
 
 class DIContainer: ObservableObject {
     @Published var navigationRouter: NavigationRouter
+    @Published var firebaseService: FirebaseService
     
     init(
-        navigationRouter: NavigationRouter = .init()
+        navigationRouter: NavigationRouter = .init(),
+        firebaseService: FirebaseService = .init()
     ) {
         self.navigationRouter = navigationRouter
+        self.firebaseService = firebaseService
     }
 }

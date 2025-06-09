@@ -28,11 +28,11 @@ struct BackgroundShape: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(
-                Ellipse()
-                    .foregroundStyle(color)
-                    .frame(width: width, height: height)
-                    .rotationEffect(.degrees(rotation))
-                    .offset(x: x, y: y)
+                    Ellipse()
+                        .foregroundStyle(color)
+                        .frame(width: width, height: height)
+                        .rotationEffect(.degrees(rotation))
+                        .offset(x: x, y: y)
             )
     }
 }
@@ -76,24 +76,23 @@ struct DetailFriendBackground: ViewModifier {
 }
 
 struct AddFriendBackground: ViewModifier {
+    
+    let screenSize: CGSize
+    
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundBlur()
-            .backgroundShape(color: Color(red: 0.95, green: 0.51, blue: 0.4), width: 280, height: 200, rotation: 0, x: 0, y: 110)
-            .backgroundShape(color: Color(red: 0.98, green: 0.9, blue: 0.73), width: 393, height: 410, rotation: 0, x: 0, y: 37)
-            .ignoresSafeArea()
+            .backgroundShape(color: Color(red: 0.95, green: 0.51, blue: 0.4), width: screenSize.width * 0.6, height: screenSize.height * 0.2, rotation: 0, x: 0, y: 120)
+            .backgroundShape(color: Color(red: 0.98, green: 0.9, blue: 0.73), width: screenSize.width, height: screenSize.height * 0.3, rotation: 0, x: 0, y: 90)
     }
 }
 
 struct WriteDiaryBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundBlur()
             .backgroundShape(color: Color(red: 0.95, green: 0.55, blue: 0.46), width: 235, height: 166, rotation: 0, x: 0, y: -64)
             .backgroundShape(color: Color(red: 0.63, green: 0.77, blue: 0.91), width: 410, height: 411, rotation: 0, x: 0, y: 0)
-            .ignoresSafeArea()
     }
 }
 
@@ -130,7 +129,7 @@ extension View {
     /// ` content.addFriendViewBG()`
     /// - Returns: 친구 추가 뷰 배경
     func addFriendViewBG() -> some View {
-        self.modifier(AddFriendBackground())
+        self.modifier(AddFriendBackground(screenSize: getScreenSize()))
     }
     
     /// View에 일기 작성 배경 입힘

@@ -11,6 +11,7 @@ struct AddFriendView: View {
     
     @Bindable var viewModel: AddFriendsViewModel = .init()
     @EnvironmentObject var container: DIContainer
+    @FocusState var isFocused: AddFriendsField?
     
     var body: some View {
         VStack(alignment: .center, spacing: 52, content: {
@@ -23,10 +24,15 @@ struct AddFriendView: View {
             
             returnMainButton()
         })
-        .safeAreaPadding(.horizontal, 16)
+        .addFriendViewBG()
+        .navigationBarBackButtonHidden(true)
         .task {
             UIApplication.shared.hideKeyboard()
+            isFocused = (viewModel.currentPage == 1) ? .name : .birthDay
         }
+        .onChange(of: viewModel.currentPage, { old, new in
+            isFocused = (new == 1) ? .name : .birthDay
+        })
     }
     
     // MARK: - Function
@@ -35,12 +41,19 @@ struct AddFriendView: View {
     /// - Returns: 분기로 처리된 텍스트 필드 뷰
     @ViewBuilder
     private func returnContents() -> some View {
-        switch viewModel.currentPage {
-        case 1:
-            makeTextField(for: .name, $viewModel.friendsName)
-        default:
-            makeTextField(for: .birthDay, $viewModel.friendsBirthDay)
+        Group {
+            switch viewModel.currentPage {
+            case 1:
+                makeTextField(for: .name, $viewModel.friendsName, onAction: {
+                    viewModel.currentPage += 1
+                })
+            default:
+                makeTextField(for: .birthDay, $viewModel.friendsBirthDay, onAction: {
+                    print("네비게이션")
+                })
+            }
         }
+        .safeAreaPadding(.horizontal, 16)
     }
     
     /// 메인버튼 분기 처리
@@ -60,6 +73,7 @@ struct AddFriendView: View {
             }
         }
         .padding(.bottom, 16)
+        .safeAreaPadding(.horizontal, 16)
     }
     
     /// 두 번째 페이지 텍스트 필드 그룹
@@ -82,7 +96,7 @@ struct AddFriendView: View {
     /// - Parameter field: 정보 입력 타입 설정
     /// - Returns: 뷰 타입 반환
     @ViewBuilder
-    private func makeTextField(for field: AddFriendsField, _ value: Binding<String>) -> some View {
+    private func makeTextField(for field: AddFriendsField, _ value: Binding<String>, onAction: @escaping () -> Void) -> some View {
         VStack(alignment: .center, spacing: 32, content: {
             Text(field.title)
                 .font(.h4)
@@ -98,6 +112,8 @@ struct AddFriendView: View {
                         value.wrappedValue = ConvertDataFormat.shared.formatBirthdayInput(new)
                     }
                 })
+                .onSubmit({onAction()})
+                .focused($isFocused, equals: field == .name ? .name : .birthDay)
         })
     }
     
@@ -116,34 +132,37 @@ struct AddFriendView: View {
     /// - Returns: 네비게이션 뷰 반환
     @ViewBuilder
     private func topNavigation(value: Int) -> some View {
-        switch value {
-        case 1:
-            CustomNavigation(config: .closeOnly, leftAction: { icon in
-                switch icon {
-                case .closeX:
-                    container.navigationRouter.pop()
-                default:
-                    break
-                }
-            }, rightAction: { _ in })
-            
-        default:
-            CustomNavigation(config: .backAndClose, leftAction: { icon in
-                switch icon {
-                case .backArrow:
-                    viewModel.currentPage -= 1
-                default:
-                    break
-                }
-            }, rightAction: { icon in
-                switch icon {
-                case .closeX:
-                    container.navigationRouter.pop()
-                default:
-                    break
-                }
-            })
+        Group {
+            switch value {
+            case 1:
+                CustomNavigation(config: .closeOnly, leftAction: { icon in
+                    switch icon {
+                    case .closeX:
+                        container.navigationRouter.pop()
+                    default:
+                        break
+                    }
+                }, rightAction: { _ in })
+                
+            default:
+                CustomNavigation(config: .backAndClose, leftAction: { icon in
+                    switch icon {
+                    case .backArrow:
+                        viewModel.currentPage -= 1
+                    default:
+                        break
+                    }
+                }, rightAction: { icon in
+                    switch icon {
+                    case .closeX:
+                        container.navigationRouter.pop()
+                    default:
+                        break
+                    }
+                })
+            }
         }
+        .safeAreaPadding(.horizontal, 16)
     }
 }
 
