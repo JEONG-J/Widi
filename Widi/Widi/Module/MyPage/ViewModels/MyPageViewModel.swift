@@ -12,6 +12,7 @@ import Foundation
 class MyPageViewModel {
     
     // MARK: - Property
+    
     /// toggle 정보
     var toggleOption: ToggleOptionDTO = .init(toggle: true)
     /// 앱 버전
@@ -22,6 +23,10 @@ class MyPageViewModel {
     }
     /// 문의하기 모달 띄우기
     var isModalPresented: Bool = false
+    
+    var checkBackView: Bool = false
+    
+    var alertButtonType: AlertButtonType = .logoutUser
     
     private var container: DIContainer
     
@@ -37,15 +42,15 @@ class MyPageViewModel {
         /* FireBase 연결 */
     }
     
-    /// 로그아웃 버튼 함수
-    func logOutAction () {
-        
-    }
-    
-    /// 탈퇴하기 버튼 함수
-    func deleteAccountAction () {
-        
-        
-    }
+//    /// 로그아웃 버튼 함수
+//    func logOutAction () {
+//        
+//    }
+//    
+//    /// 탈퇴하기 버튼 함수
+//    func deleteAccountAction () {
+//        
+//        
+//    }
     
 }
