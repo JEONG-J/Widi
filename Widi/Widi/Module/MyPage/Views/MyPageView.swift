@@ -47,10 +47,26 @@ struct MyPageView: View {
         .safeAreaPadding(.bottom, 51)
         .background(Color.background)
         .sheet(isPresented: $viewModel.isModalPresented) {
-            ContactUsView()
+            ContactUsView(isModalPresented: $viewModel.isModalPresented)
                 .presentationCornerRadius(24)
         }
         .navigationBarBackButtonHidden(true)
+        
+        .overlay {
+            if viewModel.checkBackView {
+                CustomAlertView {
+                    CustomAlert(
+                        alertButtonType: viewModel.alertButtonType,
+                        onCancel: {
+                            viewModel.checkBackView.toggle()
+                        },
+                        onRight: {
+                            viewModel.checkBackView.toggle()
+                        })
+                }
+            }
+        }
+        
     }
     
     // MARK: - Top
@@ -124,7 +140,10 @@ struct MyPageView: View {
     /// 로그아웃 버튼
     private var logOutButton: some View {
         Button {
-            viewModel.logOutAction()
+            withAnimation(.easeInOut) {
+                viewModel.checkBackView = true
+                viewModel.alertButtonType = .logoutUser
+            }
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
@@ -141,7 +160,10 @@ struct MyPageView: View {
     /// 탈퇴하기 버튼
     private var deleteAccountButton: some View {
         Button {
-            viewModel.deleteAccountAction()
+            withAnimation(.easeInOut) {
+                viewModel.checkBackView = true
+                viewModel.alertButtonType = .withdrawUser
+            }
         } label: {
             Text(deleteAccountText)
                 .font(.cap2)

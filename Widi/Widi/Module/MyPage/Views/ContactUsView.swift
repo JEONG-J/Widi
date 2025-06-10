@@ -13,6 +13,7 @@ struct ContactUsView: View {
     // MARK: - Property
     
     @Bindable var viewModel: ContactUsViewModel = .init()
+    @Binding var isModalPresented: Bool
     
     @Environment(\.dismiss) var dismiss
     @FocusState private var isFocusedContactText: Bool
@@ -36,7 +37,7 @@ struct ContactUsView: View {
     private var modalBar: some View {
         HStack {
             Button {
-                dismiss()
+                isModalPresented.toggle()
             } label: {
                 Image(.naviClose)
                     .padding(8)
@@ -46,7 +47,7 @@ struct ContactUsView: View {
             
             Button {
                 viewModel.complete()
-                dismiss()
+                isModalPresented.toggle()
             } label: {
                 let icon = NavigationIcon.complete(type: .complete, isEmphasized: viewModel.isAllComplete)
                 
@@ -113,6 +114,7 @@ struct ContactUsView: View {
                 .padding(.vertical, 16)
                 .padding(.horizontal , 16)
                 .padding(.trailing, 30)
+                .keyboardType(.emailAddress)
                 .onChange(of: viewModel.emailText, { oldValue, newValue in
                     guard viewModel.isContactFocusedOnce else { return }
                     
@@ -184,5 +186,5 @@ extension ContactUsView {
 }
 
 #Preview {
-    ContactUsView()
+    ContactUsView(isModalPresented: .constant(true))
 }
