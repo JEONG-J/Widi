@@ -26,21 +26,29 @@ struct AddDiaryView: View {
     // MARK: - Body
     
     var body: some View {
-        DiaryContainerView(header: {
-            topController
-        }, imageScroll: {
-            if !viewModel.diaryImages.isEmpty {
-                DiaryImageScrollView(images: viewModel.diaryImages, mode: .write,
-                                     onDelete: { index in
-                    viewModel.photoImages.remove(at: index)
-                    viewModel.diaryImages.remove(at: index)
-                }, onSelect: { image in
-                    viewModel.selectedImage = image
-                })
-            }
-        }, content: {
-            bottomContents
-        })
+        
+        ZStack {
+            
+            Color.clear
+                .writeDiaryViewBG()
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+            
+            DiaryContainerView(header: {
+                topController
+            }, imageScroll: {
+                if !viewModel.diaryImages.isEmpty {
+                    DiaryImageScrollView(images: viewModel.diaryImages, mode: .write,
+                                         onDelete: { index in
+                        viewModel.photoImages.remove(at: index)
+                        viewModel.diaryImages.remove(at: index)
+                    }, onSelect: { image in
+                        viewModel.selectedImage = image
+                    })
+                }
+            }, content: {
+                bottomContents
+            })
+        }
         
         .overlay(alignment: .bottom, content: {
             DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)

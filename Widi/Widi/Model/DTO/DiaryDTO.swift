@@ -33,3 +33,4 @@ struct DiaryResponse: Codable, DiaryDTO, Identifiable {
     var pictures: [String]?
     var diaryDate: String // 일기의 실제 날짜
 }
+
