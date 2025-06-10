@@ -17,8 +17,8 @@ struct NavigationRoutingView: View {
             switch destination {
             case .addFriendView:
                 AddFriendView(container: container)
-            case .addDiaryView(let friendsRequest):
-                AddDiaryView(friendsRequest: friendsRequest, container: container)
+            case .addDiaryView(let friendsRequest, let firstMode):
+                AddDiaryView(friendsRequest: friendsRequest, container: container, firstMode: firstMode)
             case .detailFriendView(let friendResponse):
                 DetailFriendsView(container: container, friendResponse: friendResponse)
             case .searchDiary:

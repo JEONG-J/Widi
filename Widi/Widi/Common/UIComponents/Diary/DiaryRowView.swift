@@ -35,6 +35,7 @@ struct DiaryRowView: View {
                 }
             }
         }
+        .background(Color.red)
         .animation(.easeInOut, value: offset)
     }
     

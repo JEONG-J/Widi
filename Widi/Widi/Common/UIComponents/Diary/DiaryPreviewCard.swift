@@ -32,6 +32,7 @@ struct DiaryPreviewCard: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 28)
         .frame(maxHeight: .infinity, alignment: .center)
+        .background(Color.black)
     }
     
     var diaryTextContent: some View {
@@ -89,6 +90,8 @@ struct DiaryPreviewCard: View {
                         .padding(.top, 4)
                 }
             }
+        } else {
+            Spacer()
         }
     }
 }
