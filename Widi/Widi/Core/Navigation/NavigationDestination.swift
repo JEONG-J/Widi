@@ -11,4 +11,6 @@ enum NavigationDestination: Equatable, Hashable {
     case addFriendView
     case addDiaryView(friendsRequest: FriendRequest)
     case detailFriendView(friendResponse: FriendResponse)
+    case searchDiary
+    case myPage
 }

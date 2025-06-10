@@ -12,7 +12,6 @@ struct DetailFriendsView: View {
     // MARK: - Properties
     
     @Bindable private var viewModel: DetailFriendsViewModel
-    
     @EnvironmentObject var container: DIContainer
     
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
@@ -45,6 +44,24 @@ struct DetailFriendsView: View {
         }
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
+        .overlay(content: {
+            if viewModel.showDeleteAlert {
+                CustomAlertView(content: {
+                    CustomAlert(alertButtonType: .friendsDelete, onCancel: {
+                        viewModel.showDeleteAlert = false
+                    }, onRight: {
+                        Task {
+                            await viewModel.deleteFriend()
+                            viewModel.showDeleteAlert = false
+                            container.navigationRouter.pop()
+                        }
+                    })
+                })
+            }
+        })
+        .sheet(isPresented: $viewModel.showFriendEdit, content: {
+            DetailFriendUpdateView(contaienr: container, showFriendEdit: $viewModel.showFriendEdit)
+        })
     }
 }
 
@@ -58,8 +75,7 @@ fileprivate extension DetailFriendsView {
             leftAction: { icon in
                 switch icon {
                 case .backArrow:
-                    // TODO: - 네비게이션 연결
-                    print("뒤로가기")
+                    container.navigationRouter.pop()
                 default:
                     break
                 }
@@ -110,16 +126,13 @@ fileprivate extension DetailFriendsView {
             FriendDropDown(onSelect: { selected in
                 switch selected {
                 case .search:
-                    // TODO: - 일기 검색화면 네비 연결
-                    withAnimation {
-                        isDropDownPresented = false
-                    }
+                    container.navigationRouter.push(to: .searchDiary)
                 case .edit:
-                    // TODO: - 네비게이션 연결
-                    print("편집")
+                    viewModel.showFriendEdit.toggle()
                 case .delete:
-                    // TODO: - 서버 호출 및 네비게이션 연결
-                    print("삭제")
+                    withAnimation(.easeInOut) {
+                        viewModel.showDeleteAlert.toggle()
+                    }
                 }
             })
             .safeAreaPadding(.horizontal, 16)
@@ -171,7 +184,6 @@ fileprivate extension DetailFriendsView {
         .clipShape(
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )
-        .border(Color.red)
         .sheet()
     }
     

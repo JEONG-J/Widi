@@ -12,11 +12,30 @@ struct MyPageView: View {
     
     // MARK: - Property
     
-    @State var myPageViewModel: MyPageViewModel = .init()
+    @Bindable var viewModel: MyPageViewModel
+    @EnvironmentObject var contaier: DIContainer
+    
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     
     // MARK: - Body
     var body: some View {
         VStack {
+            CustomNavigation(config: .backOnly, leftAction: { icon in
+                switch icon {
+                case .backArrow:
+                    contaier.navigationRouter.pop()
+                default:
+                    break
+                }
+            }, rightAction: { icon in
+                switch icon {
+                default:
+                    break
+                }
+            })
+            
             topContents
             
             Spacer()
@@ -25,13 +44,13 @@ struct MyPageView: View {
             
         }
         .safeAreaPadding(.horizontal, 16)
-        .safeAreaPadding(.top, 24)
         .safeAreaPadding(.bottom, 51)
         .background(Color.background)
-        .sheet(isPresented: $myPageViewModel.isModalPresented) {
+        .sheet(isPresented: $viewModel.isModalPresented) {
             ContactUsView()
                 .presentationCornerRadius(24)
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     // MARK: - Top
@@ -61,12 +80,12 @@ struct MyPageView: View {
         
         let settings: [SettingRowType] = [
             .toggle(
-                isOn: $myPageViewModel.toggleOption,
+                isOn: $viewModel.toggleOption,
                 description: settingRowNavigationDescription,
-                onToggleChanged: myPageViewModel.toggleOnOff
+                onToggleChanged: viewModel.toggleOnOff
             ),
             .navigation,
-            .version(text: myPageViewModel.appVersion!)
+            .version(text: viewModel.appVersion!)
         ]
         
         return VStack(spacing: 0) {
@@ -78,7 +97,7 @@ struct MyPageView: View {
                 case .navigation:
                     SettingRow(type: rowType)
                         .onTapGesture {
-                            myPageViewModel.isModalPresented = true
+                            viewModel.isModalPresented = true
                         }
                 default:
                     SettingRow(type: rowType)
@@ -105,7 +124,7 @@ struct MyPageView: View {
     /// 로그아웃 버튼
     private var logOutButton: some View {
         Button {
-            myPageViewModel.logOutAction()
+            viewModel.logOutAction()
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
@@ -122,7 +141,7 @@ struct MyPageView: View {
     /// 탈퇴하기 버튼
     private var deleteAccountButton: some View {
         Button {
-            myPageViewModel.deleteAccountAction()
+            viewModel.deleteAccountAction()
         } label: {
             Text(deleteAccountText)
                 .font(.cap2)
@@ -136,17 +155,4 @@ extension MyPageView {
     private var logoutText: String { "로그아웃" }
     private var deleteAccountText: String { "탈퇴하기" }
     private var settingRowNavigationDescription: String { "모든 알림 전송이 일시 중단돼요" }
-}
-
-struct Mypage_Preview: PreviewProvider {
-    static let devices = ["iPhone 11", "iPhone 16 Pro Max"]
-    
-    static var previews: some View {
-        ForEach(devices, id: \.self) { device in
-            MyPageView()
-                .previewDevice(PreviewDevice(rawValue: device))
-                .previewDisplayName(device)
-        }
-    }
-    
 }

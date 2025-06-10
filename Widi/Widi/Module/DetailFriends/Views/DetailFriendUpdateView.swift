@@ -9,8 +9,13 @@ import SwiftUI
 
 struct DetailFriendUpdateView: View {
 
-    @Environment(\.dismiss) var dismiss
-    @Bindable var viewModel: DetailFriendUpdateViewModel = .init()
+    @Binding var showFriendEdit: Bool
+    @Bindable var viewModel: DetailFriendUpdateViewModel
+    
+    init(contaienr: DIContainer, showFriendEdit: Binding<Bool>) {
+        self.viewModel = .init(container: contaienr)
+        self._showFriendEdit = showFriendEdit
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
@@ -28,11 +33,11 @@ struct DetailFriendUpdateView: View {
         .background(Color.whiteBlack)
     }
     
-    /// 모달 맨 위에 들어가는 모달바
+    /// 상단 옵션 컨트롤러
     private var modalBar: some View {
         HStack {
             Button {
-                dismiss()
+                showFriendEdit = false
             } label: {
                 NavigationIcon.closeX.image
                     .padding(8)
@@ -41,7 +46,10 @@ struct DetailFriendUpdateView: View {
             Spacer()
             
             Button {
-                viewModel.complete()
+                Task {
+                    await viewModel.sendUpadte()
+                    showFriendEdit = false
+                }
             } label: {
                 let icon = NavigationIcon.complete(type: .complete, isEmphasized: !viewModel.nameText.isEmpty)
                 
@@ -128,49 +136,4 @@ extension DetailFriendUpdateView {
     private var namePlaceHolderText: String { "이름" }
     private var birthdayTitleText: String { "생일" }
     private var birthdayPlaceHolderText: String { "mm / dd" }
-}
-
-#Preview {
-    DetailFriendUpdateView()
-}
-
-enum InfoAreaType {
-    case birthday
-    case name
-    
-    var title: String {
-        switch self {
-        case .birthday:
-            return "생일"
-        case .name:
-            return "이름"
-        }
-    }
-    
-    var placeholder: String {
-        switch self {
-        case .birthday:
-            "mm / dd"
-        case .name:
-            "이름"
-        }
-    }
-    
-    func guideText(text: String) -> String {
-        switch self {
-        case .birthday:
-            return ""
-        case .name:
-            return "\(text.count) / 10"
-        }
-    }
-    
-    var keyboardType: UIKeyboardType {
-        switch self {
-        case .birthday:
-            return .numberPad
-        case .name:
-            return .default
-        }
-    }
 }

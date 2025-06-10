@@ -12,30 +12,25 @@ import Foundation
 class MyPageViewModel {
     
     // MARK: - Property
-    // TODO: - FireBase에서 정보 가져와야 함.
-    
     /// toggle 정보
     var toggleOption: ToggleOptionDTO = .init(toggle: true)
-    
     /// 앱 버전
-//    var appVersion: String = "1.0.0"
-    
     var appVersion: String? {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String else { return nil }
         return version
     }
-    
     /// 문의하기 모달 띄우기
     var isModalPresented: Bool = false
     
-    // MARK: - Function
-    // TODO: - FireBase나 애플 로그인이나 다른 뷰 완성되어야 함.
+    private var container: DIContainer
     
-    /// 토글 온오프 함수
-    /// - Parameters:
-    ///   - a: 토글 변경 전 상태
-    ///   - b: 토글 변경 후 상태
+    init(container: DIContainer) {
+        self.container = container
+    }
+    
+    // MARK: - Function
+    
     func toggleOnOff(oldValue: Bool, newValue: Bool) {
         toggleOption.toggle.toggle()
         

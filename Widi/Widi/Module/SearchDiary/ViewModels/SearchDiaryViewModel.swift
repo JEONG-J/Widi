@@ -20,9 +20,9 @@ class SearchDiaryViewModel {
     }
     var diaries: [DiaryResponse] = []
     
-    private var allDiaries: [DiaryResponse]
     private var cancellables = Set<AnyCancellable>()
     private let searchSubject = PassthroughSubject<String, Never>()
+    private var container: DIContainer
     
     var offsets: [UUID: CGFloat] = [:]
     
@@ -30,8 +30,8 @@ class SearchDiaryViewModel {
     
     /// SearchDiaryViewModel
     /// - Parameter diaries: 전체 다이어리 리스트
-    init(diaries: [DiaryResponse]) {
-        self.allDiaries = diaries
+    init(container: DIContainer) {
+        self.container = container
         setupSearch()
     }
     
@@ -42,17 +42,13 @@ class SearchDiaryViewModel {
             .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
             .sink { [weak self] keyword in
                 guard let self else { return }
-                self.filterDiaries(with: keyword)
+                self.self.searchServer()
             }
             .store(in: &cancellables)
     }
     
-    private func filterDiaries(with keyword: String) {
-        
-        diaries = allDiaries.filter {
-            $0.title?.localizedCaseInsensitiveContains(keyword) ?? false ||
-            $0.content.localizedCaseInsensitiveContains(keyword)
-        }
+    func searchServer() {
+        print("hello")
     }
     
     func deleteDiary(_ diary: DiaryResponse) {
