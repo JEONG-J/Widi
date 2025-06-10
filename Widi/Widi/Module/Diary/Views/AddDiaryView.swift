@@ -59,7 +59,7 @@ struct AddDiaryView: View {
             if viewModel.checkBackView {
                 CustomAlertView(content: {
                     CustomAlert(
-                        alertButtonType: firstMode ? .stopDiaryFirst : .diaryDelete,
+                        alertButtonType: firstMode ? .stopDiaryFirst : .stopDiary,
                         onCancel: {
                             self.viewModel.checkBackView = false
                         },

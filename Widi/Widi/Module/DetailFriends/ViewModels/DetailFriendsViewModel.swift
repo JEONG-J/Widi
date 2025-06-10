@@ -35,4 +35,8 @@ final class DetailFriendsViewModel {
     func deleteFriend() async {
         print("hello")
     }
+    
+    func returnFriendInfo() -> FriendRequest {
+        return .init(name: friendResponse.name, birthDay: friendResponse.birthDay)
+    }
 }

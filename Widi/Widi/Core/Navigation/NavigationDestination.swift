@@ -9,7 +9,7 @@ import Foundation
 
 enum NavigationDestination: Equatable, Hashable {
     case addFriendView
-    case addDiaryView(friendsRequest: FriendRequest)
+    case addDiaryView(friendsRequest: FriendRequest, firstMode: Bool)
     case detailFriendView(friendResponse: FriendResponse)
     case searchDiary
     case myPage

@@ -101,7 +101,7 @@ fileprivate extension DetailFriendsView {
             
             DiariesAddButton(
                 action: {
-                    print("추후 개선")
+                    container.navigationRouter.push(to: .addDiaryView(friendsRequest: viewModel.returnFriendInfo(), firstMode: false))
                 }
             )
             .frame(width: 56)
