@@ -94,10 +94,10 @@ struct WriteDiaryBackground: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundBlur()
-            .backgroundShape(color: Color(red: 0.95, green: 0.55, blue: 0.46), width: screenSize.width * 0.6, height: screenSize.height * 0.2, rotation: 0, x: 0, y: -64)
-            .backgroundShape(color: Color(red: 0.63, green: 0.77, blue: 0.91), width: screenSize.width, height: screenSize.height * 0.48, rotation: 0, x: 0, y: 0)
-    }
+            .backgroundShape(color: Color(red: 0.95, green: 0.55, blue: 0.46), width: screenSize.width * 0.6, height: screenSize.height * 0.2, rotation: 0, x: 0, y: -115)
+            .backgroundShape(color: Color(red: 0.63, green: 0.77, blue: 0.91), width: screenSize.width, height: screenSize.height * 0.48, rotation: 0, x: 0, y: -40)    }
 }
 
 extension View {
