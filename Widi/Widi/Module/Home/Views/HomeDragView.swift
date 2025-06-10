@@ -39,10 +39,6 @@ struct HomeDragView: View {
                 .shadow(color: Color(red: 0.56, green: 0.56, blue: 0.58).opacity(0.05), radius: 4, x: 0, y: -14)
         }
         .ignoresSafeArea()
-        .navigationDestination(for: NavigationDestination.self) { destination in
-            NavigationRoutingView(destination: destination)
-                .environmentObject(container)
-        }
     }
     
     /// 드래그 인디케이터

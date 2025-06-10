@@ -10,8 +10,11 @@ import SwiftUI
 @Observable
 final class DetailFriendsViewModel {
     
-    // MARK: - Property
+    // MARK: - StatePropery
+    var showFriendEdit: Bool = false
+    var showDeleteAlert: Bool = false
     
+    // MARK: - Property
     var diaries: [DiaryResponse]?
     var friendResponse: FriendResponse
     
@@ -27,5 +30,9 @@ final class DetailFriendsViewModel {
     // MARK: - Method
     func deleteDiary(_ diary: DiaryResponse) {
         diaries?.removeAll { $0.id == diary.id }
+    }
+    
+    func deleteFriend() async {
+        print("hello")
     }
 }

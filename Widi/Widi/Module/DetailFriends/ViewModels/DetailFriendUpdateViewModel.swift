@@ -10,13 +10,17 @@ import Foundation
 @Observable
 class DetailFriendUpdateViewModel {
     
+    // MARK: - Property
     var nameText: String = ""
-    
     var birthdayText: String = ""
     
-    // TODO: - 친구 내용 변경 필요
-    /// 문의 내용 서버 전송
-    func complete() {
+    private var container: DIContainer
+    
+    init(container: DIContainer) {
+        self.container = container
     }
     
+    func sendUpadte() async {
+        print("complete")
+    }
 }
