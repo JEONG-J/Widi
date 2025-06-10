@@ -36,7 +36,7 @@ struct CustomNavigation: View {
     
     var body: some View {
         HStack {
-            leftIcon
+            leftIcon.frame(width: 90, alignment: .leading)
             
             Spacer()
             
@@ -44,7 +44,7 @@ struct CustomNavigation: View {
             
             Spacer()
             
-            rightIcon
+            rightIcon.frame(width: 90, alignment: .trailing)
         }
     }
     
@@ -82,7 +82,7 @@ struct CustomNavigation: View {
 }
 
 #Preview {
-
+    
     CustomNavigation(
         config: .backTitleAndEditTrash(title: "Hello"),
         leftAction: { icon in
@@ -104,24 +104,4 @@ struct CustomNavigation: View {
             }
         }
     )
-    
-//    CustomNavigation(
-//        config: .backAndClose,
-//        leftAction: { icon in
-//            switch icon {
-//            case .backArrow:
-//                print("Back tapped")
-//            default:
-//                break
-//            }
-//        },
-//        rightAction: { icon in
-//            switch icon {
-//            case .closeX:
-//                print("xx")
-//            default:
-//                break
-//            }
-//        }
-//    )
 }

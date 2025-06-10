@@ -15,7 +15,21 @@ class AddFriendsViewModel {
     // MARK: - StateProperty
     var currentPage: Int = 1
     
-    // MARK: - Friends
     var friendsName: String = ""
     var friendsBirthDay: String = ""
+    
+    let container: DIContainer
+    
+    init(container: DIContainer) {
+        self.container = container
+    }
+    
+    // MARK: - Func
+    private func createFriendRequest() -> FriendRequest {
+        return FriendRequest(name: friendsName, birthDay: friendsBirthDay)
+    }
+    
+    public func navigationPush() {
+        container.navigationRouter.push(to: .addDiaryView(friendsRequest: createFriendRequest()))
+    }
 }

@@ -90,18 +90,12 @@ fileprivate struct HatchProgressDotsView: View {
 }
 
 #Preview {
-    @Previewable @State var dummyFriend: FriendResponse = FriendResponse(name: "", birthDay: "04/20", experienceDTO: .init(experiencePoint: 3, characterInfo: .init(imageURL: "")
-        )
-    )
-    @Previewable @State var dummyFriend2: FriendResponse = FriendResponse(name: "", birthDay: "04/20", experienceDTO: .init(experiencePoint: 7, characterInfo: .init(imageURL: "")
+    @Previewable @State var dummyFriend: FriendResponse = FriendResponse(name: "123", birthDay: "04/20", experienceDTO: .init(experiencePoint: 3, characterInfo: .init(imageURL: "")
         )
     )
     
     VStack {
         FriendInfoView(friendInfoData: dummyFriend)
-            .frame(width: .infinity, height: 101)
-        
-        FriendInfoView(friendInfoData: dummyFriend2)
             .frame(width: .infinity, height: 101)
         
     }

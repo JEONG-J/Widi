@@ -14,12 +14,15 @@ class CreateDiaryViewModel: DiaryViewModelProtocol {
     // MARK: - StateProperty
     var isShowCalendar: Bool = false
     var isShowImagePicker: Bool = false
+    var checkBackView: Bool = false
     
     // MARK: - CreateFriend
     var friendsRequest: FriendRequest
+    let container: DIContainer
     
-    init(friendRequest: FriendRequest) {
+    init(friendRequest: FriendRequest, container: DIContainer) {
         self.friendsRequest = friendRequest
+        self.container = container
     }
     
     // MARK: - DiaryProtocol
@@ -43,7 +46,8 @@ class CreateDiaryViewModel: DiaryViewModelProtocol {
     // MARK: - Function
     /// 일기 작성 후 생성 버튼 액션
     public func addFriendsAndDiary() {
-        print("완료")
+        // TODO: - 완료 기능 추가 파이어베이스
+        container.navigationRouter.popToRooteView()
     }
     
     /// 앨범에서 가져온 경우만 이미지 변환하기
@@ -63,5 +67,7 @@ class CreateDiaryViewModel: DiaryViewModelProtocol {
     }
     
     // MARK: - API
-    
+    public func saveDiary() async {
+        print("Hello")
+    }
 }

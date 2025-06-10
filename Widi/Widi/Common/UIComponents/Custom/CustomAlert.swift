@@ -91,26 +91,10 @@ struct CustomAlert: View {
     /// - Returns: 버튼에 맞도록 액션 연결
     private func action(for button: AlertButton) -> () -> Void {
         switch button {
-        case .cancelText:
+        case .continuation, .returnTo:
             return onCancel
         default:
             return onRight
         }
-    }
-}
-
-#Preview {
-    ZStack {
-        Color.black
-        
-        CustomAlert(alertButtonType: .leave, onCancel: {
-            print("Hello")
-        }, onRight: {
-            print("Hello")
-        })
-        
-        // TODO: - Alert 사이즈 고정으로 가져갈지 동적으로 가져갈지 정하기
-        .safeAreaPadding(.leading, 41)
-        .safeAreaPadding(.trailing, 39)
     }
 }

@@ -15,11 +15,11 @@ struct NavigationRoutingView: View {
     var body: some View {
         switch destination {
         case .addFriendView:
-            AddFriendView()
-        case .addDiaryView:
-            Text("12")
-        case .detailDiaryView:
-            Text("11")
+            AddFriendView(container: container)
+        case .addDiaryView(let friendsRequest):
+            AddDiaryView(friendsRequest: friendsRequest, container: container)
+        case .detailFriendView(let friendResponse):
+            DetailFriendsView(container: container, friendResponse: friendResponse)
         }
     }
 }

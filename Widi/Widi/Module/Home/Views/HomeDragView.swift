@@ -75,6 +75,9 @@ struct HomeDragView: View {
             LazyVStack(alignment: .center, spacing: 8, content: {
                 ForEach(data, id: \.id) { data in
                     FriendsCard(friendsData: data)
+                        .onTapGesture {
+                            container.navigationRouter.push(to: .detailFriendView(friendResponse: data))
+                        }
                 }
             })
         } else {

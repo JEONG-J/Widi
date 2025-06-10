@@ -9,9 +9,14 @@ import SwiftUI
 
 struct AddFriendView: View {
     
-    @Bindable var viewModel: AddFriendsViewModel = .init()
+    @Bindable var viewModel: AddFriendsViewModel
     @EnvironmentObject var container: DIContainer
     @FocusState var isFocused: AddFriendsField?
+    
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
+    
     
     var body: some View {
         VStack(alignment: .center, spacing: 52, content: {
@@ -48,9 +53,7 @@ struct AddFriendView: View {
                     viewModel.currentPage += 1
                 })
             default:
-                makeTextField(for: .birthDay, $viewModel.friendsBirthDay, onAction: {
-                    print("네비게이션")
-                })
+                makeTextField(for: .birthDay, $viewModel.friendsBirthDay, onAction: {})
             }
         }
         .safeAreaPadding(.horizontal, 16)
@@ -80,15 +83,15 @@ struct AddFriendView: View {
     /// - Returns: 두 번째 페이지 텍스트 필드 뷰 반환
     @ViewBuilder
     private func secondPageMainButton() -> some View {
+        let pushAction = {
+            viewModel.navigationPush()
+        }
+        
         HStack(alignment: .center, spacing: 10, content: {
-            CustomMainButton(type: .skip, action: {
-                viewModel.currentPage += 1
-            })
+            CustomMainButton(type: .skip, action: pushAction)
             
-            CustomMainButton(type: .next(isDisabled: viewModel.friendsBirthDay.isEmpty), action: {
-                viewModel.currentPage += 1
-            })
-            .disabled(viewModel.friendsBirthDay.isEmpty)
+            CustomMainButton(type: .next(isDisabled: viewModel.friendsBirthDay.isEmpty), action: pushAction)
+                .disabled(viewModel.friendsBirthDay.isEmpty)
         })
     }
     
@@ -164,9 +167,4 @@ struct AddFriendView: View {
         }
         .safeAreaPadding(.horizontal, 16)
     }
-}
-
-#Preview {
-    AddFriendView(viewModel: .init())
-        .environmentObject(DIContainer())
 }

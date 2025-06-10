@@ -12,23 +12,20 @@ final class DetailFriendsViewModel {
     
     // MARK: - Property
     
-    private(set) var diaries: [DiaryResponse]
-    private(set) var friendData: FriendResponse
+    var diaries: [DiaryResponse]?
+    var friendResponse: FriendResponse
+    
+    private var container: DIContainer
     
     // MARK: - Init
     
-    /// DetailFriendsViewModel
-    /// - Parameters:
-    ///   - friendData: FriendResponse
-    ///   - diaries: DiaryResponse 리스트
-    init(friendData: FriendResponse, diaries: [DiaryResponse]) {
-        self.friendData = friendData
-        self.diaries = diaries
+    init(container: DIContainer, friendResponse: FriendResponse) {
+        self.container = container
+        self.friendResponse = friendResponse
     }
     
     // MARK: - Method
-    
     func deleteDiary(_ diary: DiaryResponse) {
-        diaries.removeAll { $0.id == diary.id }
+        diaries?.removeAll { $0.id == diary.id }
     }
 }

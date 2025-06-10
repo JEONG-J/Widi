@@ -16,8 +16,11 @@ struct AddDiaryView: View {
     @Bindable var viewModel: CreateDiaryViewModel
     @EnvironmentObject var container: DIContainer
     
-    init(friendsRequest: FriendRequest) {
-        self.viewModel = .init(friendRequest: friendsRequest)
+    let firstMode: Bool
+    
+    init(friendsRequest: FriendRequest, container: DIContainer, firstMode: Bool = false) {
+        self.viewModel = .init(friendRequest: friendsRequest, container: container)
+        self.firstMode = firstMode
     }
     
     // MARK: - Body
@@ -44,6 +47,25 @@ struct AddDiaryView: View {
                 .safeAreaPadding(.horizontal, 16)
         })
         
+        .overlay(content: {
+            if viewModel.checkBackView {
+                CustomAlertView(content: {
+                    CustomAlert(
+                        alertButtonType: firstMode ? .stopDiaryFirst : .diaryDelete,
+                        onCancel: {
+                            self.viewModel.checkBackView = false
+                        },
+                        onRight: {
+                            Task {
+                                self.viewModel.checkBackView = false
+                                self.handleNavigationPop()
+                            }
+                        }
+                    )
+                })
+            }
+        })
+        
         .fullScreenCover(item: $viewModel.selectedImage, content: { _ in
             DetailImageView(images: $viewModel.diaryImages,
                             selectedImage: $viewModel.selectedImage,
@@ -64,17 +86,19 @@ struct AddDiaryView: View {
             isPresented: $viewModel.isShowImagePicker,
             selection: $viewModel.photoImages,
             maxSelectionCount: 5,
-            matching: .images)
+            matching: .images).tint(.orange30)
         
-        .onChange(of: viewModel.photoImages, { oldValue, newValue in
-            Task {
-                await viewModel.convertSelectedPhotosToUIImage()
+            .onChange(of: viewModel.photoImages, { oldValue, newValue in
+                Task {
+                    await viewModel.convertSelectedPhotosToUIImage()
+                }
+            })
+        
+            .task {
+                viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: .now)
             }
-        })
-    
-        .task {
-            viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: .now)
-        }
+        
+            .navigationBarBackButtonHidden(true)
     }
     
     /// 상단 네비게이션 컨트롤러
@@ -84,7 +108,9 @@ struct AddDiaryView: View {
             leftAction: { icon in
                 switch icon {
                 case .backArrow:
-                    container.navigationRouter.popToRooteView()
+                    withAnimation(.easeInOut) {
+                        viewModel.checkBackView.toggle()
+                    }
                 default:
                     break
                 }
@@ -146,6 +172,15 @@ struct AddDiaryView: View {
             .font(.b1)
             .foregroundStyle(Color.gray40)
     }
+    
+    /// 모드에 따른 네비게이션 pop 루트
+    private func handleNavigationPop() {
+        if firstMode {
+            container.navigationRouter.popToRooteView()
+        } else {
+            container.navigationRouter.pop()
+        }
+    }
 }
 
 extension AddDiaryView {
@@ -154,6 +189,6 @@ extension AddDiaryView {
 }
 
 #Preview {
-    AddDiaryView(friendsRequest: .init(name: "하하", birthDay: "199"))
+    AddDiaryView(friendsRequest: .init(name: "하하", birthDay: "199"), container: DIContainer())
         .environmentObject(DIContainer())
 }
