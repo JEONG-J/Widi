@@ -17,6 +17,7 @@ struct DetailFriendsView: View {
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
     @State private var isDropDownPresented: Bool = false
+    @State private var targetDiary: DiaryResponse? = nil
     
     private let naviHeight: CGFloat = 59
     private let headerHeight: CGFloat = 209
@@ -45,14 +46,14 @@ struct DetailFriendsView: View {
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
         .overlay(content: {
-            if viewModel.showDeleteAlert {
+            if viewModel.showFriendDeleteAlert {
                 CustomAlertView(content: {
                     CustomAlert(alertButtonType: .friendsDelete, onCancel: {
-                        viewModel.showDeleteAlert = false
+                        viewModel.showFriendDeleteAlert = false
                     }, onRight: {
                         Task {
                             await viewModel.deleteFriend()
-                            viewModel.showDeleteAlert = false
+                            viewModel.showFriendDeleteAlert = false
                             container.navigationRouter.pop()
                         }
                     })
@@ -61,6 +62,25 @@ struct DetailFriendsView: View {
         })
         .sheet(isPresented: $viewModel.showFriendEdit, content: {
             DetailFriendUpdateView(contaienr: container, showFriendEdit: $viewModel.showFriendEdit)
+        })
+        .overlay(content: {
+            if viewModel.showDiaryDeleteAlert {
+                CustomAlertView(content: {
+                    CustomAlert(alertButtonType: .diaryDelete, onCancel: {
+                        viewModel.showDiaryDeleteAlert = false
+                    }, onRight: {
+                        Task {
+                            await viewModel.deleteDiaryAPI()
+                            
+                            if let diary = targetDiary {
+                                await viewModel.deleteDiary(diary)
+                                diariesOffsets[diary.id] = nil
+                                viewModel.showDiaryDeleteAlert = false
+                            }
+                        }
+                    })
+                })
+            }
         })
     }
 }
@@ -131,7 +151,7 @@ fileprivate extension DetailFriendsView {
                     viewModel.showFriendEdit.toggle()
                 case .delete:
                     withAnimation(.easeInOut) {
-                        viewModel.showDeleteAlert.toggle()
+                        viewModel.showFriendDeleteAlert.toggle()
                     }
                 }
             })
@@ -212,8 +232,8 @@ fileprivate extension DetailFriendsView {
                         ),
                         allOffsets: $diariesOffsets,
                         deleteAction: {
-                            viewModel.deleteDiary(diary)
-                            diariesOffsets[diary.id] = nil
+                            viewModel.showDiaryDeleteAlert.toggle()
+                            self.targetDiary = diary
                         }
                     )
                     .frame(height: 171)
