@@ -232,8 +232,10 @@ fileprivate extension DetailFriendsView {
                         ),
                         allOffsets: $diariesOffsets,
                         deleteAction: {
-                            viewModel.showDiaryDeleteAlert.toggle()
-                            self.targetDiary = diary
+                            withAnimation(.easeInOut) {
+                                viewModel.showDiaryDeleteAlert.toggle()
+                                self.targetDiary = diary
+                            }
                         }
                     )
                     .frame(height: 171)
