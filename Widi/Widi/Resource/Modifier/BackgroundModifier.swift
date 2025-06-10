@@ -83,8 +83,8 @@ struct AddFriendBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .backgroundBlur()
-            .backgroundShape(color: Color(red: 0.95, green: 0.51, blue: 0.4), width: screenSize.width * 0.6, height: screenSize.height * 0.2, rotation: 0, x: 0, y: 120)
-            .backgroundShape(color: Color(red: 0.98, green: 0.9, blue: 0.73), width: screenSize.width, height: screenSize.height * 0.3, rotation: 0, x: 0, y: 90)
+            .backgroundShape(color: Color(red: 0.95, green: 0.51, blue: 0.4), width: screenSize.width * 0.71, height: screenSize.height * 0.23, rotation: 0, x: 0, y: 120)
+            .backgroundShape(color: Color(red: 0.98, green: 0.9, blue: 0.73), width: screenSize.width, height: screenSize.height * 0.48, rotation: 0, x: 0, y: 90)
     }
 }
 
@@ -96,7 +96,7 @@ struct WriteDiaryBackground: ViewModifier {
         content
             .backgroundBlur()
             .backgroundShape(color: Color(red: 0.95, green: 0.55, blue: 0.46), width: screenSize.width * 0.6, height: screenSize.height * 0.2, rotation: 0, x: 0, y: -64)
-            .backgroundShape(color: Color(red: 0.63, green: 0.77, blue: 0.91), width: screenSize.width, height: screenSize.height * 0.5, rotation: 0, x: 0, y: 0)
+            .backgroundShape(color: Color(red: 0.63, green: 0.77, blue: 0.91), width: screenSize.width, height: screenSize.height * 0.48, rotation: 0, x: 0, y: 0)
     }
 }
 

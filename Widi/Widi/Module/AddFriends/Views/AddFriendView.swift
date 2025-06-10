@@ -19,20 +19,26 @@ struct AddFriendView: View {
     
     
     var body: some View {
-        VStack(alignment: .center, spacing: 52, content: {
-            topNavigation(value: viewModel.currentPage)
-                .padding(.bottom, 12)
+        
+        ZStack {
             
-            returnContents()
+            Color.clear
+                .addFriendViewBG()
+                .ignoresSafeArea(.keyboard, edges: .bottom)
             
-            Spacer()
-            
-            returnMainButton()
-        })
-        .addFriendViewBG()
+            VStack(alignment: .center, spacing: 52, content: {
+                topNavigation(value: viewModel.currentPage)
+                    .padding(.bottom, 12)
+                
+                returnContents()
+                
+                Spacer()
+                
+                returnMainButton()
+            })
+        }
         .navigationBarBackButtonHidden(true)
         .task {
-            UIApplication.shared.hideKeyboard()
             isFocused = (viewModel.currentPage == 1) ? .name : .birthDay
         }
         .onChange(of: viewModel.currentPage, { old, new in
