@@ -8,15 +8,21 @@
 import Foundation
 
 protocol ButtonTextProtocol {
+    var returnTo: String { get }
+    var continuation: String { get }
+    
     var delete: String { get }
-    var cancel: String { get }
     var withdraw: String { get }
     var logout: String { get }
+    var exit: String { get }
 }
 
 extension ButtonTextProtocol {
+    var returnTo: String { "돌아가기" }
+    var continuation: String { "이어쓰기" }
+    
     var delete: String { "삭제하기" }
-    var cancel: String { "돌아가기" }
     var withdraw: String { "탈퇴하기" }
     var logout: String { "로그아웃" }
+    var exit: String { "나가기" }
 }

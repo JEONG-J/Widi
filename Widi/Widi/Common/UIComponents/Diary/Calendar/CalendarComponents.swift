@@ -43,8 +43,7 @@ struct CalendarComponents: View {
             })
             .padding(6)
         })
-        .padding(.leading, 26)
-        .padding(.trailing, 20)
+        .padding(.leading, 24)
     }
     
     /// 달력 하단 날짜 그리드

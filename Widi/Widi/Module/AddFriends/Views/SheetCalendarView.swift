@@ -36,16 +36,22 @@ struct SheetCalendarView: View {
             
             Spacer()
             
-            CustomNavigationIcon(navigationIcon: .complete(type: .select, isEmphasized: true), action: {
+            Button(action: {
                 Task {
                     viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: calendarViewModel.selectedDate)
                     viewModel.isShowCalendar.toggle()
                 }
+            }, label: {
+                if let title = NavigationIcon.complete(type: .select, isEmphasized: true).title {
+                    Text(title)
+                        .font(.h4)
+                        .foregroundStyle(.orange30)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.whiteBlack)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                }
             })
         }
     }
-}
-
-#Preview(traits: .sizeThatFitsLayout) {
-    SheetCalendarView(viewModel: .init(friendRequest: .init(name: "11", birthDay: "11")))
 }

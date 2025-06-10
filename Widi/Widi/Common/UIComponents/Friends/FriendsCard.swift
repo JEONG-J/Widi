@@ -34,8 +34,8 @@ struct FriendsCard: View {
         .background {
             RoundedRectangle(cornerRadius: 18)
                 .fill(Color.whiteBlack)
-                .shadow1()
                 .frame(maxWidth: .infinity, minHeight: 68)
+                .shadow1()
         }
     }
     
@@ -60,8 +60,4 @@ struct FriendsCard: View {
                 .frame(width: 32, height: 32)
         }
     }
-}
-
-#Preview {
-    FriendsCard(friendsData: .init(name: "지나", birthDay: "222-22-222", experienceDTO: .init(experiencePoint: 1, characterInfo: .init(imageURL: "https://i.namu.wiki/i/iCHC076zQo7GAZ2-mVkE8pieXrNb3of2rE-0Xq05ZE5kuvyynrU7dq9DIodkrOaoyDRMTRDBty6skiZByeF_pSg-ZykIcgIXnQ5MAr6lzhztv0Wz8nQILcQ8kZMus9XrP_Cist1bxrTgq8Z8EjR3sA.webp"))))
 }

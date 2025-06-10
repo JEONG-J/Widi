@@ -14,13 +14,13 @@ protocol FriendDTO {
 }
 
 /// 친구 생성
-struct FriendRequest: Codable, FriendDTO {
+struct FriendRequest: Codable, FriendDTO, Hashable {
     var name: String
     var birthDay: String
 }
 
 /// 친구 조회
-struct FriendResponse: Codable, FriendDTO, Identifiable {
+struct FriendResponse: Codable, FriendDTO, Identifiable, Hashable {
     var id: UUID = .init()
     var name: String
     var birthDay: String

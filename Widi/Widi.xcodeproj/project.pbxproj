@@ -16,9 +16,11 @@
 		5C2C99252DE837FE005C8591 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 5C2C99242DE837FE005C8591 /* FirebaseMessaging */; };
 		5C2C99272DE837FE005C8591 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5C2C99262DE837FE005C8591 /* FirebaseStorage */; };
 		5C2C99292DE837FE005C8591 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 5C2C99282DE837FE005C8591 /* FirebaseStorageCombine-Community */; };
+		5C59D6742DF713D5008EE626 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C59D6732DF713D5008EE626 /* TestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C59D6732DF713D5008EE626 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		5CCD31C02DE6D9AA00E56207 /* Widi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Widi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -66,6 +68,7 @@
 		5CCD31B72DE6D9AA00E56207 = {
 			isa = PBXGroup;
 			children = (
+				5C59D6732DF713D5008EE626 /* TestView.swift */,
 				5CCD31C22DE6D9AA00E56207 /* Widi */,
 				5CCD31C12DE6D9AA00E56207 /* Products */,
 			);
@@ -166,6 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C59D6742DF713D5008EE626 /* TestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

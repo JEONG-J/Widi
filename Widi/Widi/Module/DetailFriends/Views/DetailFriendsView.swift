@@ -14,38 +14,37 @@ struct DetailFriendsView: View {
     @Bindable private var viewModel: DetailFriendsViewModel
     
     @EnvironmentObject var container: DIContainer
+    
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
     @State private var isDropDownPresented: Bool = false
     
-    private let naviHeight: CGFloat = 56
+    private let naviHeight: CGFloat = 59
     private let headerHeight: CGFloat = 209
     
     
     // MARK: - Init
     
-    /// DetailFriendsView
-    /// - Parameter viewModel: DetailFriendsViewModel
-    init(viewModel: DetailFriendsViewModel) {
-        self.viewModel = viewModel
+    init(container: DIContainer, friendResponse: FriendResponse) {
+        self.viewModel = .init(container: container, friendResponse: friendResponse)
     }
     
     // MARK: - Body
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            Text("11")
-//            GeometryReader { geometry in
-//                VStack {
-//                    navigationBar
-//                    scrollContent(topSafeArea: geometry.safeAreaInsets.top)
-//                }
-//                .ignoresSafeArea(edges: .bottom)
-//            }
-//            addButton
-//            dropDownOverlay
+            GeometryReader { geometry in
+                VStack {
+                    navigationBar
+                    scrollContent(topSafeArea: geometry.safeAreaInsets.top)
+                }
+                .ignoresSafeArea(edges: .bottom)
+            }
+            addButton
+            dropDownOverlay
         }
         .detailFriendViewBG()
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -86,7 +85,7 @@ fileprivate extension DetailFriendsView {
             
             DiariesAddButton(
                 action: {
-                    container.navigationRouter.push(to: .addDiaryView)
+                    print("추후 개선")
                 }
             )
             .frame(width: 56)
@@ -134,7 +133,7 @@ fileprivate extension DetailFriendsView {
     func scrollContent(topSafeArea: CGFloat) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                HeaderView(friendData: viewModel.friendData, headerHeight: headerHeight)
+                HeaderView(friendData: viewModel.friendResponse, headerHeight: headerHeight)
                 diarySection(topSafeArea: topSafeArea)
             }
         }
@@ -142,6 +141,7 @@ fileprivate extension DetailFriendsView {
         .clipShape(
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )
+        .disabled(viewModel.diaries?.isEmpty ?? true)
     }
     
     /// diarySection
@@ -166,11 +166,12 @@ fileprivate extension DetailFriendsView {
             Spacer()
                 .frame(minHeight: 120)
         }
-        .frame(minHeight: UIScreen.main.bounds.height - topSafeArea - naviHeight - headerHeight)
+        .frame(minHeight: getScreenSize().height )
         .background(Color.whiteBlack.opacity(0.8))
         .clipShape(
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )
+        .border(Color.red)
         .sheet()
     }
     
@@ -188,33 +189,35 @@ fileprivate extension DetailFriendsView {
     /// 일기 리스트
     var diaryList: some View {
         VStack(spacing: 0) {
-            ForEach(Array(viewModel.diaries.enumerated()), id: \.element.id) { index, diary in
-                
-                DiaryRowView(
-                    diary: diary,
-                    offset: Binding(
-                        get: { diariesOffsets[diary.id] ?? 0 },
-                        set: { diariesOffsets[diary.id] = $0 }
-                    ),
-                    allOffsets: $diariesOffsets,
-                    deleteAction: {
-                        viewModel.deleteDiary(diary)
-                        diariesOffsets[diary.id] = nil
-                    }
-                )
-                .frame(height: 171)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    container.navigationRouter.push(to: .detailDiaryView)
-                }
-                
-                if index < viewModel.diaries.count - 1 {
-                    Divider()
-                        .background(Color.gray20)
+            if let diaries = viewModel.diaries {
+                ForEach(Array(diaries.enumerated()), id: \.element.id) { index, diary in
                     
+                    DiaryRowView(
+                        diary: diary,
+                        offset: Binding(
+                            get: { diariesOffsets[diary.id] ?? 0 },
+                            set: { diariesOffsets[diary.id] = $0 }
+                        ),
+                        allOffsets: $diariesOffsets,
+                        deleteAction: {
+                            viewModel.deleteDiary(diary)
+                            diariesOffsets[diary.id] = nil
+                        }
+                    )
+                    .frame(height: 171)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        // TODO: - 일기 상세 화면 뷰
+                    }
+                    
+                    if index < diaries.count - 1 {
+                        Divider()
+                            .background(Color.gray20)
+                        
+                    }
                 }
+                .offset(y: -48)
             }
-            .offset(y: -48)
         }
     }
 }
@@ -257,62 +260,4 @@ fileprivate struct HeaderView: View {
         }
         .frame(height: headerHeight)
     }
-}
-
-#Preview {
-    @Previewable @State var dummyFriend: FriendResponse = FriendResponse(name: "지나", birthDay: "04/20", experienceDTO: .init(experiencePoint: 3, characterInfo: .init(imageURL: "https://i.namu.wiki/i/w3zCJtF4bwby7ks27ujKimbyqA13XB7o4PrBY7FOnNvZbFEw9fwnx3TKxcFLiZboKGrwihJlk3feyQTBCyuYMg.webp")))
-    
-    @Previewable @State var dummyDiaries: [DiaryResponse] = [
-        DiaryResponse(
-            id: UUID(),
-            title: "여름 바다",
-            content: "뜨거운 여름날, 시원한 바다를 바라보며 친구들과 놀았다. 바람이 기분 좋았다.",
-            pictures: ["https://pimg.mk.co.kr/news/cms/202403/29/20240329_01110601000001_L01.jpg", "https://pimg.mk.co.kr/news/cms/202403/29/20240329_01110601000001_L01.jpg"],
-            diaryDate: "2025 / 06 / 01"
-        ),
-        DiaryResponse(
-            id: UUID(),
-            content: "노랗게 물든 단풍길을 걷다 보니 가을이 깊어감을 느꼈다. 사진도 많이 찍었다.",
-            pictures: [],
-            diaryDate: "2025 / 01 / 15"
-        ),
-        DiaryResponse(
-            id: UUID(),
-            content: "도서관에서 하루 종일 책을 읽었다. 오랜만에 조용한 시간을 보냈다.",
-            pictures: ["https://mblogthumb-phinf.pstatic.net/MjAyNDA4MDRfMjI5/MDAxNzIyNzU1NDE0MTQ5.gevr23_H7cZd_TFFvMwxxxknSY64mOvjRsBbNjwSopsg.57UoK7G4ioWfjIuEYDBQ0qmYnwd-hbBfETbTa13Y8tcg.JPEG/20230801%EF%BC%BF092949.jpg?type=w800"],
-            diaryDate: "2025 / 02 / 20"
-        ),
-        DiaryResponse(
-            id: UUID(),
-            title: "친구와 영화",
-            content: "친구와 최신 영화를 봤다. 재미있고 감동적인 장면이 많았다.",
-            pictures: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS59y8lxcgT1bpo-UFhKxUUp7hT8z7PUWr97A&s"],
-            diaryDate: "2025 / 03 / 12"
-        ),
-        DiaryResponse(
-            id: UUID(),
-            title: "봄꽃 축제",
-            content: "만개한 봄꽃들을 구경하러 갔다. 형형색색 꽃들이 아름다웠다.",
-            pictures: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQac9U1pW4QDEPBuVcBJTAEuPTQ-diXo5vEC6dsv6M-sUN_9srqggXHax2itKHC26IkKc8&usqp=CAU"],
-            diaryDate: "2025 / 10 / 05"
-        ),
-        DiaryResponse(
-            id: UUID(),
-            title: "비 오는 날",
-            content: "창밖으로 내리는 비를 바라보며 따뜻한 커피를 마셨다. 잔잔한 하루였다.",
-            pictures: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv2znysM8hscNWLP8pdjV0iEG_Nd7sox20DvoaPmV68a4iN8XWnbvqpqvIyxO0MkLeouA&usqp=CAU"],
-            diaryDate: "2025 / 04 / 18"
-        ),
-        DiaryResponse(
-            title: "겨울 산책",
-            content: "눈이 소복이 쌓인 길을 따라 조용히 산책을 했다. 고요하고 평화로운 느낌이었다.",
-            pictures: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8oKFPctzGt7mCmM06q7Qp8qM0dO3S9LjHruBsuvAtprnmBxeAXYZymZKp84qVxD1puLc&usqp=CAU"],
-            diaryDate: "2025 / 04 / 10"
-        )
-    ]
-    
-    let viewModel = DetailFriendsViewModel(friendData: dummyFriend, diaries: dummyDiaries)
-    
-    DetailFriendsView(viewModel: viewModel)
-        .environmentObject(DIContainer())
 }

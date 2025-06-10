@@ -8,18 +8,18 @@
 import Foundation
 
 /// 알 (부화 전)
-struct EggDTO: Codable {
+struct EggDTO: Codable, Hashable {
     var eggColor: String
     var x: Int
     var y: Int
 }
 
 /// 캐릭터 (부화 후)
-struct CharacterDTO: Codable {
+struct CharacterDTO: Codable, Hashable {
     var imageURL: String
 }
 
-struct ExperienceDTO: Codable {
+struct ExperienceDTO: Codable, Hashable {
     var experiencePoint: Int
     var eggInfo: EggDTO?
     var characterInfo: CharacterDTO?

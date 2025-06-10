@@ -48,7 +48,7 @@ struct DetailImageView: View {
     private var topController: some View {
         CustomNavigation(config: .closeAndTrash, leftAction: { icon in
             switch icon {
-            case .backArrow:
+            case .closeX:
                 dismiss()
             default:
                 break
