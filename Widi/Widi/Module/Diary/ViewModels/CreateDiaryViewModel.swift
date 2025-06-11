@@ -49,10 +49,10 @@ class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     /// 일기 작성 후 생성 버튼 액션
     public func addFriends() async {
         isLoading = true
-        defer { isLoading = false }
         
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
-            print("로그인 사용자 없음")
+            print("로그인 유저 없음")
+            isLoading = false
             return
         }
         do {

@@ -62,8 +62,12 @@ final class DetailFriendsViewModel {
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
         isLoading = true
-        defer { isLoading = false }
-        guard let userId = container.firebaseService.auth.currentUser?.uid else { return }
+        
+        guard let userId = container.firebaseService.auth.currentUser?.uid else {
+            print("로그인 유저 없음")
+            isLoading = false
+            return
+        }
 
         do {
             let list = try await container.firebaseService.diary.fetchDiaries(

@@ -59,12 +59,12 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     
     func deleteDiary() async {
         self.isEditLoading = true
-        defer { isEditLoading = false }
         if let diary = diary {
             do {
                 try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
             } catch {
                 print("일기 삭제 실패: \(error.localizedDescription)")
+                isLoading = false
             }
         }
     }
@@ -76,7 +76,6 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     @MainActor
     func saveEditContent() async {
         isEditLoading = true
-        defer { isEditLoading = false }
         
         guard let diary = diary else { return }
         
@@ -92,6 +91,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
             print("일기 수정 성공")
         } catch {
             print("일기 수정 실패: \(error.localizedDescription)")
+            isLoading = false
         }
     }
     
