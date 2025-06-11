@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftUI
+import PhotosUI
 
 /// 다이어리 생성 및 조회 수정 공통 인터페이스
 protocol DiaryViewModelProtocol {
@@ -13,6 +15,7 @@ protocol DiaryViewModelProtocol {
     associatedtype DiaryData: DiaryDTO
     
     var diary: DiaryData? { get set }
-    var diaryMode: DiaryMode { get }
     var diaryImages: [DiaryImage] { get set }
+    var selectedImage: DiaryImage? { get set }
+    var photoImages: [PhotosPickerItem] { get set }
 }

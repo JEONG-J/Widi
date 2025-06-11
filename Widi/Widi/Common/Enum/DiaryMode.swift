@@ -10,5 +10,5 @@ import Foundation
 enum DiaryMode {
     case read // 일기 상세 보기
     case edit // 기존 일기 수정
-    case write // 일기 새로 생성
+    case write // 일기 생성 모드
 }

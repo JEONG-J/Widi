@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SheetCalendarView: View {
     
-    @Bindable var viewModel: CreateDiaryViewModel
+    @State var viewModel: CalendarControllable
     @State var calendarViewModel: CalendarViewModel = .init()
     
     var body: some View {

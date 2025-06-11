@@ -43,14 +43,16 @@ struct SelectedImagePreview: View {
                 displayImage()
             })
             
-            Button(action: {
-                onDelete()
-            }, label: {
-                Image(.closeX)
-                    .background(Color.whiteBlack.opacity(0.6))
-                    .clipShape(Circle())
-                    .padding(8)
-            })
+            if showDeleteButton {
+                Button(action: {
+                    onDelete()
+                }, label: {
+                    Image(.closeX)
+                        .background(Color.whiteBlack.opacity(0.6))
+                        .clipShape(Circle())
+                        .padding(8)
+                })
+            }
         })
     }
     

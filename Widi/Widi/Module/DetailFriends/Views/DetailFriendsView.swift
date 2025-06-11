@@ -146,7 +146,7 @@ fileprivate extension DetailFriendsView {
             FriendDropDown(onSelect: { selected in
                 switch selected {
                 case .search:
-                    container.navigationRouter.push(to: .searchDiary)
+                    container.navigationRouter.push(to: .searchDiary(friendResponse: viewModel.friendResponse))
                 case .edit:
                     viewModel.showFriendEdit.toggle()
                 case .delete:
@@ -200,7 +200,7 @@ fileprivate extension DetailFriendsView {
                 .frame(minHeight: 120)
         }
         .frame(minHeight: getScreenSize().height )
-        .background(Color.whiteBlack.opacity(0.8))
+        .background(Color.clear)
         .clipShape(
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )
@@ -241,7 +241,7 @@ fileprivate extension DetailFriendsView {
                     .frame(height: 171)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        // TODO: - 일기 상세 화면 뷰
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read))
                     }
                     
                     if index < diaries.count - 1 {
