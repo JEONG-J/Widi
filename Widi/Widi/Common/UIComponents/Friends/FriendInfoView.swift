@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 정보를 요약 표시하는 컴포넌트
 struct FriendInfoView: View {
     
     // MARK: - Property

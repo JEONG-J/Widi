@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 일기 상세 뷰모델
 @Observable
 class DetailDiaryViewModel: DiaryViewModelProtocol {
     

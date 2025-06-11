@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Background를 만드는 컴포넌트
 struct CustomBackgroundShape: View {
     let color: Color
     let width: CGFloat

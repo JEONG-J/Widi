@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 수정 뷰
 struct DetailFriendUpdateView: View {
 
     @Binding var showFriendEdit: Bool

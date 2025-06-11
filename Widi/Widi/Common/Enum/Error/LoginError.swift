@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 로그인 에러 열거형
 enum LoginError: LocalizedError {
     case invalidAppleCredential
     case invalidIdentityToken

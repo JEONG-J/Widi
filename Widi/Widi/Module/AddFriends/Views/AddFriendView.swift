@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 추가 뷰
 struct AddFriendView: View {
     
     @Bindable var viewModel: AddFriendsViewModel

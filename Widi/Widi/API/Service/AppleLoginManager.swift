@@ -8,6 +8,7 @@
 import Foundation
 import AuthenticationServices
 
+/// 애플 로그인 매니저
 class AppleLoginManager: NSObject {
     
     static let shared = AppleLoginManager()

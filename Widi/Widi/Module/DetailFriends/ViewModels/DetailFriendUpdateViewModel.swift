@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 친구 수정 뷰모델
 @Observable
 class DetailFriendUpdateViewModel {
     

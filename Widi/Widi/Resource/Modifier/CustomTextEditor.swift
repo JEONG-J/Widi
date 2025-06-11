@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 커스텀 텍스트 에디터 modifier
 struct CustomTextEditor: ViewModifier {
     
     // MARK: - Property

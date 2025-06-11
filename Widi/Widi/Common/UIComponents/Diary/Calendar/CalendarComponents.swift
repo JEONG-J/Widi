@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Custom 캘린더 컴포넌트
 struct CalendarComponents: View {
     
     @Bindable var viewModel: CalendarViewModel

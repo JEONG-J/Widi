@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// 서버 또는 로컬 이미지 정보를 나타내는 일기 이미지 열거형
 enum DiaryImage: Identifiable, Equatable, Hashable {
     case local(Image, id: UUID = UUID())
     case server(String)

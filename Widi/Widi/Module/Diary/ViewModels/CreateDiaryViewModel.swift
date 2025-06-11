@@ -9,6 +9,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+/// 일기 작성 뷰모델
 @Observable
 class CreateDiaryViewModel: DiaryViewModelProtocol {
     // MARK: - StateProperty

@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 
+/// 프로필 이미지 컴포넌트
 struct CustomProfileImage: View {
     
     // MARK: - Properties

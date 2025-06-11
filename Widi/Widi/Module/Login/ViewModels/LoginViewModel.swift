@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import FirebaseAuth
 
+/// 로그인 뷰모델
 @Observable
 class LoginViewModel {
     

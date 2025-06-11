@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 홈 드래그 뷰
 struct HomeDragView: View {
     
     @Bindable var viewModel: HomeViewModel

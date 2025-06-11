@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일기 작성 화면 내용 구성 컨테이너 뷰
 struct DiaryContainerView<Header: View, Content: View, ImageScroll: View> : View {
     
     @ViewBuilder var header: () -> Header

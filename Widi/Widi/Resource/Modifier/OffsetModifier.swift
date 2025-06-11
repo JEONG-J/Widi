@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// offeset modifier
 struct OffsetModifier: ViewModifier {
     @Binding var offset: CGFloat
     

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 앱 플로우 뷰모델
 @Observable
 class AppFlowViewModel {
     

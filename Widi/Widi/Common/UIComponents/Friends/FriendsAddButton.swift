@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 추가 버튼 컴포넌트
 struct FriendsAddButton: View {
     
     let action: () -> Void

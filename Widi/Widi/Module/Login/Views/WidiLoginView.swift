@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 로그인 뷰
 struct WidiLoginView: View {
     
     var viewModel: LoginViewModel

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// NavigationDestination에 따라 해당 화면을 렌더링하는 라우팅 전용 뷰
 struct NavigationRoutingView: View {
     
     @EnvironmentObject var container: DIContainer

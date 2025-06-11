@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Custom 메인 버튼 컴포넌트
 struct CustomMainButton: View {
     
     // MARK: - Properties

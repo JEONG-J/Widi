@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 마이페이지 설정 리스트 컴포넌트
 struct SettingRow: View {
     
     // MARK: - Property
@@ -18,7 +19,6 @@ struct SettingRow: View {
     /// SettingRow
     /// - Parameters:
     ///   - type: toggle, navigation, version 중 택 1
-    ///   - onToggleChanged: 토글 상태 변경 시 호출할 클로저
     init(type: SettingRowType) {
         self.type = type
     }

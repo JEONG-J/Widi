@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 상세 뷰
 struct DetailFriendsView: View {
     
     // MARK: - Properties

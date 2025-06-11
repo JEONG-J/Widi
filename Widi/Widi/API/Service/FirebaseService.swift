@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Firebase 인증 관련 기능 클래스
 @Observable
 final class FirebaseService {
     

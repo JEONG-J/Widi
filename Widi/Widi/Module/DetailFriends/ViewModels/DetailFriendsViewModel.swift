@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 친구 상세 뷰모델
 @Observable
 final class DetailFriendsViewModel {
     
