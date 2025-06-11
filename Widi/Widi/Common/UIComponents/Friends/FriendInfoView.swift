@@ -44,7 +44,7 @@ struct FriendInfoView: View {
         .padding(.vertical, 13)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(.whiteBlack.opacity(0.3))
+                .fill(.whiteBlack.opacity(0.3).shadow(.inner(color: Color.white.opacity(0.5), radius: 2, x: 2, y: 2)))
         )
         .glass()
     }

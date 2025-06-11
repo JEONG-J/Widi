@@ -24,7 +24,6 @@ struct Glass: ViewModifier {
         content
             .shadow(color: Color(red: 0.93, green: 0.25, blue: 0.09).opacity(0.03), radius: 4, x: 0, y: 8)
             .shadow(color: Color(red: 0.55, green: 0.13, blue: 0.05).opacity(0.03), radius: 2, x: 1, y: 3)
-            .foregroundStyle(.shadow(.inner(color: Color.white.opacity(0.5), radius: 2, x: 2, y: 2)))
     }
 }
 
@@ -40,7 +39,6 @@ struct BlurShadow: ViewModifier {
     func body(content: Content) -> some View {
         content
             .shadow(color: Color(red: 0.56, green: 0.56, blue: 0.58).opacity(0.05), radius: 4, x: 0, y: -14)
-            .foregroundStyle(.shadow(.inner(color: Color.white.opacity(0.8), radius: 2, x: 2, y: 2)))
     }
 }
 

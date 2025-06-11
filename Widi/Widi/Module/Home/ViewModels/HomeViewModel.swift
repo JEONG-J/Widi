@@ -16,4 +16,11 @@ class HomeViewModel {
         .init(name: "마이", birthDay: "06.20", experienceDTO: .init(experiencePoint: 3)),
         .init(name: "지나", birthDay: "07.20", experienceDTO: .init(experiencePoint: 4))
     ]
+    
+    var container: DIContainer
+    
+    
+    init(container: DIContainer) {
+        self.container = container
+    }
 }

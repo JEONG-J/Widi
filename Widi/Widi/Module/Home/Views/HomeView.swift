@@ -15,20 +15,23 @@ struct HomeView: View {
     @State private var lastOffset: CGFloat = .zero
     @GestureState private var dragOffset: CGFloat = .zero
     @EnvironmentObject var container: DIContainer
+    @Bindable var viewModel: HomeViewModel
     
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     var body: some View {
         
         let screenHeight = getScreenSize().height
-        let minOffset: CGFloat = screenHeight * 0.83
+        let minOffset: CGFloat = screenHeight * 0.825
         let maxOffset: CGFloat = screenHeight * 0.01
         let midPoint = (minOffset + maxOffset) / 2
         let shouldHideOverlay = offset < midPoint
         
         NavigationStack(path: $container.navigationRouter.destination) {
             ZStack {
-                Color.green.ignoresSafeArea()
                 
-                HomeDragView()
+                HomeDragView(viewModel: viewModel)
                     .environmentObject(container)
                     .offset(y: offset + dragOffset)
                     .gesture(
@@ -75,6 +78,13 @@ struct HomeView: View {
                         }
                     }
             }
+            .background {
+                Image(.homeBackground)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+            }
             .navigationDestination(for: NavigationDestination.self) { destination in
                 NavigationRoutingView(destination: destination)
                     .environmentObject(container)
@@ -90,9 +100,13 @@ struct HomeView: View {
                                 .padding(10)
                                 .background {
                                     Circle()
-                                        .fill(Color.white)
-                                        .shadow1()
+                                        .fill(
+                                            Color.white.opacity(0.7)
+                                                .shadow(.inner(color: Color.white.opacity(0.5), radius: 2, x: 2, y: 2))
+                                        )
+                                        .glass()
                                 }
+                                
                         })
                         .transition(.opacity)
                         .animation(.easeInOut, value: shouldHideOverlay)
@@ -103,13 +117,13 @@ struct HomeView: View {
     }
 }
 
+#Preview {
+    HomeView(container: DIContainer())
+        .environmentObject(DIContainer())
+}
+
 extension Comparable {
     func clamped(to limits: ClosedRange<Self>) -> Self {
         return min(max(self, limits.lowerBound), limits.upperBound)
     }
-}
-
-#Preview {
-    HomeView()
-        .environmentObject(DIContainer())
 }
