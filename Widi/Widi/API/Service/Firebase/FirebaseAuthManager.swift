@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import AuthenticationServices
 import FirebaseFirestore
+import FirebaseMessaging
 
 /// Firebase 인증 매니저
 class FirebaseAuthManager {
@@ -34,6 +35,17 @@ class FirebaseAuthManager {
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let user = authResult?.user {
+                    Messaging.messaging().token { token, error in
+                        if let token = token {
+                            Firestore.firestore().collection("users").document(user.uid).setData([
+                                "fcmToken": token
+                            ], merge: true)
+                            print("FCM 토큰 저장 완료")
+                        } else if let error = error {
+                            print("FCM 토큰 저장 실패: \(error.localizedDescription)")
+                        }
+                    }
+                    
                     continuation.resume(returning: user)
                 } else {
                     continuation.resume(throwing: NSError(domain: "UnknownError", code: -1))
