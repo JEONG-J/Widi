@@ -10,10 +10,22 @@ import SwiftUI
 /// 앱 진입 지점
 @main
 struct WidiApp: App {
+    
+    @StateObject var container: DIContainer = .init()
+    @StateObject var appFlowViewModel: AppFlowViewModel = .init()
+    
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environmentObject(DIContainer())
+            switch appFlowViewModel.appState {
+            case .splash:
+                WidiSplashView()
+                    .environmentObject(appFlowViewModel)
+            case .login:
+                WidiLoginView(container: container, appFlowViewModel: appFlowViewModel)
+            case .home:
+                HomeView(container: container)
+                    .environmentObject(container)
+            }
         }
     }
 }

@@ -19,14 +19,16 @@ class LoginViewModel {
     let keychain = KeychainManager.standard
     
     let container: DIContainer
+    let appFlowViewModel: AppFlowViewModel
     
     
-    init(container: DIContainer) {
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
         self.container = container
+        self.appFlowViewModel = appFlowViewModel
     }
     
     /// 애플 로그인
-    func appleLogin() {
+    func appleLogin()  {
         if let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows.first {
@@ -37,6 +39,7 @@ class LoginViewModel {
                         do {
                             let user = try await self?.container.firebaseService.auth.signInWithAppleCredential(credential)
                             self?.saveKeychain(user: user)
+                            self?.appFlowViewModel.appState = .home
                         } catch {
                             print(LoginError.firebaseSignInFailed(error.localizedDescription).localizedDescription)
                         }

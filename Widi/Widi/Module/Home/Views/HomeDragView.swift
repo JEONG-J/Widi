@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 /// 홈 드래그 뷰
 struct HomeDragView: View {
@@ -13,35 +14,33 @@ struct HomeDragView: View {
     @Bindable var viewModel: HomeViewModel
     @EnvironmentObject var container: DIContainer
     
-    init() {
-        self.viewModel = .init()
-    }
-    
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .center, spacing: 20, content: {
-            dragIndicator
-            
-            VStack(alignment: .center, spacing: 16, content: {
-                topController
+            VStack(alignment: .center, spacing: 20, content: {
+                dragIndicator
                 
-                ScrollView(.vertical, content: {
-                    bottomContents
+                VStack(alignment: .center, spacing: 16, content: {
+                    topController
+                    
+                    ScrollView(.vertical, content: {
+                        bottomContents
+                    })
+                    .padding(.bottom, 48)
                 })
-                .padding(.bottom, 48)
+                
+                Spacer()
             })
-            
-            Spacer()
-        })
-        .safeAreaPadding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
-        .background {
-            UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
-                .fill(Color.white.opacity(0.6))
-                .background(Material.ultraThick)
-                .blurShadow()
-            // TODO: - blur Metarial 처리
-        }
-        .ignoresSafeArea()
+            .safeAreaPadding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+            .background {
+                UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+                    .fill(
+                        Color.white.opacity(0.55)
+                            .shadow(.inner(color: Color.white, radius: 2, x: 2, y: 2))
+                    )
+                    .background(Material.ultraThin.opacity(0.85), in: UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
+                    .blurShadow()
+                    .ignoresSafeArea()
+            }
     }
     
     /// 드래그 인디케이터
@@ -114,7 +113,8 @@ extension HomeDragView {
 }
 
 
+
 #Preview {
-    HomeDragView()
+    HomeView(container: DIContainer())
         .environmentObject(DIContainer())
 }
