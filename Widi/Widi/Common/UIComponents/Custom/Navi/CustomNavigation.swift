@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 커스텀 네비게이션 바 컴포넌트
 struct CustomNavigation: View {
     
     // MARK: - Property

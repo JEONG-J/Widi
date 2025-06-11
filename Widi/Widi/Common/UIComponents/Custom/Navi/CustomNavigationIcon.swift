@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 커스텀 네비게이션 바 버튼 컴포넌트
 struct CustomNavigationIcon: View {
     
     let navigationIcon: NavigationIcon

@@ -19,6 +19,7 @@ struct CharacterDTO: Codable, Hashable {
     var imageURL: String
 }
 
+/// 경험치
 struct ExperienceDTO: Codable, Hashable {
     var experiencePoint: Int
     var eggInfo: EggDTO?
