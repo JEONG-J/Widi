@@ -13,6 +13,7 @@ struct WidiApp: App {
     
     @StateObject var container: DIContainer = .init()
     @StateObject var appFlowViewModel: AppFlowViewModel = .init()
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
         WindowGroup {
