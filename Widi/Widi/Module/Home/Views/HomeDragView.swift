@@ -119,7 +119,7 @@ struct HomeDragView: View {
 
 extension HomeDragView {
     private var topTitle: String { "나의 친구들" }
-    private var notContentsText: String { "기억하고 싶은 사람이 있나요? \n친구와의 추억을 위디로 남겨봐요 💌" }
+    private var notContentsText: String { "기억하고 싶은 사람이 있나요? \n 친구와의 추억을 위디로 남겨봐요 💌" }
 }
 
 

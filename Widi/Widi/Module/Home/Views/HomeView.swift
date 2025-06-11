@@ -23,13 +23,16 @@ struct HomeView: View {
     var body: some View {
         
         let screenHeight = getScreenSize().height
-        let minOffset: CGFloat = screenHeight * 0.825
-        let maxOffset: CGFloat = screenHeight * 0.01
+        let minOffset: CGFloat = screenHeight * 0.89
+        let maxOffset: CGFloat = screenHeight * 0.08
         let midPoint = (minOffset + maxOffset) / 2
         let shouldHideOverlay = offset < midPoint
         
         NavigationStack(path: $container.navigationRouter.destination) {
             ZStack {
+                if let friends = viewModel.friendsData {
+                    CharacterFloatingScene(friends: friends)
+                }
                 
                 HomeDragView(viewModel: viewModel)
                     .environmentObject(container)
@@ -78,6 +81,7 @@ struct HomeView: View {
                         }
                     }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity).ignoresSafeArea()
             .background {
                 Image(.homeBackground)
                     .resizable()
@@ -111,6 +115,7 @@ struct HomeView: View {
                         .transition(.opacity)
                         .animation(.easeInOut, value: shouldHideOverlay)
                         .safeAreaPadding(.horizontal, 16)
+                        .offset(y: 59)
                 }
             })
         }

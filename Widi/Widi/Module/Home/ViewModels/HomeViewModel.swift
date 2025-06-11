@@ -23,9 +23,10 @@ class HomeViewModel {
     // MARK: - API
     func getMyFriends() async {
         isLoading = true
-        defer { isLoading = false }
+        
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
+            isLoading = false
             return
         }
         
