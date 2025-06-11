@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 커스텀 알림 담는 뷰
 struct CustomAlertView<Content: View>: View {
     
     @ViewBuilder var content: () -> Content

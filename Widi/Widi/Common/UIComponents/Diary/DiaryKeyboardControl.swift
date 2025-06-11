@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일기 작성시 키보드의 Input Accessory View 컴포넌트
 struct DiaryKeyboardControl: View {
     
     @Binding var isShowCalendar: Bool

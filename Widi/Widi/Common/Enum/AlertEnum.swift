@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// Alert에 표시될 버튼 타입 열거형
 enum AlertButton: ButtonTextProtocol, CaseIterable {
     
     case returnTo
@@ -45,6 +46,7 @@ enum AlertButton: ButtonTextProtocol, CaseIterable {
     }
 }
 
+/// Alert를 구성하는 열거형
 enum AlertButtonType {
     case friendsDelete
     case diaryDelete

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 홈 뷰
 struct HomeView: View {
     
     @State private var hasAppeared = false

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일기 검색 뷰
 struct SearchDiaryView: View {
     
     // MARK: - Property

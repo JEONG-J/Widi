@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// shadow1 modifier
 struct Shadow1: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -17,6 +18,7 @@ struct Shadow1: ViewModifier {
     }
 }
 
+/// glass modifier
 struct Glass: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -26,6 +28,7 @@ struct Glass: ViewModifier {
     }
 }
 
+/// sheet modifier
 struct Sheet: ViewModifier {
     func body(content: Content) -> some View {
         content

@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 
+/// 일기 카드 컴포넌트
 struct DiaryPreviewCard: View {
     
     // MARK: - Propertity

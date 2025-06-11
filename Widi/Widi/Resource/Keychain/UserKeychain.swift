@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 키체인 모델
 struct UserKeychain: Codable {
     var userUID: String
 }

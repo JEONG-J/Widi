@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일기 추가를 위한 플로팅 액션 버튼 컴포넌트
 struct DiariesAddButton: View {
     
     // MARK: - Properties

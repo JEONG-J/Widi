@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+/// 일기 검색 뷰모델
 @Observable
 class SearchDiaryViewModel {
     

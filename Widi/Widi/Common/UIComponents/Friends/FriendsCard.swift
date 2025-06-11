@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 
+/// 친구 이름과 프로필 카드 컴포넌트
 struct FriendsCard: View {
     
     // MARK: - Property

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 홈 뷰모델
 @Observable
 class HomeViewModel {
     var friendsData: [FriendResponse]? = [

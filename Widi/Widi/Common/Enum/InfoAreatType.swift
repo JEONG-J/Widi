@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// AddFriendView의 이름과 생일 입력 필드의 UI 정보를 정의한 열거형
 enum InfoAreaType {
     case birthday
     case name

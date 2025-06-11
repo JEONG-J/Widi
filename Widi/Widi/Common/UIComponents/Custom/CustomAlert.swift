@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 커스텀 Alert 컴포넌트
 struct CustomAlert: View {
     
     // MARK: - Property

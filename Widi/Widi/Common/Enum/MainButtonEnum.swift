@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 메인 버튼의 유형(다음, 건너뛰기)에 따라 텍스트, 배경색, 글자색을 정의한 열거형
 enum MainButtonType {
     case next(isDisabled: Bool)
     case skip

@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import AuthenticationServices
 
+/// Firebase 인증 매니저
 class FirebaseAuthManager {
     
     func signInWithAppleCredential(_ appleIDCredential: ASAuthorizationAppleIDCredential) async throws -> User {

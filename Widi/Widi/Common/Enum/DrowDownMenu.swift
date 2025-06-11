@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// FriendDetailView에서 사용할 드롭다운 메뉴 옵션을 정의한 열거형
 enum DropDownMenu: CaseIterable {
     case search
     case edit

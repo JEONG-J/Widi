@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일기 이미지 가로 스크롤 뷰
 struct DiaryImageScrollView: View {
     let images: [DiaryImage]
     let mode: DiaryMode

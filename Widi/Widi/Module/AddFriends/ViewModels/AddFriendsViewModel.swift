@@ -9,6 +9,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+/// 친구 추가 뷰모델
 @Observable
 class AddFriendsViewModel {
     

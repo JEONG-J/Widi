@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 앱 진입 지점
 @main
 struct WidiApp: App {
     var body: some Scene {

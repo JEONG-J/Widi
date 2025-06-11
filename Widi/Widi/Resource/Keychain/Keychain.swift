@@ -8,6 +8,7 @@
 import Foundation
 import Security
 
+/// 키체인 관리 매니저
 final class KeychainManager: @unchecked Sendable {
     static let standard = KeychainManager()
     

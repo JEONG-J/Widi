@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// FriendDetailView의 드롭다운 컴포넌트
 struct FriendDropDown: View {
     // MARK: - Property
     

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// 백그라운드 모양 Modifier
 struct BackgroundShape: ViewModifier {
     let color: Color
     let width: CGFloat
@@ -37,6 +38,7 @@ struct BackgroundShape: ViewModifier {
     }
 }
 
+/// 백그라운드 블러 처리 modifier
 struct BackgroundBlur: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -50,6 +52,7 @@ struct BackgroundBlur: ViewModifier {
     }
 }
 
+/// 친구 상세 뷰 백그라운드 modifier
 struct DetailFriendBackground: ViewModifier {
     var screenSize: CGSize
     
@@ -76,6 +79,7 @@ struct DetailFriendBackground: ViewModifier {
     }
 }
 
+/// 친구 추가 뷰 백그라운드 modifier
 struct AddFriendBackground: ViewModifier {
     
     let screenSize: CGSize
@@ -88,6 +92,7 @@ struct AddFriendBackground: ViewModifier {
     }
 }
 
+/// 일기 작성 뷰 백그라운드 modifier
 struct WriteDiaryBackground: ViewModifier {
     
     let screenSize: CGSize

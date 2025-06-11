@@ -9,6 +9,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+/// 일기 상세 뷰모델
 @Observable
 class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     

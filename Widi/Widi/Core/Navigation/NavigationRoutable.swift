@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 화면 이동 로직을 정의하는 네비게이션 라우터용 프로토콜
 protocol NavigationRoutable {
     var destination: [NavigationDestination] { get set }
     func push(to view: NavigationDestination)
@@ -14,6 +15,7 @@ protocol NavigationRoutable {
     func popToRooteView()
 }
 
+/// 네비게이션 라우터
 @Observable
 class NavigationRouter: NavigationRoutable {
     var destination: [NavigationDestination] = []

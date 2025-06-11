@@ -5,6 +5,7 @@
 //  Created by jeongminji on 6/2/25.
 //
 
+/// 친구 상세 정보를 표현하는 열거형
 enum FriendInfoItem {
     case diaryCount(Int)
     case birthday(String)

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 캘린더 개별 날짜 셀 컴포넌트
 struct Cell: View {
     
     var calendarDay: CellModel

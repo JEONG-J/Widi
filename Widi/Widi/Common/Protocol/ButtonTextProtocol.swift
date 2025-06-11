@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 알림 버튼에 공통으로 사용되는 텍스트를 정의한 프로토콜
 protocol ButtonTextProtocol {
     var returnTo: String { get }
     var continuation: String { get }

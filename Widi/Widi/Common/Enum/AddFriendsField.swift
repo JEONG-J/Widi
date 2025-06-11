@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 친구 추가 화면에서 이름과 생일 입력 필드를 나타내는 열거형
 enum AddFriendsField: CaseIterable, AddFriendsContent {
     case name
     case birthDay

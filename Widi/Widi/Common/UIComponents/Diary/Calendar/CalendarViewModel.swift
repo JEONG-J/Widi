@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// Custom 캘린더 뷰모델
 @Observable
 class CalendarViewModel {
     var currentMonth: Date
