@@ -26,8 +26,9 @@ struct DiaryRequest: Codable, DiaryDTO {
 }
 
 /// 일기 조회
-struct DiaryResponse: Codable, DiaryDTO, Identifiable {
+struct DiaryResponse: Codable, DiaryDTO, Identifiable, Hashable {
     var id: UUID = .init()
+    var documentId: String
     var title: String?
     var content: String
     var pictures: [String]?

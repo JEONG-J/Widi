@@ -23,7 +23,7 @@ struct FriendsCard: View {
     // MARK: - Body
     var body: some View {
         HStack(spacing: 12, content: {
-            profileImage
+            CustomProfileImage(imageURLString: friendsData.experienceDTO.characterInfo.imageURL)
             
             Text(friendsData.name)
                 .font(.h3)
@@ -39,26 +39,8 @@ struct FriendsCard: View {
                 .shadow1()
         }
     }
-    
-    /// 프로필 이미지 캐시 처리
-    @ViewBuilder
-    private var profileImage: some View {
-        if let urlString = friendsData.experienceDTO.characterInfo?.imageURL,
-           let url = URL(string: urlString) {
-            KFImage(url)
-                .downsampling(size: .init(width: 400, height: 400))
-                .cacheOriginalImage()
-                .placeholder({
-                    ProgressView()
-                        .controlSize(.small)
-                }).retry(maxCount: 2, interval: .seconds(2))
-                .resizable()
-                .clipShape(Circle())
-                .frame(width: 32, height: 32)
-        } else {
-            Circle()
-                .fill(Color.gray10)
-                .frame(width: 32, height: 32)
-        }
-    }
+}
+
+#Preview {
+    FriendsCard(friendsData: .init(documentId: "0", friendId: "0", name: "지나", experienceDTO: .init(experiencePoint: 0, characterInfo: .init(imageURL: "https://i.namu.wiki/i/e0lH4DdMFmKDm2Pf6nZtxpXjrUAn6hJSv_ecLV9l3BCof60YlFP-AU2EanXKubX1mttxSeAG5DyxD0QW-qbZ-qxVGPPdqHsPSSx1fdTRkv-jFuQC5CdWCUBsWHblz-zzIrqYrgFhoYO4Hr1B-RymVQ.webp", x: 9, y: 9))))
 }

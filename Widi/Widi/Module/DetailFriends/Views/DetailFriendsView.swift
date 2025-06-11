@@ -62,7 +62,7 @@ struct DetailFriendsView: View {
             }
         })
         .sheet(isPresented: $viewModel.showFriendEdit, content: {
-            DetailFriendUpdateView(contaienr: container, showFriendEdit: $viewModel.showFriendEdit)
+            DetailFriendUpdateView(contaienr: container, showFriendEdit: $viewModel.showFriendEdit, friendResponse: viewModel.friendResponse)
         })
         .overlay(content: {
             if viewModel.showDiaryDeleteAlert {
@@ -71,8 +71,6 @@ struct DetailFriendsView: View {
                         viewModel.showDiaryDeleteAlert = false
                     }, onRight: {
                         Task {
-                            await viewModel.deleteDiaryAPI()
-                            
                             if let diary = targetDiary {
                                 await viewModel.deleteDiary(diary)
                                 diariesOffsets[diary.id] = nil
@@ -83,6 +81,9 @@ struct DetailFriendsView: View {
                 })
             }
         })
+        .task {
+            await viewModel.fetchDiaries(for: viewModel.friendResponse)
+        }
     }
 }
 
@@ -122,7 +123,7 @@ fileprivate extension DetailFriendsView {
             
             DiariesAddButton(
                 action: {
-                    container.navigationRouter.push(to: .addDiaryView(friendsRequest: viewModel.returnFriendInfo(), firstMode: false))
+                    container.navigationRouter.push(to: .addDiaryView(friendsRequest: viewModel.returnFriendInfo(), firstMode: false, friendId: viewModel.friendResponse.friendId))
                 }
             )
             .frame(width: 56)
@@ -189,7 +190,12 @@ fileprivate extension DetailFriendsView {
                 pinnedViews: [.sectionHeaders]
             ) {
                 Section {
-                    diaryList
+                    if !viewModel.isLoading {
+                        diaryList
+                    } else {
+                        ProgressView()
+                            .tint(Color.orange30)
+                    }
                 } header: {
                     pinnedHeaderView()
                         .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
@@ -242,7 +248,7 @@ fileprivate extension DetailFriendsView {
                     .frame(height: 171)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read))
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
                     }
                     
                     if index < diaries.count - 1 {
@@ -276,7 +282,7 @@ fileprivate struct HeaderView: View {
                         .foregroundStyle(.gray80)
                     
                     CustomProfileImage(
-                        imageURLString: friendData.experienceDTO.characterInfo?.imageURL,
+                        imageURLString: friendData.experienceDTO.characterInfo.imageURL,
                         size: 40
                     )
                 }

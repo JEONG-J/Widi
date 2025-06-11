@@ -20,9 +20,7 @@ struct AddFriendView: View {
     
     
     var body: some View {
-        
         ZStack {
-            
             Color.clear
                 .addFriendViewBG()
                 .ignoresSafeArea(.keyboard, edges: .bottom)

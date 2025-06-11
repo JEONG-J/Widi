@@ -8,9 +8,14 @@
 import Foundation
 import FirebaseAuth
 import AuthenticationServices
+import FirebaseFirestore
 
 /// Firebase 인증 매니저
 class FirebaseAuthManager {
+    
+    var currentUser: User? {
+        return Auth.auth().currentUser
+    }
     
     func signInWithAppleCredential(_ appleIDCredential: ASAuthorizationAppleIDCredential) async throws -> User {
         guard let identityToken = appleIDCredential.identityToken,
@@ -34,6 +39,39 @@ class FirebaseAuthManager {
                     continuation.resume(throwing: NSError(domain: "UnknownError", code: -1))
                 }
             }
+        }
+    }
+    
+    @MainActor
+    func saveInitialUserData(user: User, fullName: PersonNameComponents?) async throws {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(user.uid)
+        
+        // givenName만 저장
+        let name = fullName?.givenName ?? "사용자"
+        
+        let data: [String: Any] = [
+            "name": name,
+            "toggle": true,
+            "createdAt": FieldValue.serverTimestamp()
+        ]
+        
+        do {
+            try await userRef.setData(data, merge: true)
+            print("사용자 정보 Firestore에 저장 완료")
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FirebaseServiceError.permissionDenied
+            case FirestoreErrorCode.notFound.rawValue:
+                throw FirebaseServiceError.documentNotFound
+            case NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut:
+                throw FirebaseServiceError.networkFailure
+            default:
+                throw FirebaseServiceError.custom(message: error.localizedDescription)
+            }
+        } catch {
+            throw FirebaseServiceError.unknownError
         }
     }
 }

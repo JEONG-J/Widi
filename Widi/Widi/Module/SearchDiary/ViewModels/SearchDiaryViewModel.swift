@@ -46,16 +46,32 @@ class SearchDiaryViewModel {
             .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
             .sink { [weak self] keyword in
                 guard let self else { return }
-                self.self.searchServer()
+                Task {
+                    await self.search(keyword: keyword)
+                }
             }
             .store(in: &cancellables)
     }
     
-    func searchServer() {
-        print("hello")
+    @MainActor
+    func search(keyword: String) async {
+        guard let uid = container.firebaseService.auth.currentUser?.uid else { return }
+        
+        do {
+            let result = try await container.firebaseService.diary.searchDiaries(keyword: keyword, userId: uid)
+            self.diaries = result
+        } catch {
+            print("❌ 검색 실패: \(error.localizedDescription)")
+            self.diaries = []
+        }
     }
     
-    func deleteDiary(_ diary: DiaryResponse) {
-        diaries.removeAll { $0.id == diary.id }
+    func deleteDiary(_ diary: DiaryResponse) async {
+        do {
+            try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            diaries.removeAll { $0.id == diary.id }
+        } catch {
+            print("일기 삭제 실패: \(error.localizedDescription)")
+        }
     }
 }

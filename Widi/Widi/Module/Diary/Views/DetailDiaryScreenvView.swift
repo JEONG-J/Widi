@@ -15,9 +15,9 @@ struct DetailDiaryScreenvView: View {
     
     let friendName: String
     
-    init(friendName: String, diaryMode: DiaryMode, container: DIContainer) {
+    init(friendName: String, diaryMode: DiaryMode, container: DIContainer, diaryResponse: DiaryResponse) {
         self.friendName = friendName
-        self.viewModel = .init(diaryMode: diaryMode, container: container)
+        self.viewModel = .init(diaryMode: diaryMode, container: container, diary: diaryResponse)
     }
     
     var body: some View {
@@ -46,6 +46,8 @@ struct DetailDiaryScreenvView: View {
                     .tint(.orange30)
             }
         }
+        .loadingOverlay(isLoading: viewModel.isEditLoading, loadingType: .editDiary)
+        
         .overlay(alignment: .bottom, content: {
             if viewModel.diaryMode == .edit {
                 DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
@@ -88,7 +90,6 @@ struct DetailDiaryScreenvView: View {
             DetailImageView(images: $viewModel.diaryImages,
                             selectedImage: $viewModel.selectedImage,
                             onDeleteServerImage: { url in
-                print(url)
             }, onDeleteLocalImage: { index in
                 viewModel.photoImages.remove(at: index)
             })
@@ -240,9 +241,4 @@ struct DetailDiaryScreenvView: View {
 extension DetailDiaryScreenvView {
     var titlePlaceholder: String { "제목" }
     var contentsPlaceholder: String { "친구와의 기억을 적어주세요" }
-}
-
-
-#Preview {
-    DetailDiaryScreenvView(friendName: "지나", diaryMode: .read, container: DIContainer())
 }

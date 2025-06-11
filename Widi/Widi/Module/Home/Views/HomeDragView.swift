@@ -22,10 +22,15 @@ struct HomeDragView: View {
                 VStack(alignment: .center, spacing: 16, content: {
                     topController
                     
-                    ScrollView(.vertical, content: {
-                        bottomContents
-                    })
-                    .padding(.bottom, 48)
+                    if !viewModel.isLoading {
+                        ScrollView(.vertical, content: {
+                            bottomContents
+                        })
+                        .padding(.bottom, 48)
+                    } else {
+                        ProgressView()
+                            .tint(Color.orange30)
+                    }
                 })
                 
                 Spacer()
@@ -40,6 +45,11 @@ struct HomeDragView: View {
                     .background(Material.ultraThin.opacity(0.85), in: UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
                     .blurShadow()
                     .ignoresSafeArea()
+            }
+            .task {
+                Task {
+                    await viewModel.getMyFriends()
+                }
             }
     }
     
