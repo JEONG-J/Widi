@@ -30,3 +30,14 @@ enum DiaryImage: Identifiable, Equatable, Hashable {
         lhs.id == rhs.id
     }
 }
+
+extension DiaryImage {
+    func asUIImage() -> UIImage? {
+        switch self {
+        case .local(let image, _):
+            return image.asUIImage()
+        case .server:
+            return nil
+        }
+    }
+}

@@ -22,10 +22,15 @@ struct HomeDragView: View {
                 VStack(alignment: .center, spacing: 16, content: {
                     topController
                     
-                    ScrollView(.vertical, content: {
-                        bottomContents
-                    })
-                    .padding(.bottom, 48)
+                    if !viewModel.isLoading {
+                        ScrollView(.vertical, content: {
+                            bottomContents
+                        })
+                        .padding(.bottom, 48)
+                    } else {
+                        ProgressView()
+                            .tint(Color.orange30)
+                    }
                 })
                 
                 Spacer()

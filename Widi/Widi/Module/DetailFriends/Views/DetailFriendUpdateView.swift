@@ -13,8 +13,8 @@ struct DetailFriendUpdateView: View {
     @Binding var showFriendEdit: Bool
     @Bindable var viewModel: DetailFriendUpdateViewModel
     
-    init(contaienr: DIContainer, showFriendEdit: Binding<Bool>) {
-        self.viewModel = .init(container: contaienr)
+    init(contaienr: DIContainer, showFriendEdit: Binding<Bool>, friendResponse: FriendResponse) {
+        self.viewModel = .init(container: contaienr, friendResponse: friendResponse)
         self._showFriendEdit = showFriendEdit
     }
     
@@ -48,7 +48,7 @@ struct DetailFriendUpdateView: View {
             
             Button {
                 Task {
-                    await viewModel.sendUpadte()
+                    await viewModel.updateFriend()
                     showFriendEdit = false
                 }
             } label: {

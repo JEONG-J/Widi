@@ -116,13 +116,15 @@ struct SearchDiaryView: View {
                         ),
                         allOffsets: $viewModel.offsets,
                         deleteAction: {
-                            viewModel.deleteDiary(diary)
+                            Task {
+                                await viewModel.deleteDiary(diary)
+                            }
                         }
                     )
                     .frame(height: 171)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read))
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
                     }
                     
                     if index < viewModel.diaries.count - 1 {

@@ -16,10 +16,10 @@ final class DetailFriendsViewModel {
     var showFriendDeleteAlert: Bool = false
     var showDiaryDeleteAlert: Bool = false
     
+    var isLoading: Bool = false
+    
     // MARK: - Property
-    var diaries: [DiaryResponse]? = [
-        .init(content: "dmdkdkdkkdkdkddkdkdk", diaryDate: "11")
-    ]
+    var diaries: [DiaryResponse]?
     var friendResponse: FriendResponse
     
     private var container: DIContainer
@@ -32,13 +32,16 @@ final class DetailFriendsViewModel {
     }
     
     // MARK: - Method
-    func deleteDiary(_ diary: DiaryResponse) async {
-        print("다이어리 삭제함")
-        diaries?.removeAll { $0.id == diary.id }
-    }
     
+    /// 친구 삭제
+    /// - Parameter friend: 친구 정보 입력
+    @MainActor
     func deleteFriend() async {
-        print("hello")
+        do {
+            try await container.firebaseService.friends.deleteFriend(documentId: self.friendResponse.documentId)
+        } catch {
+            print("친구 삭제 실패: \(error.localizedDescription)")
+        }
     }
     
     func returnFriendInfo() -> FriendRequest {
@@ -46,7 +49,31 @@ final class DetailFriendsViewModel {
     }
     
     // MARK: - API
-    func deleteDiaryAPI() async {
-        print("Hello")
+    
+    func deleteDiary(_ diary: DiaryResponse) async {
+        do {
+            try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            diaries?.removeAll { $0.id == diary.id }
+        } catch {
+            print("일기 삭제 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func fetchDiaries(for friend: FriendResponse) async {
+        isLoading = true
+        defer { isLoading = false }
+        guard let userId = container.firebaseService.auth.currentUser?.uid else { return }
+
+        do {
+            let list = try await container.firebaseService.diary.fetchDiaries(
+                for: userId,
+                friendId: friend.friendId
+            )
+            self.diaries = list
+            isLoading = false
+        } catch {
+            print("일기 조회 실패: \(error.localizedDescription)")
+        }
     }
 }

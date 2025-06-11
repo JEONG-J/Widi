@@ -13,13 +13,12 @@ import SwiftUI
 @Observable
 class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     
-    
-    
     // MARK: - StateProperty
     var isShowStopEditAlert: Bool = false
     var isShowDeleteDiaryAlert: Bool = false
     var isShowCalendar: Bool = false
     var isShowImagePicker: Bool = false
+    var isEditLoading: Bool = false
     
     // MARK: - Property
     var diary: DiaryResponse? {
@@ -32,7 +31,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     
     var dateString: String = ""
     
-    var diaryImages: [DiaryImage] = [.server("https://i.namu.wiki/i/MNpePzeeKAtd-rcjEzYfCKiGwYnwG1gyAQxjmx1lSCKZBnYd1zd5vwwVcvJsvc1fr3ipMmlja55Qwq41GDj4BvmvnGQsey8YP3T2IPpzxNdWv8itxjsAybCeqartv5kp8SeXGexnFT53BwkQY8XXmQ.webp")]
+    var diaryImages: [DiaryImage] = []
     var photoImages: [PhotosPickerItem] = []
     var selectedImage: DiaryImage? = nil
     
@@ -43,22 +42,57 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     var diaryContents: String = ""
     
     // MARK: - Init
-    init(diaryMode: DiaryMode, container: DIContainer) {
+    init(diaryMode: DiaryMode, container: DIContainer, diary: DiaryResponse) {
         self.diaryMode = diaryMode
         self.container = container
+        self.diary = diary
+        
+        if let pictures = diary.pictures {
+            self.diaryImages = pictures.map { DiaryImage.server($0) }
+        } else {
+            self.diaryImages = []
+        }
     }
     
     // MARK: - Read
     /// 일기 삭제
+    
     func deleteDiary() async {
-        print("일기 삭제")
+        self.isEditLoading = true
+        defer { isEditLoading = false }
+        if let diary = diary {
+            do {
+                try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            } catch {
+                print("일기 삭제 실패: \(error.localizedDescription)")
+            }
+        }
     }
+    
     
     // MARK: - Write
     
     /// 수정 완료 함수
+    @MainActor
     func saveEditContent() async {
-        print("hello")
+        isEditLoading = true
+        defer { isEditLoading = false }
+        
+        guard let diary = diary else { return }
+        
+        do {
+            try await container.firebaseService.diary.updateDiaryWithImages(
+                diaryId: diary.documentId,
+                title: diaryTitle.isEmpty ? nil : diaryTitle,
+                content: diaryContents,
+                images: diaryImages,
+                originalServerImageURLs: diary.pictures ?? [],
+                diaryDate: dateString
+            )
+            print("일기 수정 성공")
+        } catch {
+            print("일기 수정 실패: \(error.localizedDescription)")
+        }
     }
     
     /// 이미지 삭제
@@ -81,6 +115,18 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
         }
         
         diaryImages.remove(at: index)
+    }
+    
+    @MainActor
+    func deleteServerImage(url: String) async {
+        if let diary = diary {
+            let diaryId = diary.documentId
+            do {
+                try await container.firebaseService.diary.deleteImage(from: diaryId, imageUrl: url)
+            } catch {
+                print("이미지 삭제 실패: \(error.localizedDescription)")
+            }
+        }
     }
     
     @MainActor

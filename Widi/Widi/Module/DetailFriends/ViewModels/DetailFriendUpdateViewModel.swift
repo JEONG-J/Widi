@@ -14,14 +14,27 @@ class DetailFriendUpdateViewModel {
     // MARK: - Property
     var nameText: String = ""
     var birthdayText: String = ""
+    var friendResponse: FriendResponse
     
     private var container: DIContainer
     
-    init(container: DIContainer) {
+    init(container: DIContainer, friendResponse: FriendResponse) {
         self.container = container
+        self.nameText = friendResponse.name
+        self.birthdayText = friendResponse.birthDay ?? ""
+        self.friendResponse = friendResponse
     }
     
-    func sendUpadte() async {
-        print("complete")
+    @MainActor
+    func updateFriend() async {
+        do {
+            try await container.firebaseService.friends.updateFriendInfo(
+                documentId: friendResponse.documentId,
+                name: nameText,
+                birthday: birthdayText.isEmpty ? nil : birthdayText
+            )
+        } catch {
+            print("친구 정보 수정 실패: \(error.localizedDescription)")
+        }
     }
 }

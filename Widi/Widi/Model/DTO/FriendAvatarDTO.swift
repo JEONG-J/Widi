@@ -7,21 +7,15 @@
 
 import Foundation
 
-/// 알 (부화 전)
-struct EggDTO: Codable, Hashable {
-    var eggColor: String
-    var x: Int
-    var y: Int
-}
-
-/// 캐릭터 (부화 후)
+/// 캐릭터
 struct CharacterDTO: Codable, Hashable {
     var imageURL: String
+    var x: Int
+    var y: Int
 }
 
 /// 경험치
 struct ExperienceDTO: Codable, Hashable {
     var experiencePoint: Int
-    var eggInfo: EggDTO?
-    var characterInfo: CharacterDTO?
+    var characterInfo: CharacterDTO
 }

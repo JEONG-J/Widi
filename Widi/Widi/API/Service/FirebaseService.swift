@@ -13,9 +13,11 @@ final class FirebaseService {
     
     let auth: FirebaseAuthManager
     let friends: FirebaseFriendsService
+    let diary: FirebaseDiaryService
     
     init() {
         self.auth = FirebaseAuthManager()
         self.friends = FirebaseFriendsService()
+        self.diary = FirebaseDiaryService()
     }
 }

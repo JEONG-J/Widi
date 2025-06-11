@@ -17,10 +17,12 @@ struct AddDiaryView: View {
     @EnvironmentObject var container: DIContainer
     
     let firstMode: Bool
+    let friendId: String?
     
-    init(friendsRequest: FriendRequest, container: DIContainer, firstMode: Bool = false) {
+    init(friendsRequest: FriendRequest, container: DIContainer, firstMode: Bool = false, friendId: String? = nil) {
         self.viewModel = .init(friendRequest: friendsRequest, container: container)
         self.firstMode = firstMode
+        self.friendId = friendId
     }
     
     // MARK: - Body
@@ -28,7 +30,6 @@ struct AddDiaryView: View {
     var body: some View {
         
         ZStack {
-            
             Color.clear
                 .writeDiaryViewBG()
                 .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -49,6 +50,7 @@ struct AddDiaryView: View {
                 bottomContents
             })
         }
+        .loadingOverlay(isLoading: viewModel.isLoading, loadingType: .diary)
         
         .overlay(alignment: .bottom, content: {
             DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
@@ -126,7 +128,15 @@ struct AddDiaryView: View {
             rightAction: { icon in
                 switch icon {
                 case .complete(type: .complete, isEmphasized: viewModel.diaryIsEmphasized):
-                    viewModel.addFriendsAndDiary()
+                    Task {
+                        if firstMode == true {
+                            await viewModel.addFriends()
+                        } else {
+                            if let friendId = friendId {
+                                await viewModel.addDiary(targetFriendId: friendId)
+                            }
+                        }
+                    }
                 default:
                     break
                 }

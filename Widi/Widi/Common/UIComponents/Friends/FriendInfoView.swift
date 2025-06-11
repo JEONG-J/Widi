@@ -83,24 +83,9 @@ fileprivate struct HatchProgressDotsView: View {
                 }
                 .padding(.vertical, 6)
             } else {
-                Text("🍄")
+                Text("🐣")
                     .font(.h1)
             }
         }
     }
-}
-
-#Preview {
-    @Previewable @State var dummyFriend: FriendResponse = FriendResponse(name: "123", birthDay: "04/20", experienceDTO: .init(experiencePoint: 3, characterInfo: .init(imageURL: "")
-        )
-    )
-    
-    VStack {
-        FriendInfoView(friendInfoData: dummyFriend)
-            .frame(width: .infinity, height: 101)
-        
-    }
-    .padding(.horizontal, 16)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(.gray20.opacity(0.3))
 }
