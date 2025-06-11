@@ -32,16 +32,24 @@ class LoginViewModel {
         if let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows.first {
+            
             appleLoginManager.startSignInWithAppleFlow(presentationAnchor: window) { [weak self] result in
                 switch result {
                 case .success(let credential):
                     Task {
                         do {
-                            let user = try await self?.container.firebaseService.auth.signInWithAppleCredential(credential)
-                            self?.saveKeychain(user: user)
-                            self?.appFlowViewModel.appState = .home
+                            if let user = try await self?.container.firebaseService.auth.signInWithAppleCredential(credential) {
+                                try await self?.container.firebaseService.auth.saveInitialUserData(
+                                    user: user,
+                                    fullName: credential.fullName
+                                )
+                                self?.saveKeychain(user: user)
+                                self?.appFlowViewModel.appState = .home
+                            }
+                        } catch let error as FirebaseServiceError {
+                            print("Firestore 오류: \(error.localizedDescription)")
                         } catch {
-                            print(LoginError.firebaseSignInFailed(error.localizedDescription).localizedDescription)
+                            print("일반 오류: \(error.localizedDescription)")
                         }
                     }
                 case .failure(let error):

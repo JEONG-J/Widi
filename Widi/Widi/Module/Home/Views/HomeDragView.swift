@@ -41,6 +41,11 @@ struct HomeDragView: View {
                     .blurShadow()
                     .ignoresSafeArea()
             }
+            .task {
+                Task {
+                    await viewModel.getMyFriends()
+                }
+            }
     }
     
     /// 드래그 인디케이터

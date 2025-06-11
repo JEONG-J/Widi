@@ -12,8 +12,10 @@ import Foundation
 final class FirebaseService {
     
     let auth: FirebaseAuthManager
+    let friends: FirebaseFriendsService
     
     init() {
         self.auth = FirebaseAuthManager()
+        self.friends = FirebaseFriendsService()
     }
 }
