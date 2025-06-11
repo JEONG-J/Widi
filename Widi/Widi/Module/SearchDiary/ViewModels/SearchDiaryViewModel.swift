@@ -26,12 +26,15 @@ class SearchDiaryViewModel {
     
     var offsets: [UUID: CGFloat] = [:]
     
+    let friendResponse: FriendResponse
+    
     // MARK: - Init
     
     /// SearchDiaryViewModel
     /// - Parameter diaries: 전체 다이어리 리스트
-    init(container: DIContainer) {
+    init(container: DIContainer, friendResponse: FriendResponse) {
         self.container = container
+        self.friendResponse = friendResponse
         setupSearch()
     }
     

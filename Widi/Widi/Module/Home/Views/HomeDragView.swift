@@ -35,8 +35,10 @@ struct HomeDragView: View {
         .safeAreaPadding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
         .background {
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
-                .fill(Color.white.opacity(0.7))
-                .shadow(color: Color(red: 0.56, green: 0.56, blue: 0.58).opacity(0.05), radius: 4, x: 0, y: -14)
+                .fill(Color.white.opacity(0.6))
+                .background(Material.ultraThick)
+                .blurShadow()
+            // TODO: - blur Metarial 처리
         }
         .ignoresSafeArea()
     }

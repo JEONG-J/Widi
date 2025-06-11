@@ -96,17 +96,17 @@ struct AddDiaryView: View {
             maxSelectionCount: 5,
             matching: .images).tint(.orange30)
         
-            .onChange(of: viewModel.photoImages, { oldValue, newValue in
+        .onChange(of: viewModel.photoImages, { oldValue, newValue in
                 Task {
                     await viewModel.convertSelectedPhotosToUIImage()
                 }
             })
         
-            .task {
+        .task {
                 viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: .now)
             }
         
-            .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
     
     /// 상단 네비게이션 컨트롤러
@@ -157,12 +157,7 @@ struct AddDiaryView: View {
             }
             .safeAreaPadding(.horizontal, 16)
         })
-        .padding(.top, 24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background {
-            UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
-                .fill(Color.whiteBlack)
-        }
+        .diaryContainerStyle()
         .sheet()
     }
     
@@ -192,8 +187,8 @@ struct AddDiaryView: View {
 }
 
 extension AddDiaryView {
-    private var titlePlaceholder: String { "제목" }
-    private var contentsPlaceholder: String { "친구와의 기억을 적어주세요" }
+    var titlePlaceholder: String { "제목" }
+    var contentsPlaceholder: String { "친구와의 기억을 적어주세요" }
 }
 
 #Preview {

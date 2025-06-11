@@ -19,7 +19,7 @@ struct DiaryRowView: View {
     let deleteAction: () -> Void
     
     private let deleteButtonWidth: CGFloat = 68
-    private let dragThreshold: CGFloat = 30
+    private let dragThreshold: CGFloat = 15
     
     // MARK: - Body
     
@@ -35,7 +35,6 @@ struct DiaryRowView: View {
                 }
             }
         }
-        .background(Color.red)
         .animation(.easeInOut, value: offset)
     }
     
@@ -56,12 +55,12 @@ struct DiaryRowView: View {
                 .scaledToFit()
                 .frame(width: 28, height: 28)
                 .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 48)
+        .frame(width: deleteButtonWidth)
         .frame(maxHeight: .infinity)
+        .alignmentGuide(.leading) { _ in 0 }
         .background(Color.red30)
-        .transition(.move(edge: .trailing))
+        .transition(.move(edge: .trailing).animation(.easeInOut.speed(1)))
     }
     
     // MARK: - Methods

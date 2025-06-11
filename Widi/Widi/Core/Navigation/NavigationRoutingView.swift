@@ -21,8 +21,10 @@ struct NavigationRoutingView: View {
                 AddDiaryView(friendsRequest: friendsRequest, container: container, firstMode: firstMode)
             case .detailFriendView(let friendResponse):
                 DetailFriendsView(container: container, friendResponse: friendResponse)
-            case .searchDiary:
-                SearchDiaryView(container: container)
+            case .detailDiaryView(let name, let mode):
+                DetailDiaryScreenvView(friendName: name, diaryMode: mode, container: container)
+            case .searchDiary(let friendResponse):
+                SearchDiaryView(container: container, friendResponse: friendResponse)
             case .myPage:
                 MyPageView(container: container)
             }

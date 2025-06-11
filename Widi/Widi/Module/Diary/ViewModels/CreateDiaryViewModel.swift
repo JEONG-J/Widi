@@ -10,7 +10,8 @@ import PhotosUI
 import SwiftUI
 
 @Observable
-class CreateDiaryViewModel: DiaryViewModelProtocol {
+class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
+    
     // MARK: - StateProperty
     var isShowCalendar: Bool = false
     var isShowImagePicker: Bool = false
@@ -27,7 +28,6 @@ class CreateDiaryViewModel: DiaryViewModelProtocol {
     
     // MARK: - DiaryProtocol
     var diary: DiaryRequest? = nil
-    var diaryMode: DiaryMode = .write
     var diaryImages: [DiaryImage] = []
     var selectedImage: DiaryImage? = nil
     

@@ -18,14 +18,14 @@ struct HomeView: View {
     var body: some View {
         
         let screenHeight = getScreenSize().height
-        let minOffset: CGFloat = screenHeight * 0.89
-        let maxOffset: CGFloat = screenHeight * 0.07
+        let minOffset: CGFloat = screenHeight * 0.83
+        let maxOffset: CGFloat = screenHeight * 0.01
         let midPoint = (minOffset + maxOffset) / 2
         let shouldHideOverlay = offset < midPoint
         
         NavigationStack(path: $container.navigationRouter.destination) {
             ZStack {
-                Color.green
+                Color.green.ignoresSafeArea()
                 
                 HomeDragView()
                     .environmentObject(container)
@@ -74,7 +74,6 @@ struct HomeView: View {
                         }
                     }
             }
-            .ignoresSafeArea()
             .navigationDestination(for: NavigationDestination.self) { destination in
                 NavigationRoutingView(destination: destination)
                     .environmentObject(container)

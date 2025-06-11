@@ -15,13 +15,12 @@ struct SearchDiaryView: View {
     @EnvironmentObject var container: DIContainer
     
     @FocusState private var isTextFieldFocused: Bool
-    
     // MARK: - Init
     
     /// SearchDiaryView
     /// - Parameter viewModel: SearchDiaryViewModel
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
+    init(container: DIContainer, friendResponse: FriendResponse) {
+        self.viewModel = .init(container: container, friendResponse: friendResponse)
     }
     
     // MARK: - Body
@@ -122,7 +121,7 @@ struct SearchDiaryView: View {
                     .frame(height: 171)
                     .contentShape(Rectangle())
                     .onTapGesture {
-//                        container.navigationRouter.push(to: .detailDiaryView)
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read))
                     }
                     
                     if index < viewModel.diaries.count - 1 {
@@ -134,9 +133,4 @@ struct SearchDiaryView: View {
             }
         }
     }
-}
-
-
-#Preview {
-    SearchDiaryView(container: DIContainer())
 }
