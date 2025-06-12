@@ -93,7 +93,7 @@ class FirebaseDiaryService {
                 let data = doc.data()
                 guard
                     let content = data["content"] as? String,
-                    let eventDate = data["eventDate"] as? String
+                    let eventDate = data["diaryDate"] as? String
                 else { return nil }
                 
                 let title = data["title"] as? String
@@ -106,7 +106,7 @@ class FirebaseDiaryService {
                     documentId: doc.documentID,
                     title: title,
                     content: content,
-                    pictures: data["photos"] as? [String],
+                    pictures: data["pictures"] as? [String],
                     diaryDate: eventDate
                 )
             }
