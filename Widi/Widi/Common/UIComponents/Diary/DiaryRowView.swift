@@ -55,9 +55,9 @@ struct DiaryRowView: View {
                 .scaledToFit()
                 .frame(width: 28, height: 28)
                 .foregroundStyle(.white)
+                .frame(width: deleteButtonWidth)
+                .frame(maxHeight: .infinity)
         }
-        .frame(width: deleteButtonWidth)
-        .frame(maxHeight: .infinity)
         .alignmentGuide(.leading) { _ in 0 }
         .background(Color.red30)
         .transition(.move(edge: .trailing).animation(.easeInOut.speed(1)))
