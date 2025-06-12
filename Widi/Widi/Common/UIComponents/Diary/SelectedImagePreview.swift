@@ -61,15 +61,17 @@ struct SelectedImagePreview: View {
     private func displayImage() -> some View {
         Group {
             switch diaryImage {
-            case .local(let image, _):
+            case .local(let image, _, _):
                 image
                     .resizable()
+
             case .server(let string):
                 KFImage(URL(string: string))
                     .placeholder {
                         ProgressView()
                             .controlSize(.regular)
-                    }.retry(maxCount: 2, interval: .seconds(2))
+                    }
+                    .retry(maxCount: 2, interval: .seconds(2))
                     .cacheMemoryOnly()
                     .resizable()
             }

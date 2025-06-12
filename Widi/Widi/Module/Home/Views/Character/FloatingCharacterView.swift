@@ -27,14 +27,15 @@ struct FloatingCharacterView: View {
             characterImage()
                 .position(position)
                 .task {
-                    position = initialPosition()
-                    direction = randomDirection()
-                    updateSharedState()
+                    if position == .zero {
+                        position = initialPosition()
+                        direction = randomDirection()
+                        updateSharedState()
+                    }
                 }
                 .onChange(of: context.date) { _, _ in
                     guard friend.experienceDTO.experiencePoint >= 4 else { return }
                     updatePosition()
-                    checkCollision()
                     updateSharedState()
                 }
                 .onTapGesture(count: 2) {
@@ -64,8 +65,8 @@ struct FloatingCharacterView: View {
                 .frame(width: 120, height: 110)
             
             Text(friend.name)
-                .font(.caption)
-                .foregroundColor(.black)
+                .font(.cap1)
+                .foregroundColor(Color.gray50)
         }
         .overlay(alignment: .top, content: {
             ForEach(heartStates) { heart in
@@ -118,6 +119,7 @@ struct FloatingCharacterView: View {
         let minY = characterSize.height / 2
         let maxY = screenSize.height - characterSize.height / 2
         
+        // 벽 반사 처리
         if newX < minX || newX > maxX {
             current.direction.dx *= -1
             newX = min(max(newX, minX), maxX)
@@ -130,17 +132,23 @@ struct FloatingCharacterView: View {
         
         current.position = CGPoint(x: newX, y: newY)
         
-        for other in allCharacters where other.id != current.id {
-            let distance = current.position.distance(to: other.position)
-            if distance < 100 {
-                current.direction = CGVector(
-                    dx: CGFloat.random(in: -1.5...1.5),
-                    dy: CGFloat.random(in: -1.5...1.5)
-                )
-                break
-            }
-        }
+//        // 충돌 감지 및 튕기기 처리
+//        for other in allCharacters where other.id != current.id {
+//            let distance = current.position.distance(to: other.position)
+//            if distance < 100 {
+//                let angle = atan2(current.position.y - other.position.y,
+//                                  current.position.x - other.position.x)
+//                
+//                // 새로운 방향을 각도 기준으로 반사
+//                current.direction = CGVector(
+//                    dx: cos(angle) * 1.5,
+//                    dy: sin(angle) * 1.5
+//                )
+//                break
+//            }
+//        }
         
+        // 상태 업데이트
         allCharacters[index] = current
         position = current.position
         direction = current.direction

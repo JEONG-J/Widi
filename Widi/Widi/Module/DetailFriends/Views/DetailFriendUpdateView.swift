@@ -12,10 +12,17 @@ struct DetailFriendUpdateView: View {
 
     @Binding var showFriendEdit: Bool
     @Bindable var viewModel: DetailFriendUpdateViewModel
+    var onUpdate: (FriendResponse) -> Void
     
-    init(contaienr: DIContainer, showFriendEdit: Binding<Bool>, friendResponse: FriendResponse) {
-        self.viewModel = .init(container: contaienr, friendResponse: friendResponse)
+    init(
+        container: DIContainer,
+        showFriendEdit: Binding<Bool>,
+        friendResponse: FriendResponse,
+        onUpdate: @escaping (FriendResponse) -> Void
+    ) {
+        self._viewModel = Bindable(wrappedValue: DetailFriendUpdateViewModel(container: container, friendResponse: friendResponse))
         self._showFriendEdit = showFriendEdit
+        self.onUpdate = onUpdate
     }
     
     var body: some View {
@@ -49,6 +56,7 @@ struct DetailFriendUpdateView: View {
             Button {
                 Task {
                     await viewModel.updateFriend()
+                    onUpdate(viewModel.returnOutsize())
                     showFriendEdit = false
                 }
             } label: {

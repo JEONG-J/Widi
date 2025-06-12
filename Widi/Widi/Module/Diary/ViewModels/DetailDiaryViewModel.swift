@@ -62,6 +62,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
         if let diary = diary {
             do {
                 try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+                isEditLoading = false
             } catch {
                 print("일기 삭제 실패: \(error.localizedDescription)")
                 isEditLoading = false
@@ -89,6 +90,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
                 diaryDate: dateString
             )
             print("일기 수정 성공")
+            isEditLoading = false
         } catch {
             print("일기 수정 실패: \(error.localizedDescription)")
             isEditLoading = false
@@ -142,7 +144,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
             if let data = try? await item.loadTransferable(type: Data.self),
                let image = UIImage(data: data) {
                 let swiftUIImage = Image(uiImage: image)
-                diaryImages.append(.local(swiftUIImage))
+                diaryImages.append(.local(swiftUIImage, original: image))
             }
         }
     }

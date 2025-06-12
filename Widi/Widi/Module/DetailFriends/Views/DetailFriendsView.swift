@@ -44,6 +44,7 @@ struct DetailFriendsView: View {
             addButton
             dropDownOverlay
         }
+        .loadingOverlay(isLoading: viewModel.isLoading, loadingType: .delete)
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
         .overlay(content: {
@@ -53,8 +54,8 @@ struct DetailFriendsView: View {
                         viewModel.showFriendDeleteAlert = false
                     }, onRight: {
                         Task {
-                            await viewModel.deleteFriend()
                             viewModel.showFriendDeleteAlert = false
+                            await viewModel.deleteFriend()
                             container.navigationRouter.pop()
                         }
                     })
@@ -62,7 +63,15 @@ struct DetailFriendsView: View {
             }
         })
         .sheet(isPresented: $viewModel.showFriendEdit, content: {
-            DetailFriendUpdateView(contaienr: container, showFriendEdit: $viewModel.showFriendEdit, friendResponse: viewModel.friendResponse)
+            DetailFriendUpdateView(container: container,
+                                   showFriendEdit: $viewModel.showFriendEdit,
+                                   friendResponse: viewModel.friendResponse,
+                                   onUpdate: { friend in
+                viewModel.friendResponse.name = friend.name
+                viewModel.friendResponse.birthDay = friend.birthDay ?? ""
+                print("친구 수정 데이터: \(friend)")
+            }
+            )
         })
         .overlay(content: {
             if viewModel.showDiaryDeleteAlert {
@@ -193,8 +202,20 @@ fileprivate extension DetailFriendsView {
                     if !viewModel.isLoading {
                         diaryList
                     } else {
-                        ProgressView()
-                            .tint(Color.orange30)
+                        
+                        Spacer()
+                        
+                        HStack {
+                            Spacer()
+                            
+                            ProgressView()
+                                .tint(Color.orange30)
+                            
+                            Spacer()
+                        }
+                        
+                        Spacer()
+                        
                     }
                 } header: {
                     pinnedHeaderView()
@@ -207,7 +228,7 @@ fileprivate extension DetailFriendsView {
                 .frame(minHeight: 120)
         }
         .frame(minHeight: getScreenSize().height )
-        .background(Color.clear)
+        .background(Color.whiteBlack.opacity(0.8))
         .clipShape(
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )

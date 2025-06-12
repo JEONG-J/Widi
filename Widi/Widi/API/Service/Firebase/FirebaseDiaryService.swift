@@ -21,15 +21,16 @@ class FirebaseDiaryService {
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
             
+            
             let diaries: [DiaryResponse] = snapshot.documents.compactMap { doc in
                 let data = doc.data()
                 guard
                     let content = data["content"] as? String,
-                    let eventDate = data["eventDate"] as? String
+                    let eventDate = data["diaryDate"] as? String
                 else { return nil }
                 
                 let title = data["title"] as? String
-                let photos = data["photos"] as? [String]
+                let photos = data["pictures"] as? [String]
                 
                 return DiaryResponse(
                     documentId: doc.documentID,
@@ -163,7 +164,9 @@ class FirebaseDiaryService {
             return nil
         }
         let newLocalImages = images.compactMap {
-            if case let .local(img, _) = $0 { return img.asUIImage() }
+            if case let .local(_, original, _) = $0 {
+                return original
+            }
             return nil
         }
         
@@ -183,7 +186,7 @@ class FirebaseDiaryService {
             }
         }
         
-        // 📄 문서 업데이트
+        // 문서 업데이트
         let allURLs = currentServerURLs + uploadedURLs
         let request = DiaryRequest(
             title: title,
@@ -206,8 +209,8 @@ class FirebaseDiaryService {
         
         // 1. 로컬 이미지 → UIImage 변환
         let localImages = images.compactMap {
-            if case let .local(image, _) = $0 {
-                return image.asUIImage()
+            if case let .local(_, original, _) = $0 {
+                return original
             }
             return nil
         }
@@ -215,9 +218,14 @@ class FirebaseDiaryService {
         // 2. Firebase Storage에 업로드
         var uploadedURLs: [String] = []
         let diaryId = UUID().uuidString
+        print("localImage:",localImages)
         for img in localImages {
-            if let url = try? await uploadImageToStorage(image: img, diaryId: diaryId) {
+            do {
+                let url = try await uploadImageToStorage(image: img, diaryId: diaryId)
+                print("업로드 성공:", url)
                 uploadedURLs.append(url)
+            } catch {
+                print("업로드 실패:", error.localizedDescription)
             }
         }
         

@@ -10,18 +10,18 @@ import SwiftUI
 
 /// 서버 또는 로컬 이미지 정보를 나타내는 일기 이미지 열거형
 enum DiaryImage: Identifiable, Equatable, Hashable {
-    case local(Image, id: UUID = UUID())
+    case local(Image, original: UIImage, id: UUID = UUID())
     case server(String)
-    
+
     var id: String {
         switch self {
-        case .local(_, let id):
+        case .local(_, _, let id):
             return id.uuidString
         case .server(let urlString):
             return urlString
         }
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -29,13 +29,11 @@ enum DiaryImage: Identifiable, Equatable, Hashable {
     static func == (lhs: DiaryImage, rhs: DiaryImage) -> Bool {
         lhs.id == rhs.id
     }
-}
 
-extension DiaryImage {
     func asUIImage() -> UIImage? {
         switch self {
-        case .local(let image, _):
-            return image.asUIImage()
+        case .local(_, let original, _):
+            return original
         case .server:
             return nil
         }

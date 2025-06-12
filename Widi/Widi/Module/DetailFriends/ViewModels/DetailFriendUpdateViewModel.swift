@@ -37,4 +37,8 @@ class DetailFriendUpdateViewModel {
             print("친구 정보 수정 실패: \(error.localizedDescription)")
         }
     }
+    
+    func returnOutsize() -> FriendResponse {
+        return .init(documentId: friendResponse.documentId, friendId: friendResponse.friendId, name: nameText, birthDay: birthdayText, experienceDTO: friendResponse.experienceDTO)
+    }
 }

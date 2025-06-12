@@ -9,24 +9,33 @@ import SwiftUI
 
 struct CharacterFloatingScene: View {
     @State private var allCharacters: [CharacterState] = []
-    
+    @State private var isLoaded = false
     let friends: [FriendResponse]
     
     var body: some View {
-        ForEach(friends, id: \..id) { friend in
-            FloatingCharacterView(
-                friend: friend,
-                screenSize: getScreenSize(),
-                allCharacters: $allCharacters
-            )
+        Group {
+            if isLoaded {
+                ForEach(friends, id: \.documentId) { friend in
+                    FloatingCharacterView(
+                        friend: friend,
+                        screenSize: getScreenSize(),
+                        allCharacters: $allCharacters
+                    )
+                }
+            } else {
+                ProgressView("캐릭터를 불러오는 중...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                    .scaleEffect(1.5)
+            }
         }
-        .frame(width: getScreenSize().width, height: getScreenSize().height)
         .task {
             let screenWidth = getScreenSize().width
             let screenHeight = getScreenSize().height
-            
+
             var usedPositions: [CGPoint] = []
-            allCharacters = friends.map { friend in
+
+            let initializedCharacters = friends.map { friend -> CharacterState in
                 var position: CGPoint
                 repeat {
                     position = CGPoint(
@@ -34,9 +43,9 @@ struct CharacterFloatingScene: View {
                         y: CGFloat.random(in: 150...(screenHeight - 150))
                     )
                 } while usedPositions.contains(where: { $0.distance(to: position) < 100 })
-                
+
                 usedPositions.append(position)
-                
+
                 return CharacterState(
                     id: friend.documentId,
                     position: position,
@@ -46,6 +55,9 @@ struct CharacterFloatingScene: View {
                     )
                 )
             }
+
+            allCharacters = initializedCharacters
+            isLoaded = true
         }
     }
 }

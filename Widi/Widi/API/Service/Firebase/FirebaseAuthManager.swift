@@ -59,7 +59,6 @@ class FirebaseAuthManager {
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(user.uid)
         
-        // givenName만 저장
         let name = fullName?.givenName ?? "사용자"
         
         let data: [String: Any] = [

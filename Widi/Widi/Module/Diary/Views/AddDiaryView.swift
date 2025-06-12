@@ -32,7 +32,6 @@ struct AddDiaryView: View {
         ZStack {
             Color.clear
                 .writeDiaryViewBG()
-                .ignoresSafeArea(.keyboard, edges: .bottom)
             
             DiaryContainerView(header: {
                 topController
@@ -50,12 +49,15 @@ struct AddDiaryView: View {
                 bottomContents
             })
         }
-        .loadingOverlay(isLoading: viewModel.isLoading, loadingType: .diary)
         
         .overlay(alignment: .bottom, content: {
             DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
                 .safeAreaPadding(.horizontal, 16)
+                .zIndex(1)
         })
+        
+        .loadingOverlay(isLoading: viewModel.isLoading, loadingType: .diary)
+        .loadingOverlay(isLoading: viewModel.isLoadingFriend, loadingType: .diary)
         
         .overlay(content: {
             if viewModel.checkBackView {
@@ -98,17 +100,18 @@ struct AddDiaryView: View {
             maxSelectionCount: 5,
             matching: .images).tint(.orange30)
         
-        .onChange(of: viewModel.photoImages, { oldValue, newValue in
+            .onChange(of: viewModel.photoImages, { oldValue, newValue in
                 Task {
                     await viewModel.convertSelectedPhotosToUIImage()
                 }
             })
         
-        .task {
+            .task {
                 viewModel.dateString = ConvertDataFormat.shared.simpleDateString(from: .now)
+                UIApplication.shared.hideKeyboard()
             }
         
-        .navigationBarBackButtonHidden(true)
+            .navigationBarBackButtonHidden(true)
     }
     
     /// 상단 네비게이션 컨트롤러
@@ -131,9 +134,11 @@ struct AddDiaryView: View {
                     Task {
                         if firstMode == true {
                             await viewModel.addFriends()
+                            container.navigationRouter.popToRooteView()
                         } else {
                             if let friendId = friendId {
                                 await viewModel.addDiary(targetFriendId: friendId)
+                                container.navigationRouter.pop()
                             }
                         }
                     }
@@ -157,12 +162,14 @@ struct AddDiaryView: View {
                     TextField("제목", text: $viewModel.diaryTitle, prompt: title())
                         .font(.h2)
                         .foregroundStyle(Color.gray80)
+                        .submitLabel(.done)
                     
                     
                     TextField(contentsPlaceholder, text: $viewModel.diaryContents, prompt: subtitle(), axis: .vertical)
                         .font(.b1)
                         .foregroundStyle(Color.gray80)
                         .lineSpacing(1.6)
+                        .submitLabel(.done)
                 })
             }
             .safeAreaPadding(.horizontal, 16)

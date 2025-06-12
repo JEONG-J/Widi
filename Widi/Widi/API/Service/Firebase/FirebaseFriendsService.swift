@@ -15,68 +15,68 @@ class FirebaseFriendsService {
     /// - Parameter userId: userId 값 기반으로 조회
     /// - Returns: 친구 데이터 조회
     func fetchFriends(for userId: String) async throws -> [FriendResponse] {
-            let db = Firestore.firestore()
-
-            do {
-                let friendsSnapshot = try await db.collection("friends")
+        let db = Firestore.firestore()
+        
+        do {
+            let friendsSnapshot = try await db.collection("friends")
+                .whereField("userId", isEqualTo: userId)
+                .getDocuments()
+            
+            var results: [FriendResponse] = []
+            
+            for doc in friendsSnapshot.documents {
+                let data = doc.data()
+                guard
+                    let name = data["name"] as? String,
+                    let friendId = data["friendId"] as? String
+                else { continue }
+                
+                let birthday = data["birthday"] as? String
+                
+                let expSnapshot = try await db.collection("experiences")
                     .whereField("userId", isEqualTo: userId)
+                    .whereField("friendId", isEqualTo: friendId)
                     .getDocuments()
-
-                var results: [FriendResponse] = []
-
-                for doc in friendsSnapshot.documents {
-                    let data = doc.data()
-                    guard
-                        let name = data["name"] as? String,
-                        let friendId = data["friendId"] as? String
-                    else { continue }
-
-                    let birthday = data["birthday"] as? String
-
-                    let expSnapshot = try await db.collection("experiences")
-                        .whereField("userId", isEqualTo: userId)
-                        .whereField("friendId", isEqualTo: friendId)
-                        .getDocuments()
-
-                    guard let expDoc = expSnapshot.documents.first else { continue }
-                    let expData = expDoc.data()
-                    let exp = expData["exp"] as? Int ?? 0
-
-                    let characterData = expData["characterInfo"] as? [String: Any]
-                    let character = CharacterDTO(
-                        imageURL: characterData?["imageURL"] as? String ?? "",
-                        x: characterData?["x"] as? Int ?? 0,
-                        y: characterData?["y"] as? Int ?? 0
+                
+                guard let expDoc = expSnapshot.documents.first else { continue }
+                let expData = expDoc.data()
+                let exp = expData["exp"] as? Int ?? 0
+                
+                let characterData = expData["characterInfo"] as? [String: Any]
+                let character = CharacterDTO(
+                    imageURL: characterData?["imageURL"] as? String ?? "",
+                    x: characterData?["x"] as? Int ?? 0,
+                    y: characterData?["y"] as? Int ?? 0
+                )
+                
+                let friend = FriendResponse(
+                    documentId: doc.documentID,
+                    friendId: friendId,
+                    name: name,
+                    birthDay: birthday,
+                    experienceDTO: .init(
+                        experiencePoint: exp,
+                        characterInfo: character
                     )
-
-                    let friend = FriendResponse(
-                        documentId: doc.documentID,
-                        friendId: friendId,
-                        name: name,
-                        birthDay: birthday,
-                        experienceDTO: .init(
-                            experiencePoint: exp,
-                            characterInfo: character
-                        )
-                    )
-                    results.append(friend)
-                }
-
-                return results
-
-            } catch let error as NSError {
-                switch error.code {
-                case NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut:
-                    throw FirebaseServiceError.networkFailure
-                case FirestoreErrorCode.permissionDenied.rawValue:
-                    throw FirebaseServiceError.permissionDenied
-                default:
-                    throw FirebaseServiceError.custom(message: error.localizedDescription)
-                }
-            } catch {
-                throw FirebaseServiceError.unknownError
+                )
+                results.append(friend)
             }
+            
+            return results
+            
+        } catch let error as NSError {
+            switch error.code {
+            case NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut:
+                throw FirebaseServiceError.networkFailure
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FirebaseServiceError.permissionDenied
+            default:
+                throw FirebaseServiceError.custom(message: error.localizedDescription)
+            }
+        } catch {
+            throw FirebaseServiceError.unknownError
         }
+    }
     
     
     /// 친구 삭제
@@ -143,8 +143,8 @@ class FirebaseFriendsService {
         // 랜덤 캐릭터 위치
         let character = CharacterDTO(
             imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelZero.png?alt=media&token=0ded3e91-a7ec-4354-885b-020d5c77ba97",
-            x: Int.random(in: 0...100),
-            y: Int.random(in: 0...100)
+            x: Int(CGFloat.random(in: 50...393)),
+            y: Int(CGFloat.random(in: 100...852))
         )
         
         // 친구 필드

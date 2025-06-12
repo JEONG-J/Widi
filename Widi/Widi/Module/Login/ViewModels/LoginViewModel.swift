@@ -21,6 +21,8 @@ class LoginViewModel {
     let container: DIContainer
     let appFlowViewModel: AppFlowViewModel
     
+    let firebaseManager: FirebaseAuthManager = .init()
+    
     
     init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
         self.container = container
@@ -38,18 +40,19 @@ class LoginViewModel {
                 case .success(let credential):
                     Task {
                         do {
-                            if let user = try await self?.container.firebaseService.auth.signInWithAppleCredential(credential) {
-                                try await self?.container.firebaseService.auth.saveInitialUserData(
+                            if let user = try await self?.firebaseManager.signInWithAppleCredential(credential) {
+                                try await self?.firebaseManager.saveInitialUserData(
                                     user: user,
                                     fullName: credential.fullName
                                 )
                                 self?.saveKeychain(user: user)
+                                print()
                                 self?.appFlowViewModel.appState = .home
                             }
                         } catch let error as FirebaseServiceError {
-                            print("Firestore 오류: \(error.localizedDescription)")
+                            print("로그인 Firestore 오류: \(error.localizedDescription)")
                         } catch {
-                            print("일반 오류: \(error.localizedDescription)")
+                            print("로그인 일반 오류: \(error.localizedDescription)")
                         }
                     }
                 case .failure(let error):

@@ -94,8 +94,9 @@ struct DetailImageView: View {
     @ViewBuilder
     private func imageView(for image: DiaryImage) -> some View {
         switch image {
-        case .local(let image, _):
-            image.resizable()
+        case .local(let image, _, _):
+            image
+                .resizable()
         case .server(let urlString):
             KFImage(URL(string: urlString))
                 .placeholder {

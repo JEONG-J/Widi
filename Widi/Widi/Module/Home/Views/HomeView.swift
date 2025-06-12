@@ -115,7 +115,7 @@ struct HomeView: View {
                         .transition(.opacity)
                         .animation(.easeInOut, value: shouldHideOverlay)
                         .safeAreaPadding(.horizontal, 16)
-                        .offset(y: 59)
+                        .offset(y: 25)
                 }
             })
         }

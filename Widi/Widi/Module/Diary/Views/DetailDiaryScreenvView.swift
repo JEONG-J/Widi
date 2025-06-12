@@ -52,6 +52,7 @@ struct DetailDiaryScreenvView: View {
             if viewModel.diaryMode == .edit {
                 DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
                     .safeAreaPadding(.horizontal, 16)
+                    .zIndex(1)
             }
         })
         
@@ -90,8 +91,13 @@ struct DetailDiaryScreenvView: View {
             DetailImageView(images: $viewModel.diaryImages,
                             selectedImage: $viewModel.selectedImage,
                             onDeleteServerImage: { url in
+                Task {
+                    await viewModel.deleteServerImage(url: url)
+                    viewModel.selectedImage = nil
+                }
             }, onDeleteLocalImage: { index in
                 viewModel.photoImages.remove(at: index)
+                viewModel.selectedImage = nil
             })
         })
         

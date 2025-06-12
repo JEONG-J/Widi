@@ -37,10 +37,13 @@ final class DetailFriendsViewModel {
     /// - Parameter friend: 친구 정보 입력
     @MainActor
     func deleteFriend() async {
+        isLoading = true
         do {
             try await container.firebaseService.friends.deleteFriend(documentId: self.friendResponse.documentId)
+            isLoading = false
         } catch {
             print("친구 삭제 실패: \(error.localizedDescription)")
+            isLoading = false
         }
     }
     
