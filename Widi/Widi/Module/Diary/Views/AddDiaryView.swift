@@ -132,6 +132,7 @@ struct AddDiaryView: View {
                 switch icon {
                 case .complete(type: .complete, isEmphasized: viewModel.diaryIsEmphasized):
                     Task {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                         if firstMode == true {
                             await viewModel.addFriends()
                             container.navigationRouter.popToRooteView()
