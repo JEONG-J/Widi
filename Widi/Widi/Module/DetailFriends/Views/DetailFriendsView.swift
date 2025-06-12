@@ -65,14 +65,9 @@ struct DetailFriendsView: View {
         .sheet(isPresented: $viewModel.showFriendEdit, content: {
             DetailFriendUpdateView(container: container,
                                    showFriendEdit: $viewModel.showFriendEdit,
-                                   friendResponse: viewModel.friendResponse,
-                                   onUpdate: { friend in
-                viewModel.friendResponse.name = friend.name
-                viewModel.friendResponse.birthDay = friend.birthDay ?? ""
-                print("친구 수정 데이터: \(friend)")
-            }
-            )
+                                   friendResponse: viewModel.friendResponse)
         })
+        
         .overlay(content: {
             if viewModel.showDiaryDeleteAlert {
                 CustomAlertView(content: {
@@ -91,6 +86,8 @@ struct DetailFriendsView: View {
             }
         })
         .task {
+            print(viewModel.friendResponse.documentId)
+            await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
             await viewModel.fetchDiaries(for: viewModel.friendResponse)
         }
     }

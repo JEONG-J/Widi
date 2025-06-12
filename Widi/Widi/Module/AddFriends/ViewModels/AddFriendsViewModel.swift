@@ -27,7 +27,7 @@ class AddFriendsViewModel {
     
     // MARK: - Func
     private func createFriendRequest() -> FriendRequest {
-        return FriendRequest(name: friendsName, birthDay: friendsBirthDay)
+        return FriendRequest(name: friendsName, birthday: friendsBirthDay)
     }
     
     public func navigationPush() {

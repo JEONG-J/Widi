@@ -21,7 +21,7 @@ class DetailFriendUpdateViewModel {
     init(container: DIContainer, friendResponse: FriendResponse) {
         self.container = container
         self.nameText = friendResponse.name
-        self.birthdayText = friendResponse.birthDay ?? ""
+        self.birthdayText = friendResponse.birthday ?? ""
         self.friendResponse = friendResponse
     }
     
@@ -39,6 +39,6 @@ class DetailFriendUpdateViewModel {
     }
     
     func returnOutsize() -> FriendResponse {
-        return .init(documentId: friendResponse.documentId, friendId: friendResponse.friendId, name: nameText, birthDay: birthdayText, experienceDTO: friendResponse.experienceDTO)
+        return .init(documentId: friendResponse.documentId, friendId: friendResponse.friendId, name: nameText, birthday: birthdayText, experienceDTO: friendResponse.experienceDTO)
     }
 }

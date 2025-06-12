@@ -18,7 +18,9 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     var isShowDeleteDiaryAlert: Bool = false
     var isShowCalendar: Bool = false
     var isShowImagePicker: Bool = false
+    
     var isEditLoading: Bool = false
+    var isDeleteLoading: Bool = false
     
     // MARK: - Property
     var diary: DiaryResponse? {
@@ -58,14 +60,14 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     /// 일기 삭제
     
     func deleteDiary() async {
-        self.isEditLoading = true
+        self.isDeleteLoading = true
         if let diary = diary {
             do {
                 try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
-                isEditLoading = false
+                isDeleteLoading = false
             } catch {
                 print("일기 삭제 실패: \(error.localizedDescription)")
-                isEditLoading = false
+                isDeleteLoading = false
             }
         }
     }

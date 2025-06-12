@@ -124,9 +124,9 @@ class FirebaseDiaryService {
         
         // Firestore 배열에서 제거
         let snapshot = try await ref.getDocument()
-        guard var pictures = snapshot.data()?["photos"] as? [String] else { return }
+        guard var pictures = snapshot.data()?["pictures"] as? [String] else { return }
         pictures.removeAll(where: { $0 == imageUrl })
-        try await ref.updateData(["photos": pictures])
+        try await ref.updateData(["pictures": pictures])
         
         // Storage 삭제
         let storageRef = Storage.storage().reference(forURL: imageUrl)

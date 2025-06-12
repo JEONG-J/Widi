@@ -48,7 +48,7 @@ final class DetailFriendsViewModel {
     }
     
     func returnFriendInfo() -> FriendRequest {
-        return .init(name: friendResponse.name, birthDay: friendResponse.birthDay)
+        return .init(name: friendResponse.name, birthday: friendResponse.birthday)
     }
     
     // MARK: - API
@@ -64,23 +64,29 @@ final class DetailFriendsViewModel {
     
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
-        isLoading = true
         
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
-            isLoading = false
             return
         }
-
+        
         do {
             let list = try await container.firebaseService.diary.fetchDiaries(
                 for: userId,
                 friendId: friend.friendId
             )
             self.diaries = list
-            isLoading = false
         } catch {
             print("일기 조회 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    func loadFriend(documentId: String) async {
+        do {
+            let friend = try await container.firebaseService.friends.fetchFriend(documentId: documentId)
+            self.friendResponse = friend
+        } catch {
+            print("친구 정보 로드 실패: \(error.localizedDescription)")
         }
     }
 }

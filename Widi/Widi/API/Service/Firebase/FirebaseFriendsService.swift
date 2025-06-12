@@ -53,7 +53,7 @@ class FirebaseFriendsService {
                     documentId: doc.documentID,
                     friendId: friendId,
                     name: name,
-                    birthDay: birthday,
+                    birthday: birthday,
                     experienceDTO: .init(
                         experiencePoint: exp,
                         characterInfo: character
@@ -155,7 +155,7 @@ class FirebaseFriendsService {
             "createdAt": FieldValue.serverTimestamp()
         ]
         
-        if let birthday = request.birthDay {
+        if let birthday = request.birthday {
             friendData["birthday"] = birthday
         }
         
@@ -178,6 +178,71 @@ class FirebaseFriendsService {
             return generatedFriendId
         } catch {
             throw FirebaseServiceError.custom(message: error.localizedDescription)
+        }
+    }
+    
+    func fetchFriend(documentId: String) async throws -> FriendResponse {
+        let db = Firestore.firestore()
+        
+        do {
+            let snapshot = try await db.collection("friends").document(documentId).getDocument()
+            
+            guard snapshot.exists, let data = snapshot.data() else {
+                throw FirebaseServiceError.custom(message: "해당 친구 문서를 찾을 수 없습니다.")
+            }
+
+            guard
+                let name = data["name"] as? String,
+                let friendId = data["friendId"] as? String,
+                let userId = data["userId"] as? String
+            else {
+                throw FirebaseServiceError.custom(message: "친구 데이터가 올바르지 않습니다.")
+            }
+
+            let birthday = data["birthday"] as? String
+            
+            // 경험치 및 캐릭터 정보 가져오기
+            let expSnapshot = try await db.collection("experiences")
+                .whereField("userId", isEqualTo: userId)
+                .whereField("friendId", isEqualTo: friendId)
+                .getDocuments()
+            
+            guard let expDoc = expSnapshot.documents.first else {
+                throw FirebaseServiceError.custom(message: "해당 친구의 경험치 데이터가 없습니다.")
+            }
+
+            let expData = expDoc.data()
+            let exp = expData["exp"] as? Int ?? 0
+            
+            let characterData = expData["characterInfo"] as? [String: Any]
+            let character = CharacterDTO(
+                imageURL: characterData?["imageURL"] as? String ?? "",
+                x: characterData?["x"] as? Int ?? 0,
+                y: characterData?["y"] as? Int ?? 0
+            )
+            
+            return FriendResponse(
+                documentId: snapshot.documentID,
+                friendId: friendId,
+                name: name,
+                birthday: birthday,
+                experienceDTO: .init(
+                    experiencePoint: exp,
+                    characterInfo: character
+                )
+            )
+            
+        } catch let error as NSError {
+            switch error.code {
+            case NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut:
+                throw FirebaseServiceError.networkFailure
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FirebaseServiceError.permissionDenied
+            default:
+                throw FirebaseServiceError.custom(message: error.localizedDescription)
+            }
+        } catch {
+            throw FirebaseServiceError.unknownError
         }
     }
 }

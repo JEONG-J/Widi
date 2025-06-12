@@ -39,9 +39,10 @@ struct DetailImageView: View {
                 currentIndex = index
             }
         }
-        .onChange(of: currentIndex, { old, new in
+        .onChange(of: currentIndex) { old, new in
+            guard selectedImage != nil else { return }
             selectedImage = images[new]
-        })
+        }
     }
     
     /// 상단 네비게이션
@@ -108,18 +109,22 @@ struct DetailImageView: View {
     
     private func onDeleteAction() {
         guard let selected = selectedImage else { return }
-
+        
+        // 먼저 selectedImage nil로
+        selectedImage = nil
+        
         if case let .server(urlString) = selected {
             onDeleteServerImage(urlString)
         }
-
+        
         if let index = images.firstIndex(of: selected) {
             if case .local = selected {
                 onDeleteLocalImage(index)
             }
-
+            
             images.remove(at: index)
-
+            
+            // currentIndex 갱신은 유지
             if currentIndex >= images.count {
                 currentIndex = max(0, images.count - 1)
             }

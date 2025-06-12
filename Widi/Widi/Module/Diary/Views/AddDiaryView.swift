@@ -207,8 +207,3 @@ extension AddDiaryView {
     var titlePlaceholder: String { "제목" }
     var contentsPlaceholder: String { "친구와의 기억을 적어주세요" }
 }
-
-#Preview {
-    AddDiaryView(friendsRequest: .init(name: "하하", birthDay: "199"), container: DIContainer())
-        .environmentObject(DIContainer())
-}

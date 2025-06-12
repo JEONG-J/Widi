@@ -47,6 +47,7 @@ struct DetailDiaryScreenvView: View {
             }
         }
         .loadingOverlay(isLoading: viewModel.isEditLoading, loadingType: .editDiary)
+        .loadingOverlay(isLoading: viewModel.isDeleteLoading, loadingType: .diaryDelete)
         
         .overlay(alignment: .bottom, content: {
             if viewModel.diaryMode == .edit {
@@ -66,8 +67,8 @@ struct DetailDiaryScreenvView: View {
                         },
                         onRight: {
                             Task {
-                                await viewModel.deleteDiary()
                                 viewModel.isShowDeleteDiaryAlert = false
+                                await viewModel.deleteDiary()
                                 container.navigationRouter.pop()
                             }
                         }
@@ -96,8 +97,8 @@ struct DetailDiaryScreenvView: View {
                     viewModel.selectedImage = nil
                 }
             }, onDeleteLocalImage: { index in
-                viewModel.photoImages.remove(at: index)
                 viewModel.selectedImage = nil
+                viewModel.photoImages.remove(at: index)
             })
         })
         
