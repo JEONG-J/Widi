@@ -73,11 +73,10 @@ struct DetailFriendsView: View {
                     viewModel.showDiaryDeleteAlert.toggle()
                 }, onRight: {
                     Task {
-                        if let diary = viewModel.targetDiary {
-                            await viewModel.deleteDiary(diary)
-                            diariesOffsets[diary.id] = nil
-                            viewModel.showDiaryDeleteAlert.toggle()
-                        }
+                        guard let diary = viewModel.targetDiary else { return }
+                        await viewModel.deleteDiary(diary)
+                        diariesOffsets[diary.id] = nil
+                        viewModel.showDiaryDeleteAlert.toggle()
                     }
                 })
             }

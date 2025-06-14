@@ -60,7 +60,6 @@ class SearchDiaryViewModel {
         do {
             let result = try await container.firebaseService.diary.searchDiaries(keyword: keyword, userId: uid)
             self.diaries = result
-            print("검색 결과", result)
         } catch {
             print("검색 실패: \(error.localizedDescription)")
             self.diaries = []

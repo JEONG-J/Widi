@@ -71,4 +71,8 @@ enum NavigationIcon: Hashable {
     var backgroundColor: Color {
         return Color.whiteBlack
     }
+    
+    var paddingValue: CGFloat {
+        return 8
+    }
 }
