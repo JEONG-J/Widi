@@ -26,6 +26,7 @@ struct WidiApp: App {
             case .home:
                 HomeView(container: container)
                     .environmentObject(container)
+                    .environmentObject(appFlowViewModel)
             }
         }
     }

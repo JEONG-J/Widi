@@ -32,3 +32,10 @@ struct DiaryImageScrollView: View {
         .contentMargins(.bottom, 8)
     }
 }
+
+#Preview {
+    DiaryImageScrollView(images: [
+        .server("https://i.namu.wiki/i/A5TusY_zlof64PzVQDhxI57klv7a3bS5BSaKQ4uuuUYXxE_Jlich7fladJ9IfGwdIdGfu6CgLwDNIXa9MBrFEzMAGYmlzi36RQEeS-kAgpGAixJplNgNWr_j-MMn_0-OATgGTQUjbX8tiQi13ze5ZQ.webp"),
+        .server("https://i.namu.wiki/i/AY0dcJwDyaiUcP2mjo0oRJludww2a9vRnZOXoAfJXF6_d8dinmbbwop4Wjdk7fR12mPKEfQWfQ0vqbqgoHbZmEDDdVaty7HJ3-4-LYlWhAOVBaG6v1gLvuIlbW15tVF4SAXnCvVeZXwYsw88JiRmfw.webp")
+    ], mode: .read, onDelete: {_ in }, onSelect: {_ in})
+}

@@ -70,14 +70,19 @@ struct SelectedImagePreview: View {
                     .placeholder {
                         ProgressView()
                             .controlSize(.regular)
+                            .tint(Color.orange30)
                     }
                     .retry(maxCount: 2, interval: .seconds(2))
                     .cacheMemoryOnly()
                     .resizable()
             }
         }
-        .aspectRatio(1, contentMode: .fill)
+        .aspectRatio(1, contentMode: .fit)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
+}
+
+#Preview {
+    SelectedImagePreview(diaryImage: .server("https://i.namu.wiki/i/A5TusY_zlof64PzVQDhxI57klv7a3bS5BSaKQ4uuuUYXxE_Jlich7fladJ9IfGwdIdGfu6CgLwDNIXa9MBrFEzMAGYmlzi36RQEeS-kAgpGAixJplNgNWr_j-MMn_0-OATgGTQUjbX8tiQi13ze5ZQ.webp"), onDelete: {}, showDeleteButton: false, onSelect: {_ in })
 }

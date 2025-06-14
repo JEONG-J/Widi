@@ -14,9 +14,10 @@ struct MyPageView: View {
     
     @Bindable var viewModel: MyPageViewModel
     @EnvironmentObject var contaier: DIContainer
+    @EnvironmentObject var appFlowViewModel: AppFlowViewModel
     
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
+        self.viewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
     }
     
     // MARK: - Body
@@ -53,17 +54,35 @@ struct MyPageView: View {
         .navigationBarBackButtonHidden(true)
         
         .overlay {
-            if viewModel.checkBackView {
+            if viewModel.isShowLogoutAlert {
                 CustomAlertView {
                     CustomAlert(
-                        alertButtonType: viewModel.alertButtonType,
+                        alertButtonType: .logoutUser,
                         onCancel: {
-                            viewModel.checkBackView.toggle()
+                            viewModel.isShowLogoutAlert.toggle()
                         },
                         onRight: {
-                            viewModel.checkBackView.toggle()
+                            Task {
+                                await viewModel.logOutAction()
+                            }
                         })
                 }
+            }
+        }
+        .overlay {
+            if viewModel.isShowDrawAlert {
+                CustomAlertView(content: {
+                    CustomAlert(alertButtonType: .withdrawUser,
+                                onCancel: {
+                        viewModel.isShowDrawAlert.toggle()
+                    },
+                                onRight: {
+                        Task {
+                            await viewModel.deleteAccountAction()
+                            self.viewModel.isShowDrawAlert.toggle()
+                        }
+                    })
+                })
             }
         }
         
@@ -141,8 +160,7 @@ struct MyPageView: View {
     private var logOutButton: some View {
         Button {
             withAnimation(.easeInOut) {
-                viewModel.checkBackView = true
-                viewModel.alertButtonType = .logoutUser
+                viewModel.isShowLogoutAlert.toggle()
             }
         } label: {
             ZStack {
@@ -161,8 +179,7 @@ struct MyPageView: View {
     private var deleteAccountButton: some View {
         Button {
             withAnimation(.easeInOut) {
-                viewModel.checkBackView = true
-                viewModel.alertButtonType = .withdrawUser
+                viewModel.isShowDrawAlert.toggle()
             }
         } label: {
             Text(deleteAccountText)

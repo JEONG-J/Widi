@@ -16,6 +16,7 @@ final class DetailFriendsViewModel {
     var showFriendDeleteAlert: Bool = false
     var showDiaryDeleteAlert: Bool = false
     
+    var deleteLoading: Bool = false
     var isLoading: Bool = false
     
     // MARK: - Property
@@ -37,13 +38,13 @@ final class DetailFriendsViewModel {
     /// - Parameter friend: 친구 정보 입력
     @MainActor
     func deleteFriend() async {
-        isLoading = true
+        deleteLoading = true
         do {
             try await container.firebaseService.friends.deleteFriend(documentId: self.friendResponse.documentId)
-            isLoading = false
+            deleteLoading = false
         } catch {
             print("친구 삭제 실패: \(error.localizedDescription)")
-            isLoading = false
+            deleteLoading = false
         }
     }
     
@@ -64,9 +65,10 @@ final class DetailFriendsViewModel {
     
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
-        
+        isLoading = true
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
+            isLoading = false
             return
         }
         
@@ -76,8 +78,10 @@ final class DetailFriendsViewModel {
                 friendId: friend.friendId
             )
             self.diaries = list
+            isLoading = false
         } catch {
             print("일기 조회 실패: \(error.localizedDescription)")
+            isLoading = false
         }
     }
     

@@ -69,7 +69,6 @@ class FirebaseAuthManager {
         
         do {
             try await userRef.setData(data, merge: true)
-            print("사용자 정보 Firestore에 저장 완료")
         } catch let error as NSError {
             switch error.code {
             case FirestoreErrorCode.permissionDenied.rawValue:
@@ -83,6 +82,25 @@ class FirebaseAuthManager {
             }
         } catch {
             throw FirebaseServiceError.unknownError
+        }
+    }
+    
+    func deleteAccount() async {
+        guard let user = Auth.auth().currentUser else {
+            print("❌ 현재 로그인된 사용자가 없습니다.")
+            return
+        }
+
+        do {
+            let uid = user.uid
+            let db = Firestore.firestore()
+            try await db.collection("friends").document(uid).delete()
+            try await user.delete()
+        }KeychainManager.standard.deleteSession(for: "widiApp")
+            print("탈퇴 완료, 앱 초기화 필요")
+
+        } catch {
+            print("탈퇴 실패: \(error.localizedDescription)")
         }
     }
 }

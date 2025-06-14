@@ -11,6 +11,7 @@ import SwiftUI
 struct NavigationRoutingView: View {
     
     @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var appFlowViewModel: AppFlowViewModel
     @State var destination: NavigationDestination
     
     var body: some View {
@@ -27,7 +28,8 @@ struct NavigationRoutingView: View {
             case .searchDiary(let friendResponse):
                 SearchDiaryView(container: container, friendResponse: friendResponse)
             case .myPage:
-                MyPageView(container: container)
+                MyPageView(container: container, appFlowViewModel: appFlowViewModel)
+                    .environmentObject(appFlowViewModel)
             }
         }
         .environmentObject(container)

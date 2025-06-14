@@ -142,7 +142,7 @@ class FirebaseFriendsService {
         
         // 랜덤 캐릭터 위치
         let character = CharacterDTO(
-            imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelZero.png?alt=media&token=0ded3e91-a7ec-4354-885b-020d5c77ba97",
+            imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelZero.png?alt=media&token=7fbd4597-5ce2-4e9d-b6ff-036cbae76a8b",
             x: Int(CGFloat.random(in: 50...393)),
             y: Int(CGFloat.random(in: 100...852))
         )

@@ -86,7 +86,8 @@ struct DiaryPreviewCard: View {
                     Image(.image)
                         .resizable()
                         .foregroundStyle(.white)
-                        .frame(width: 20, height: 20)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 30, height: 30)
                         .padding(.trailing, 2)
                         .padding(.top, 4)
                 }

@@ -268,7 +268,7 @@ class FirebaseDiaryService {
         // 레벨 조건에 따라 캐릭터 이미지 갱신
         switch newExp {
         case 2:
-            newImageURL = "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelOne.png?alt=media&token=c5b7ed5b-0fb3-47a0-b0e2-12c38009a2b5"
+            newImageURL = "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelOne.png?alt=media&token=348a327c-77ba-4af9-9e31-4d35000c7781"
         case 4:
             let level4Images = [
                 "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelFourA.png?alt=media&token=28d478e1-a07b-49be-a3fd-09b09eba7ffa",

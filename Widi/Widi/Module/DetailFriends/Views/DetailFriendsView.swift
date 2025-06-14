@@ -44,7 +44,7 @@ struct DetailFriendsView: View {
             addButton
             dropDownOverlay
         }
-        .loadingOverlay(isLoading: viewModel.isLoading, loadingType: .delete)
+        .loadingOverlay(isLoading: viewModel.deleteLoading, loadingType: .delete)
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
         .overlay(content: {
@@ -190,39 +190,26 @@ fileprivate extension DetailFriendsView {
     /// - Returns: 아이템 갯수 상관없이 바닥까지 높이가지는 일기 세션 반환
     func diarySection(topSafeArea: CGFloat) -> some View {
         VStack {
-            LazyVStack(
-                alignment: .leading,
-                spacing: 0,
-                pinnedViews: [.sectionHeaders]
-            ) {
-                Section {
-                    if !viewModel.isLoading {
+            if !viewModel.isLoading {
+                LazyVStack(
+                    alignment: .leading,
+                    spacing: 0,
+                    pinnedViews: [.sectionHeaders]
+                ) {
+                    Section {
                         diaryList
-                    } else {
-                        
-                        Spacer()
-                        
-                        HStack {
-                            Spacer()
-                            
-                            ProgressView()
-                                .tint(Color.orange30)
-                            
-                            Spacer()
-                        }
-                        
-                        Spacer()
-                        
+                    } header: {
+                        pinnedHeaderView()
+                            .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
+                            .modifier(OffsetModifier(offset: $headerOffsets.1))
                     }
-                } header: {
-                    pinnedHeaderView()
-                        .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
-                        .modifier(OffsetModifier(offset: $headerOffsets.1))
                 }
+                
+                Spacer()
+                    .frame(minHeight: 120)
+            } else {
+                progressView
             }
-            
-            Spacer()
-                .frame(minHeight: 120)
         }
         .frame(minHeight: getScreenSize().height )
         .background(Color.whiteBlack.opacity(0.8))
@@ -278,6 +265,23 @@ fileprivate extension DetailFriendsView {
                 .offset(y: -48)
             }
         }
+    }
+    
+    @ViewBuilder
+    private var progressView: some View {
+        Spacer().frame(height: 200)
+        
+        HStack {
+            Spacer()
+            
+            ProgressView()
+                .controlSize(.large)
+                .tint(Color.orange30)
+            
+            Spacer()
+        }
+        
+        Spacer()
     }
 }
 

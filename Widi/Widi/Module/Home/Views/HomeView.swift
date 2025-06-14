@@ -15,6 +15,7 @@ struct HomeView: View {
     @State private var lastOffset: CGFloat = .zero
     @GestureState private var dragOffset: CGFloat = .zero
     @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var appFlowViewModel: AppFlowViewModel
     @Bindable var viewModel: HomeViewModel
     
     init(container: DIContainer) {
@@ -92,6 +93,7 @@ struct HomeView: View {
             .navigationDestination(for: NavigationDestination.self) { destination in
                 NavigationRoutingView(destination: destination)
                     .environmentObject(container)
+                    .environmentObject(appFlowViewModel)
             }
             .overlay(alignment: .topTrailing, content: {
                 if !shouldHideOverlay {

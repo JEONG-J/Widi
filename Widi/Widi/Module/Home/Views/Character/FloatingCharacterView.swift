@@ -132,22 +132,6 @@ struct FloatingCharacterView: View {
         
         current.position = CGPoint(x: newX, y: newY)
         
-//        // 충돌 감지 및 튕기기 처리
-//        for other in allCharacters where other.id != current.id {
-//            let distance = current.position.distance(to: other.position)
-//            if distance < 100 {
-//                let angle = atan2(current.position.y - other.position.y,
-//                                  current.position.x - other.position.x)
-//                
-//                // 새로운 방향을 각도 기준으로 반사
-//                current.direction = CGVector(
-//                    dx: cos(angle) * 1.5,
-//                    dy: sin(angle) * 1.5
-//                )
-//                break
-//            }
-//        }
-        
         // 상태 업데이트
         allCharacters[index] = current
         position = current.position

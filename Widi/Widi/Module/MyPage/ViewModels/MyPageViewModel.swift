@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 /// 마이페이지 뷰모델
 @Observable
@@ -23,15 +24,15 @@ class MyPageViewModel {
     }
     /// 문의하기 모달 띄우기
     var isModalPresented: Bool = false
-    
-    var checkBackView: Bool = false
-    
-    var alertButtonType: AlertButtonType = .logoutUser
+    var isShowLogoutAlert: Bool = false
+    var isShowDrawAlert: Bool = false
     
     private var container: DIContainer
+    private var appFlowViewModel: AppFlowViewModel
     
-    init(container: DIContainer) {
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
         self.container = container
+        self.appFlowViewModel = appFlowViewModel
     }
     
     // MARK: - Function
@@ -39,18 +40,24 @@ class MyPageViewModel {
     func toggleOnOff(oldValue: Bool, newValue: Bool) {
         toggleOption.toggle.toggle()
         
-        /* FireBase 연결 */
+        
     }
     
-//    /// 로그아웃 버튼 함수
-//    func logOutAction () {
-//        
-//    }
-//    
-//    /// 탈퇴하기 버튼 함수
-//    func deleteAccountAction () {
-//        
-//        
-//    }
+    /// 로그아웃 버튼 함수
+    func logOutAction () async {
+        do {
+            try Auth.auth().signOut()
+            self.isShowLogoutAlert = false
+            KeychainManager.standard.deleteSession(for: "widiApp")
+            appFlowViewModel.appState = .login
+        } catch {
+            print("로그아웃 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    /// 탈퇴하기 버튼 함수
+    func deleteAccountAction() async {
+        await container.firebaseService.auth.deleteAccount()
+    }
     
 }

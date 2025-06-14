@@ -62,7 +62,7 @@ class SearchDiaryViewModel {
             self.diaries = result
             print("검색 결과", result)
         } catch {
-            print("❌ 검색 실패: \(error.localizedDescription)")
+            print("검색 실패: \(error.localizedDescription)")
             self.diaries = []
         }
     }

@@ -15,7 +15,6 @@ struct ContactUsView: View {
     @Bindable var viewModel: ContactUsViewModel = .init()
     @Binding var isModalPresented: Bool
     
-    @Environment(\.dismiss) var dismiss
     @FocusState private var isFocusedContactText: Bool
     
     // MARK: - Body

@@ -28,8 +28,14 @@ struct HomeDragView: View {
                         })
                         .padding(.bottom, 48)
                     } else {
+                        Spacer()
+                        
                         ProgressView()
+                            .controlSize(.large)
                             .tint(Color.orange30)
+                        
+                        Spacer()
+                            .frame(height: 400)
                     }
                 })
                 
