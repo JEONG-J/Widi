@@ -90,15 +90,15 @@ class FirebaseAuthManager {
             print("❌ 현재 로그인된 사용자가 없습니다.")
             return
         }
-
+        
         do {
             let uid = user.uid
             let db = Firestore.firestore()
             try await db.collection("friends").document(uid).delete()
             try await user.delete()
-        }KeychainManager.standard.deleteSession(for: "widiApp")
+            KeychainManager.standard.deleteSession(for: "widiApp")
             print("탈퇴 완료, 앱 초기화 필요")
-
+            
         } catch {
             print("탈퇴 실패: \(error.localizedDescription)")
         }

@@ -12,16 +12,23 @@ import SwiftUI
 final class DetailFriendsViewModel {
     
     // MARK: - StatePropery
+    /// 친구 편집
     var showFriendEdit: Bool = false
+    /// 친구 삭제 Alert
     var showFriendDeleteAlert: Bool = false
+    /// 일기 삭제 Alert
     var showDiaryDeleteAlert: Bool = false
-    
+    /// 삭제 로딩
     var deleteLoading: Bool = false
-    var isLoading: Bool = false
+    /// 친구 데이터 불러오기 로딩
+    var diaryInfoLoading: Bool = false
+    /// 상단 드롭 다운 메뉴 표시
+    var isDropDownPresented: Bool = false
     
     // MARK: - Property
     var diaries: [DiaryResponse]?
     var friendResponse: FriendResponse
+    var targetDiary: DiaryResponse? = nil
     
     private var container: DIContainer
     
@@ -32,7 +39,7 @@ final class DetailFriendsViewModel {
         self.friendResponse = friendResponse
     }
     
-    // MARK: - Method
+    // MARK: - API
     
     /// 친구 삭제
     /// - Parameter friend: 친구 정보 입력
@@ -52,8 +59,8 @@ final class DetailFriendsViewModel {
         return .init(name: friendResponse.name, birthday: friendResponse.birthday)
     }
     
-    // MARK: - API
-    
+    /// 일기 삭제
+    /// - Parameter diary: 일기 삭제 데이터
     func deleteDiary(_ diary: DiaryResponse) async {
         do {
             try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
@@ -65,23 +72,23 @@ final class DetailFriendsViewModel {
     
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
-        isLoading = true
+        diaryInfoLoading = true
+        
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
-            isLoading = false
+            diaryInfoLoading = false
             return
         }
-        
         do {
             let list = try await container.firebaseService.diary.fetchDiaries(
                 for: userId,
                 friendId: friend.friendId
             )
             self.diaries = list
-            isLoading = false
+            diaryInfoLoading = false
         } catch {
             print("일기 조회 실패: \(error.localizedDescription)")
-            isLoading = false
+            diaryInfoLoading = false
         }
     }
     

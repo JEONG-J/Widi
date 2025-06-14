@@ -11,18 +11,16 @@ import SwiftUI
 struct DetailFriendsView: View {
     
     // MARK: - Properties
-    
-    @Bindable private var viewModel: DetailFriendsViewModel
+    @State private var viewModel: DetailFriendsViewModel
     @EnvironmentObject var container: DIContainer
     
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
-    @State private var isDropDownPresented: Bool = false
-    @State private var targetDiary: DiaryResponse? = nil
     
-    private let naviHeight: CGFloat = 59
-    private let headerHeight: CGFloat = 209
-    
+    private enum DetailFriendsConstants {
+        static let naviHeight: CGFloat = 59
+        static let headerHeight: CGFloat = 209
+    }
     
     // MARK: - Init
     
@@ -44,60 +42,57 @@ struct DetailFriendsView: View {
             addButton
             dropDownOverlay
         }
-        .loadingOverlay(isLoading: viewModel.deleteLoading, loadingType: .delete)
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
-        .overlay(content: {
-            if viewModel.showFriendDeleteAlert {
-                CustomAlertView(content: {
-                    CustomAlert(alertButtonType: .friendsDelete, onCancel: {
-                        viewModel.showFriendDeleteAlert = false
-                    }, onRight: {
-                        Task {
-                            viewModel.showFriendDeleteAlert = false
-                            await viewModel.deleteFriend()
-                            container.navigationRouter.pop()
-                        }
-                    })
+        .task {
+            await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
+            await viewModel.fetchDiaries(for: viewModel.friendResponse)
+        }
+        .loadingOverlay(
+            isLoading: viewModel.deleteLoading,
+            loadingType: .delete
+        )
+        .alertModifier(
+            show: viewModel.showFriendDeleteAlert,
+            content: {
+                CustomAlert(alertButtonType: .friendsDelete, onCancel: {
+                    viewModel.showDiaryDeleteAlert.toggle()
+                }, onRight: {
+                    Task {
+                        viewModel.showFriendDeleteAlert.toggle()
+                        await viewModel.deleteFriend()
+                        container.navigationRouter.pop()
+                    }
                 })
             }
-        })
+        )
+        .alertModifier(
+            show: viewModel.showDiaryDeleteAlert,
+            content: {
+                CustomAlert(alertButtonType: .diaryDelete, onCancel: {
+                    viewModel.showDiaryDeleteAlert.toggle()
+                }, onRight: {
+                    Task {
+                        if let diary = viewModel.targetDiary {
+                            await viewModel.deleteDiary(diary)
+                            diariesOffsets[diary.id] = nil
+                            viewModel.showDiaryDeleteAlert.toggle()
+                        }
+                    }
+                })
+            }
+        )
         .sheet(isPresented: $viewModel.showFriendEdit, content: {
             DetailFriendUpdateView(container: container,
                                    showFriendEdit: $viewModel.showFriendEdit,
                                    friendResponse: viewModel.friendResponse)
         })
-        
-        .overlay(content: {
-            if viewModel.showDiaryDeleteAlert {
-                CustomAlertView(content: {
-                    CustomAlert(alertButtonType: .diaryDelete, onCancel: {
-                        viewModel.showDiaryDeleteAlert = false
-                    }, onRight: {
-                        Task {
-                            if let diary = targetDiary {
-                                await viewModel.deleteDiary(diary)
-                                diariesOffsets[diary.id] = nil
-                                viewModel.showDiaryDeleteAlert = false
-                            }
-                        }
-                    })
-                })
-            }
-        })
-        .task {
-            print(viewModel.friendResponse.documentId)
-            await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
-            await viewModel.fetchDiaries(for: viewModel.friendResponse)
-        }
     }
-}
-
-// MARK: - Subviews
-
-fileprivate extension DetailFriendsView {
-    /// 커스텀네비게이션 바
-    var navigationBar: some View {
+    
+    // MARK: - TopController
+    
+    /// 상단 네비게이션 바
+    private var navigationBar: some View {
         CustomNavigation(
             config: .backAndContextMenu,
             leftAction: { icon in
@@ -112,7 +107,7 @@ fileprivate extension DetailFriendsView {
                 switch icon {
                 case .contextMenu:
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        isDropDownPresented = true
+                        viewModel.isDropDownPresented.toggle()
                     }
                 default:
                     break
@@ -123,7 +118,7 @@ fileprivate extension DetailFriendsView {
     }
     
     /// 일기 추가 버튼
-    var addButton: some View {
+    private var addButton: some View {
         VStack {
             Spacer()
             
@@ -138,16 +133,16 @@ fileprivate extension DetailFriendsView {
         }
     }
     
-    /// 일기 검색, 친구 수정, 친구 삭제 액션시트
+    /// 일기 검색, 친구 수정, 친구 삭제 Menu
     @ViewBuilder
     var dropDownOverlay: some View {
-        if isDropDownPresented {
+        if viewModel.isDropDownPresented {
             Color.clear
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        isDropDownPresented = false
+                        viewModel.isDropDownPresented.toggle()
                     }
                 }
             
@@ -168,14 +163,16 @@ fileprivate extension DetailFriendsView {
         }
     }
     
+    // MARK: - Diary BottomContents
+    
     /// scrollContent
     /// - Parameter topSafeArea: geometry로 상단 SafeArea 값(diarySection 하위뷰에 전달하기 위해 필요)
     /// - Returns: 네비바 제외 content 스크롤 content로 반환
     func scrollContent(topSafeArea: CGFloat) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                HeaderView(friendData: viewModel.friendResponse, headerHeight: headerHeight)
-                diarySection(topSafeArea: topSafeArea)
+                HeaderView(friendResponse: viewModel.friendResponse, headerHeight: DetailFriendsConstants.headerHeight)
+                diarySection()
             }
         }
         .coordinateSpace(name: "SCROLL")
@@ -186,27 +183,11 @@ fileprivate extension DetailFriendsView {
     }
     
     /// diarySection
-    /// - Parameter topSafeArea: geometry로 상단 SafeArea 값
     /// - Returns: 아이템 갯수 상관없이 바닥까지 높이가지는 일기 세션 반환
-    func diarySection(topSafeArea: CGFloat) -> some View {
+    func diarySection() -> some View {
         VStack {
-            if !viewModel.isLoading {
-                LazyVStack(
-                    alignment: .leading,
-                    spacing: 0,
-                    pinnedViews: [.sectionHeaders]
-                ) {
-                    Section {
-                        diaryList
-                    } header: {
-                        pinnedHeaderView()
-                            .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
-                            .modifier(OffsetModifier(offset: $headerOffsets.1))
-                    }
-                }
-                
-                Spacer()
-                    .frame(minHeight: 120)
+            if !viewModel.diaryInfoLoading {
+                diaryContetns
             } else {
                 progressView
             }
@@ -217,6 +198,27 @@ fileprivate extension DetailFriendsView {
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
         )
         .sheet()
+    }
+    
+    /// 하단 다이어리 리스트 컨텐츠
+    @ViewBuilder
+    private var diaryContetns: some View {
+        LazyVStack(
+            alignment: .leading,
+            spacing: 0,
+            pinnedViews: [.sectionHeaders]
+        ) {
+            Section {
+                diaryList()
+            } header: {
+                pinnedHeaderView()
+                    .modifier(OffsetModifier(offset: $headerOffsets.0, returnromStart: false))
+                    .modifier(OffsetModifier(offset: $headerOffsets.1))
+            }
+        }
+        
+        Spacer()
+            .frame(minHeight: 120)
     }
     
     /// 스티키 헤더 뷰, 일기 리스트 상단 그라데이션 뷰
@@ -231,7 +233,8 @@ fileprivate extension DetailFriendsView {
     }
     
     /// 일기 리스트
-    var diaryList: some View {
+    @ViewBuilder
+    private func diaryList() -> some View {
         VStack(spacing: 0) {
             if let diaries = viewModel.diaries {
                 ForEach(Array(diaries.enumerated()), id: \.element.id) { index, diary in
@@ -246,7 +249,7 @@ fileprivate extension DetailFriendsView {
                         deleteAction: {
                             withAnimation(.easeInOut) {
                                 viewModel.showDiaryDeleteAlert.toggle()
-                                self.targetDiary = diary
+                                viewModel.targetDiary = diary
                             }
                         }
                     )
@@ -255,7 +258,6 @@ fileprivate extension DetailFriendsView {
                     .onTapGesture {
                         container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
                     }
-                    
                     if index < diaries.count - 1 {
                         Divider()
                             .background(Color.gray20)
@@ -269,7 +271,7 @@ fileprivate extension DetailFriendsView {
     
     @ViewBuilder
     private var progressView: some View {
-        Spacer().frame(height: 200)
+        Spacer().frame(height: 160)
         
         HStack {
             Spacer()
@@ -282,45 +284,5 @@ fileprivate extension DetailFriendsView {
         }
         
         Spacer()
-    }
-}
-
-/// 스크롤 시 사라지는 뷰, 친구 정보 뷰
-fileprivate struct HeaderView: View {
-    let friendData: FriendResponse
-    let headerHeight: CGFloat
-    
-    var body: some View {
-        GeometryReader { proxy in
-            let minY = proxy.frame(in: .named("SCROLL")).minY
-            let size = proxy.size
-            let height = max(0, size.height + minY)
-            let threshhold = -(getScreenSize().height * 0.05)
-            
-            VStack(alignment: .leading, spacing: 32) {
-                HStack(alignment: .center, spacing: 12) {
-                    Text(friendData.name)
-                        .font(.h1)
-                        .foregroundStyle(.gray80)
-                    
-                    CustomProfileImage(
-                        imageURLString: friendData.experienceDTO.characterInfo.imageURL,
-                        size: 40
-                    )
-                }
-                
-                FriendInfoView(friendInfoData: friendData)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 101)
-                    .opacity(threshhold > minY ? 0 : 1)
-                    .animation(.easeInOut(duration: 0.3), value: threshhold > minY)
-            }
-            .padding(.top, 20)
-            .padding(.bottom, 16)
-            .padding(.horizontal, 16)
-            .frame(width: size.width, height: height)
-            .offset(y: -minY)
-        }
-        .frame(height: headerHeight)
     }
 }

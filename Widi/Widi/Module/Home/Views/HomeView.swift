@@ -16,7 +16,7 @@ struct HomeView: View {
     @GestureState private var dragOffset: CGFloat = .zero
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var appFlowViewModel: AppFlowViewModel
-    @Bindable var viewModel: HomeViewModel
+    @State var viewModel: HomeViewModel
     
     init(container: DIContainer) {
         self.viewModel = .init(container: container)
