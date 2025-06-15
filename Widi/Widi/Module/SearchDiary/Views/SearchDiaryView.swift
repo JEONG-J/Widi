@@ -32,7 +32,6 @@ struct SearchDiaryView: View {
                 
                 diaryList
             })
-            .safeAreaPadding(.top, SearchDiaryConstants.topSafeAreaPadding)
             .background(.whiteBlack)
             .task {
                 isTextFieldFocused = true
@@ -122,7 +121,7 @@ struct SearchDiaryView: View {
                     .frame(height: SearchDiaryConstants.rowHeight)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryResponse: diary))
                     }
                     
                     if index < viewModel.diaries.count - 1 {

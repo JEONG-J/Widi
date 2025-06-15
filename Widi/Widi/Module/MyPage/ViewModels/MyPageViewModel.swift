@@ -44,12 +44,14 @@ class MyPageViewModel {
     }
     
     /// 로그아웃 버튼 함수
+    @MainActor
     func logOutAction () async {
         do {
             try Auth.auth().signOut()
             self.isShowLogoutAlert = false
             KeychainManager.standard.deleteSession(for: "widiApp")
             appFlowViewModel.appState = .login
+            container.navigationRouter.popToRooteView()
         } catch {
             print("로그아웃 실패: \(error.localizedDescription)")
         }

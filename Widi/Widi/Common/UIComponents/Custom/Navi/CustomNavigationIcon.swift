@@ -10,13 +10,29 @@ import SwiftUI
 /// 커스텀 네비게이션 바 버튼 컴포넌트
 struct CustomNavigationIcon: View {
     
+    // MARK: - Property
     let navigationIcon: NavigationIcon
     let action: () -> Void
     
+    // MARK: - Init
     init(navigationIcon: NavigationIcon, action: @escaping () -> Void) {
         self.navigationIcon = navigationIcon
         self.action = action
     }
+    
+    // MARK: - Constants
+    private enum CustomNavigationIconConstants {
+        // Text 버튼
+        static let textFont: Font = .h4
+        static let textHorizontalPadding: CGFloat = 20
+        static let textVerticalPadding: CGFloat = 10
+        static let textCornerRadius: CGFloat = 20
+        
+        // 이미지 버튼
+        static let imagePadding: CGFloat = 8
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         Button(action: {
@@ -26,17 +42,17 @@ struct CustomNavigationIcon: View {
                 Text(title)
                     .font(.h4)
                     .foregroundStyle(navigationIcon.foregroundColor)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, CustomNavigationIconConstants.textHorizontalPadding)
+                    .padding(.vertical, CustomNavigationIconConstants.textVerticalPadding)
                     .background(Color.whiteBlack)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .clipShape(RoundedRectangle(cornerRadius: CustomNavigationIconConstants.textCornerRadius))
                     .shadow1()
             } else if let image = navigationIcon.image {
                 image
                     .renderingMode(.template)
                     .foregroundStyle(Color.gray60)
                     .fixedSize()
-                    .padding(8)
+                    .padding(CustomNavigationIconConstants.imagePadding)
                     .background(Color.whiteBlack)
                     .clipShape(Circle())
                     .shadow1()

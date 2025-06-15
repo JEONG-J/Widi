@@ -10,30 +10,43 @@ import SwiftUI
 /// 친구 추가 뷰
 struct AddFriendView: View {
     
-    @Bindable var viewModel: AddFriendsViewModel
+    // MARK: - Property
+    @State var viewModel: AddFriendsViewModel
     @EnvironmentObject var container: DIContainer
     @FocusState var isFocused: AddFriendsField?
     
+    // MARK: - Constants
+    
+    fileprivate enum AddFriendConstants {
+        // Layout spacing
+        static let contentsTopPadding: CGFloat = 52
+        static let textFieldGroupSpacing: CGFloat = 32
+        static let hStackButtonSpacing: CGFloat = 10
+        
+        // Padding
+        static let navigationBottomPadding: CGFloat = 12
+        static let mainButtonBottomPadding: CGFloat = 16
+        static let horizontalSafeAreaPadding: CGFloat = 16
+    }
+    
+    // MARK: - Init
     init(container: DIContainer) {
         self.viewModel = .init(container: container)
     }
     
-    
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.clear
                 .addFriendViewBG()
                 .ignoresSafeArea(.keyboard, edges: .bottom)
             
-            VStack(alignment: .center, spacing: 52, content: {
-                topNavigation(value: viewModel.currentPage)
-                    .padding(.bottom, 12)
-                
-                returnContents()
+            VStack(alignment: .center, content: {
+                middleContents()
                 
                 Spacer()
                 
-                returnMainButton()
+                bottomMainButton()
             })
         }
         .navigationBarBackButtonHidden(true)
@@ -43,6 +56,27 @@ struct AddFriendView: View {
         .onChange(of: viewModel.currentPage, { old, new in
             isFocused = (new == 1) ? .name : .birthDay
         })
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarLeading, content: {
+                if viewModel.currentPage == 1 {
+                    CustomNavigationIcon(navigationIcon: .closeX, action: {
+                        container.navigationRouter.pop()
+                    })
+                } else {
+                    CustomNavigationIcon(navigationIcon: .backArrow, action: {
+                        viewModel.currentPage -= 1
+                    })
+                }
+            })
+            
+            if viewModel.currentPage != 1 {
+                ToolbarItem(placement: .topBarTrailing) {
+                    CustomNavigationIcon(navigationIcon: .closeX, action: {
+                        container.navigationRouter.pop()
+                    })
+                }
+            }
+        })
     }
     
     // MARK: - Function
@@ -50,7 +84,7 @@ struct AddFriendView: View {
     /// 텍스트 필드 분기처리
     /// - Returns: 분기로 처리된 텍스트 필드 뷰
     @ViewBuilder
-    private func returnContents() -> some View {
+    private func middleContents() -> some View {
         Group {
             switch viewModel.currentPage {
             case 1:
@@ -61,13 +95,14 @@ struct AddFriendView: View {
                 makeTextField(for: .birthDay, $viewModel.friendsBirthDay, onAction: {})
             }
         }
-        .safeAreaPadding(.horizontal, 16)
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+        .padding(.top, AddFriendConstants.contentsTopPadding)
     }
     
     /// 메인버튼 분기 처리
     /// - Returns: 페이지에 맞도록 메인 버튼 분기처리
     @ViewBuilder
-    private func returnMainButton() -> some View {
+    private func bottomMainButton() -> some View {
         Group {
             switch viewModel.currentPage {
             case 1:
@@ -80,8 +115,8 @@ struct AddFriendView: View {
                 secondPageMainButton()
             }
         }
-        .padding(.bottom, 16)
-        .safeAreaPadding(.horizontal, 16)
+        .padding(.bottom, AddFriendConstants.mainButtonBottomPadding)
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
     }
     
     /// 두 번째 페이지 텍스트 필드 그룹
@@ -92,7 +127,7 @@ struct AddFriendView: View {
             viewModel.navigationPush()
         }
         
-        HStack(alignment: .center, spacing: 10, content: {
+        HStack(alignment: .center, spacing: AddFriendConstants.hStackButtonSpacing, content: {
             CustomMainButton(type: .skip, action: pushAction)
             
             CustomMainButton(type: .next(isDisabled: viewModel.friendsBirthDay.isEmpty), action: pushAction)
@@ -105,7 +140,7 @@ struct AddFriendView: View {
     /// - Returns: 뷰 타입 반환
     @ViewBuilder
     private func makeTextField(for field: AddFriendsField, _ value: Binding<String>, onAction: @escaping () -> Void) -> some View {
-        VStack(alignment: .center, spacing: 32, content: {
+        VStack(alignment: .center, spacing: AddFriendConstants.textFieldGroupSpacing, content: {
             Text(field.title)
                 .font(.h4)
                 .foregroundStyle(Color.gray50)
@@ -121,6 +156,7 @@ struct AddFriendView: View {
                     }
                 })
                 .onSubmit({onAction()})
+                .submitLabel(.next)
                 .focused($isFocused, equals: field == .name ? .name : .birthDay)
         })
     }
@@ -134,42 +170,10 @@ struct AddFriendView: View {
             .font(.h1)
             .foregroundStyle(Color.gray30)
     }
-    
-    /// 상단 네비게이션 분기 처리
-    /// - Parameter value: 현재 페이지 입력
-    /// - Returns: 네비게이션 뷰 반환
-    @ViewBuilder
-    private func topNavigation(value: Int) -> some View {
-        Group {
-            switch value {
-            case 1:
-                CustomNavigation(config: .closeOnly, leftAction: { icon in
-                    switch icon {
-                    case .closeX:
-                        container.navigationRouter.pop()
-                    default:
-                        break
-                    }
-                }, rightAction: { _ in })
-                
-            default:
-                CustomNavigation(config: .backAndClose, leftAction: { icon in
-                    switch icon {
-                    case .backArrow:
-                        viewModel.currentPage -= 1
-                    default:
-                        break
-                    }
-                }, rightAction: { icon in
-                    switch icon {
-                    case .closeX:
-                        container.navigationRouter.pop()
-                    default:
-                        break
-                    }
-                })
-            }
-        }
-        .safeAreaPadding(.horizontal, 16)
-    }
+}
+
+
+#Preview {
+    AddFriendView(container: DIContainer())
+        .environmentObject(DIContainer())
 }

@@ -18,6 +18,7 @@ class DetailFriendUpdateViewModel {
     
     private var container: DIContainer
     
+    // MARK: - Init
     init(container: DIContainer, friendResponse: FriendResponse) {
         self.container = container
         self.nameText = friendResponse.name
@@ -25,6 +26,9 @@ class DetailFriendUpdateViewModel {
         self.friendResponse = friendResponse
     }
     
+    
+    // MARK: - API
+    /// 친구 정보 업데이트
     @MainActor
     func updateFriend() async {
         do {
@@ -36,9 +40,5 @@ class DetailFriendUpdateViewModel {
         } catch {
             print("친구 정보 수정 실패: \(error.localizedDescription)")
         }
-    }
-    
-    func returnOutsize() -> FriendResponse {
-        return .init(documentId: friendResponse.documentId, friendId: friendResponse.friendId, name: nameText, birthday: birthdayText, experienceDTO: friendResponse.experienceDTO)
     }
 }

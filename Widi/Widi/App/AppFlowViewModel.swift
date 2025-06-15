@@ -11,7 +11,7 @@ import FirebaseAuth
 /// 앱 플로우 뷰모델
 class AppFlowViewModel: ObservableObject {
     
-    @Published var appState: AppState = .splash
+    @Published var appState: AppState = .home
     
     enum AppState {
         case splash

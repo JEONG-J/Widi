@@ -9,11 +9,30 @@ import SwiftUI
 
 /// Custom 캘린더 컴포넌트
 struct CalendarComponents: View {
-    
+    // MARK: - Property
     @Bindable var viewModel: CalendarViewModel
     
+    // MARK: - Components
+    fileprivate enum CalendarConstants {
+        static let calendarSpacing: CGFloat = 12
+        static let arrowButtonSpacing: CGFloat = 12
+        static let arrowButtonPadding: CGFloat = 6
+        static let headerLeadingPadding: CGFloat = 24
+        static let headerTrailingPadding: CGFloat = 8
+        
+        static let numberOfColumns: Int = 7
+        static let gridSpacing: CGFloat = 8
+        static let gridHorizontalPadding: CGFloat = 16
+
+        static let weekdayTextVerticalPadding: CGFloat = 9
+        static let weekdayTextHorizontalPadding: CGFloat = 13
+        
+        static let calendarHeaderDateFormat = "yyyy년 MM월"
+    }
+    
+    // MARK: - Body
     var body: some View {
-        VStack(spacing: 12, content: {
+        VStack(spacing: CalendarConstants.calendarSpacing, content: {
             headerController
             calendarGrid
         })
@@ -29,7 +48,7 @@ struct CalendarComponents: View {
             
             Spacer()
             
-            HStack(spacing: 12, content: {
+            HStack(spacing: CalendarConstants.calendarSpacing, content: {
                 Button(action: {
                     viewModel.changeMonth(by: -1)
                 }, label: {
@@ -42,20 +61,21 @@ struct CalendarComponents: View {
                     Image(.right)
                 })
             })
-            .padding(6)
+            .padding(CalendarConstants.arrowButtonPadding)
         })
-        .padding(.leading, 24)
+        .padding(.leading, CalendarConstants.headerLeadingPadding)
+        .padding(.trailing, CalendarConstants.headerTrailingPadding)
     }
     
     /// 달력 하단 날짜 그리드
     private var calendarGrid: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8, content: {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: CalendarConstants.gridSpacing), count: CalendarConstants.numberOfColumns), spacing: CalendarConstants.gridSpacing, content: {
             ForEach(localizedWeekdaySymbols.indices, id: \.self) { index in
                 Text(localizedWeekdaySymbols[index])
                     .foregroundStyle(Color.gray30)
                     .font(.btn)
-                    .padding(.vertical, 9)
-                    .padding(.horizontal, 13)
+                    .padding(.vertical, CalendarConstants.weekdayTextVerticalPadding)
+                    .padding(.horizontal, CalendarConstants.weekdayTextHorizontalPadding)
             }
             
             ForEach(viewModel.daysForCurrentGrid(), id: \.id) { calendarDay in
@@ -67,7 +87,7 @@ struct CalendarComponents: View {
             }
         })
         .frame(alignment: .top)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, CalendarConstants.gridHorizontalPadding)
     }
     
     /// 요일 이름 한글로 가져오기
@@ -80,7 +100,7 @@ struct CalendarComponents: View {
     /// 헤더 날짜 표시 포맷터
     let calendarHeaderDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월"
+        formatter.dateFormat = CalendarConstants.calendarHeaderDateFormat
         return formatter
     }()
 }

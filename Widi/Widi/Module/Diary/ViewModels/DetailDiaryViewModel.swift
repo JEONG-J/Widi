@@ -37,28 +37,22 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     var photoImages: [PhotosPickerItem] = []
     var selectedImage: DiaryImage? = nil
     
-    var diaryMode: DiaryMode
+    var diaryMode: DiaryMode = .read
     private var container: DIContainer
     
     var diaryTitle: String = ""
     var diaryContents: String = ""
     
     // MARK: - Init
-    init(diaryMode: DiaryMode, container: DIContainer, diary: DiaryResponse) {
-        self.diaryMode = diaryMode
+    init(container: DIContainer, diary: DiaryResponse) {
         self.container = container
         self.diary = diary
         
-        if let pictures = diary.pictures {
-            self.diaryImages = pictures.map { DiaryImage.server($0) }
-        } else {
-            self.diaryImages = []
-        }
+        imageDestruction()
     }
     
     // MARK: - Read
     /// 일기 삭제
-    
     func deleteDiary() async {
         self.isDeleteLoading = true
         if let diary = diary {
@@ -69,6 +63,14 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
                 print("일기 삭제 실패: \(error.localizedDescription)")
                 isDeleteLoading = false
             }
+        }
+    }
+    
+    func imageDestruction() {
+        if let pictures = diary?.pictures {
+            self.diaryImages = pictures.map { DiaryImage.server($0) }
+        } else {
+            self.diaryImages = []
         }
     }
     

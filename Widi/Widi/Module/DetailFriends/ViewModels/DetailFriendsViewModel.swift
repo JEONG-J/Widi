@@ -20,10 +20,12 @@ final class DetailFriendsViewModel {
     var showDiaryDeleteAlert: Bool = false
     /// 삭제 로딩
     var deleteLoading: Bool = false
-    /// 친구 데이터 불러오기 로딩
+    /// 친구 일기 데이터 불러오기 로딩
     var diaryInfoLoading: Bool = false
     /// 상단 드롭 다운 메뉴 표시
     var isDropDownPresented: Bool = false
+    /// 친구 정보 로딩 표시
+    var isFriendInfoLoading: Bool = false
     
     // MARK: - Property
     var diaries: [DiaryResponse]?
@@ -93,11 +95,14 @@ final class DetailFriendsViewModel {
     }
     
     func loadFriend(documentId: String) async {
+        isFriendInfoLoading = true
         do {
             let friend = try await container.firebaseService.friends.fetchFriend(documentId: documentId)
             self.friendResponse = friend
+            isFriendInfoLoading = false
         } catch {
             print("친구 정보 로드 실패: \(error.localizedDescription)")
+            isFriendInfoLoading = false
         }
     }
 }

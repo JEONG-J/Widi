@@ -31,6 +31,6 @@ class AddFriendsViewModel {
     }
     
     public func navigationPush() {
-        container.navigationRouter.push(to: .addDiaryView(friendsRequest: createFriendRequest(), firstMode: true))
+        container.navigationRouter.push(to: .addDiaryView(friendsRequest: createFriendRequest()))
     }
 }

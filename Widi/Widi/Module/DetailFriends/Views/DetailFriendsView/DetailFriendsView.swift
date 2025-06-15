@@ -17,11 +17,6 @@ struct DetailFriendsView: View {
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
     
-    private enum DetailFriendsConstants {
-        static let naviHeight: CGFloat = 59
-        static let headerHeight: CGFloat = 209
-    }
-    
     // MARK: - Init
     
     init(container: DIContainer, friendResponse: FriendResponse) {
@@ -52,17 +47,18 @@ struct DetailFriendsView: View {
             isLoading: viewModel.deleteLoading,
             loadingType: .delete
         )
+        .loadingOverlay(isLoading: viewModel.isFriendInfoLoading, loadingType: .diaryFriendInfo)
         .alertModifier(
             show: viewModel.showFriendDeleteAlert,
             content: {
                 CustomAlert(alertButtonType: .friendsDelete, onCancel: {
-                    viewModel.showDiaryDeleteAlert.toggle()
+                        viewModel.showDiaryDeleteAlert.toggle()
                 }, onRight: {
-                    Task {
-                        viewModel.showFriendDeleteAlert.toggle()
-                        await viewModel.deleteFriend()
-                        container.navigationRouter.pop()
-                    }
+                        Task {
+                            viewModel.showFriendDeleteAlert.toggle()
+                            await viewModel.deleteFriend()
+                            container.navigationRouter.pop()
+                        }
                 })
             }
         )
@@ -81,7 +77,11 @@ struct DetailFriendsView: View {
                 })
             }
         )
-        .sheet(isPresented: $viewModel.showFriendEdit, content: {
+        .sheet(isPresented: $viewModel.showFriendEdit, onDismiss: {
+            Task {
+                await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
+            }
+        }, content: {
             DetailFriendUpdateView(container: container,
                                    showFriendEdit: $viewModel.showFriendEdit,
                                    friendResponse: viewModel.friendResponse)
@@ -113,7 +113,7 @@ struct DetailFriendsView: View {
                 }
             }
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, UIConstants.defaultHorizontalPadding)
     }
     
     /// 일기 추가 버튼
@@ -123,12 +123,12 @@ struct DetailFriendsView: View {
             
             DiariesAddButton(
                 action: {
-                    container.navigationRouter.push(to: .addDiaryView(friendsRequest: viewModel.returnFriendInfo(), firstMode: false, friendId: viewModel.friendResponse.friendId))
+                    container.navigationRouter.push(to: .addDiaryView(friendsRequest: viewModel.returnFriendInfo(), friendId: viewModel.friendResponse.friendId))
                 }
             )
-            .frame(width: 56)
-            .safeAreaPadding(.trailing, 20)
-            .safeAreaPadding(.bottom, 12)
+            .frame(width: DetailFriendsConstants.buttonWidth)
+            .safeAreaPadding(.trailing, DetailFriendsConstants.addButtonTrailingPadding)
+            .safeAreaPadding(.bottom, DetailFriendsConstants.addButtonBottomPadding)
         }
     }
     
@@ -157,7 +157,7 @@ struct DetailFriendsView: View {
                     }
                 }
             })
-            .safeAreaPadding(.horizontal, 16)
+            .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
             .transition(.scale(scale: 0.7, anchor: .topTrailing).combined(with: .opacity))
         }
     }
@@ -169,14 +169,14 @@ struct DetailFriendsView: View {
     /// - Returns: 네비바 제외 content 스크롤 content로 반환
     func scrollContent(topSafeArea: CGFloat) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                HeaderView(friendResponse: viewModel.friendResponse, headerHeight: DetailFriendsConstants.headerHeight)
+            VStack(spacing: .zero) {
+                HeaderView(friendResponse: viewModel.friendResponse, headerHeight: DetailFriendsConstants.headerViewHeight)
                 diarySection()
             }
         }
         .coordinateSpace(name: "SCROLL")
         .clipShape(
-            UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+            UnevenRoundedRectangle(topLeadingRadius: DetailFriendsConstants.cornerRadius, topTrailingRadius: DetailFriendsConstants.cornerRadius)
         )
         .disabled(viewModel.diaries?.isEmpty ?? true)
     }
@@ -194,7 +194,7 @@ struct DetailFriendsView: View {
         .frame(minHeight: getScreenSize().height )
         .background(Color.whiteBlack.opacity(0.8))
         .clipShape(
-            UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+            UnevenRoundedRectangle(topLeadingRadius: DetailFriendsConstants.cornerRadius, topTrailingRadius: DetailFriendsConstants.cornerRadius)
         )
         .sheet()
     }
@@ -204,7 +204,7 @@ struct DetailFriendsView: View {
     private var diaryContetns: some View {
         LazyVStack(
             alignment: .leading,
-            spacing: 0,
+            spacing: .zero,
             pinnedViews: [.sectionHeaders]
         ) {
             Section {
@@ -228,13 +228,13 @@ struct DetailFriendsView: View {
             startPoint: .top,
             endPoint: .bottom
         )
-        .frame(height: 36)
+        .frame(height: DetailFriendsConstants.pinnedHeaderHeight)
     }
     
     /// 일기 리스트
     @ViewBuilder
     private func diaryList() -> some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             if let diaries = viewModel.diaries {
                 ForEach(Array(diaries.enumerated()), id: \.element.id) { index, diary in
                     
@@ -252,10 +252,10 @@ struct DetailFriendsView: View {
                             }
                         }
                     )
-                    .frame(height: 171)
+                    .frame(height: DetailFriendsConstants.diaryRowHeight)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryResponse: diary))
                     }
                     if index < diaries.count - 1 {
                         Divider()
@@ -263,14 +263,14 @@ struct DetailFriendsView: View {
                         
                     }
                 }
-                .offset(y: -48)
+                .offset(y: DetailFriendsConstants.diaryListYOffset)
             }
         }
     }
     
     @ViewBuilder
     private var progressView: some View {
-        Spacer().frame(height: 160)
+        Spacer().frame(height: DetailFriendsConstants.loadingSpacerHeight)
         
         HStack {
             Spacer()
@@ -284,4 +284,26 @@ struct DetailFriendsView: View {
         
         Spacer()
     }
+}
+
+fileprivate enum DetailFriendsConstants {
+    // Layout Heights
+    static let navigationBarHeight: CGFloat = 59
+    static let headerViewHeight: CGFloat = 209
+    static let diaryRowHeight: CGFloat = 171
+    static let pinnedHeaderHeight: CGFloat = 36
+    static let loadingSpacerHeight: CGFloat = 160
+    static let bottomSpacerHeight: CGFloat = 120
+    
+    static let buttonWidth: CGFloat = 56
+    
+    // Button Padding
+    static let addButtonTrailingPadding: CGFloat = 20
+    static let addButtonBottomPadding: CGFloat = 12
+    
+    // Content Offset
+    static let diaryListYOffset: CGFloat = -48
+    
+    // CornerRadius
+    static let cornerRadius: CGFloat = 24
 }

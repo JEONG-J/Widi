@@ -9,19 +9,29 @@ import SwiftUI
 
 /// 커스텀 달력 뷰
 struct SheetCalendarView: View {
-    
+    // MARK: - Property
     @State var viewModel: CalendarControllable
     @State var calendarViewModel: CalendarViewModel = .init()
     
+    // MARK: - Constants
+    fileprivate enum SheetCalendarViewConstants {
+        static let contentsSpacing: CGFloat = 32
+        static let topPadding: CGFloat = 24
+        
+        static let topControllerVerticalPadding: CGFloat = 10
+        static let topControllerHorizontalPadding: CGFloat = 20
+        static let cornerRadius: CGFloat = 20
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 32, content: {
+        VStack(alignment: .leading, spacing: SheetCalendarViewConstants.contentsSpacing, content: {
             topController
             
             CalendarComponents(viewModel: calendarViewModel)
         })
-        .safeAreaPadding([.horizontal, .top], 16)
-        .safeAreaPadding(.bottom, 20)
-        .frame(alignment: .bottom)
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+        .safeAreaPadding(.top, SheetCalendarViewConstants.topPadding)
+        .frame(maxHeight: .infinity, alignment: .top)
         .background(Color.white)
     }
     
@@ -32,7 +42,7 @@ struct SheetCalendarView: View {
                 viewModel.isShowCalendar.toggle()
             }, label: {
                 NavigationIcon.closeX.image
-                    .padding(8)
+                    .padding(NavigationIcon.closeX.paddingValue)
             })
             
             Spacer()
@@ -47,10 +57,10 @@ struct SheetCalendarView: View {
                     Text(title)
                         .font(.h4)
                         .foregroundStyle(.orange30)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
+                        .padding(.vertical, SheetCalendarViewConstants.topControllerVerticalPadding)
+                        .padding(.horizontal, SheetCalendarViewConstants.topControllerHorizontalPadding)
                         .background(Color.whiteBlack)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .clipShape(RoundedRectangle(cornerRadius: SheetCalendarViewConstants.cornerRadius))
                 }
             })
         }
