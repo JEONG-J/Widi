@@ -10,19 +10,26 @@ import SwiftUI
 /// 홈 뷰
 struct HomeView: View {
     
+    // MARK: - Property
     @State private var hasAppeared = false
+    @State private var isCharacterLoaded: Bool = false
     @State private var offset: CGFloat = .zero
     @State private var lastOffset: CGFloat = .zero
+    @State var viewModel: HomeViewModel
+    
     @GestureState private var dragOffset: CGFloat = .zero
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var appFlowViewModel: AppFlowViewModel
-    @State var viewModel: HomeViewModel
+    
+    // MARK: - Init
     
     init(container: DIContainer) {
         self.viewModel = .init(container: container)
     }
+    
+    // MARK: - Body
+    
     var body: some View {
-        
         let screenHeight = getScreenSize().height
         let minOffset: CGFloat = screenHeight * 0.89
         let maxOffset: CGFloat = screenHeight * 0.08
@@ -32,7 +39,10 @@ struct HomeView: View {
         NavigationStack(path: $container.navigationRouter.destination) {
             ZStack {
                 if let friends = viewModel.friendsData {
-                    CharacterFloatingScene(friends: friends)
+                    CharacterFloatingScene(allCharacters: $viewModel.allCharacters,
+                                           isLoaded: $isCharacterLoaded,
+                                           friends: friends
+                    )
                 }
                 
                 HomeDragView(viewModel: viewModel)
@@ -90,11 +100,7 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
             }
-            .navigationDestination(for: NavigationDestination.self) { destination in
-                NavigationRoutingView(destination: destination)
-                    .environmentObject(container)
-                    .environmentObject(appFlowViewModel)
-            }
+            .loadingOverlay(isLoading: isCharacterLoaded, loadingType: .homeLoading)
             .overlay(alignment: .topTrailing, content: {
                 if !shouldHideOverlay {
                         Button(action: {
@@ -116,17 +122,17 @@ struct HomeView: View {
                         })
                         .transition(.opacity)
                         .animation(.easeInOut, value: shouldHideOverlay)
-                        .safeAreaPadding(.horizontal, 16)
+                        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
                         .offset(y: 25)
                 }
             })
+            .navigationDestination(for: NavigationDestination.self) { destination in
+                NavigationRoutingView(destination: destination)
+                    .environmentObject(container)
+                    .environmentObject(appFlowViewModel)
+            }
         }
     }
-}
-
-#Preview {
-    HomeView(container: DIContainer())
-        .environmentObject(DIContainer())
 }
 
 extension Comparable {

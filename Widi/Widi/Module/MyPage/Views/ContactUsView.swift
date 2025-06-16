@@ -12,20 +12,54 @@ struct ContactUsView: View {
     
     // MARK: - Property
     
-    @Bindable var viewModel: ContactUsViewModel = .init()
+    @Bindable var viewModel: ContactUsViewModel
     @Binding var isModalPresented: Bool
     
     @FocusState private var isFocusedContactText: Bool
     
+    
+    // MARK: - Constants
+    fileprivate enum ContactUsConstants {
+        static let bodyVStackSpacing: CGFloat = 22
+        static let sheetTopPadding: CGFloat = 16
+        
+        static let completedTextHorizonPadding: CGFloat = 20
+        static let completedTextVerticalPadding: CGFloat = 10
+        
+        static let emailTextAreaHeight: CGFloat = 88
+        static let emailTextFieldTrailingPadding: CGFloat = 30
+        static let emailTextFieldPadding: CGFloat = 16
+        static let emailCompleteImageTrailingPadding: CGFloat = 12
+        static let emailTextFieldCornerRadius: CGFloat = 10
+        
+        static let contactTextFieldBottomPadding: CGFloat = 10
+        static let warningTextVerticalPadding: CGFloat = 4
+        
+        static let contactContentsVStackPadding: CGFloat = 14
+        static let textInputComponentsStackPadding: CGFloat = 12
+        
+        static let completeButtonText: String = "완료"
+        static let contactDescriptionText: String = "위디에게 궁금한 점이나 전하고 싶은\n이야기를 적어주세요!"
+        static let emailPlaceHolderText: String = "이메일"
+        static let contactPlaceHolderText: String = "문의 내용을 적어주세요"
+        static let warningMessageText: String = "존재하지 않는 이메일입니다"
+    }
+    
+    // MARK: - Init
+    init(container: DIContainer, isModalPresented: Binding<Bool>) {
+        self.viewModel = .init(container: container)
+        self._isModalPresented = isModalPresented
+    }
+    
     // MARK: - Body
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 22) {
+        VStack(alignment: .leading, spacing: ContactUsConstants.bodyVStackSpacing) {
             modalBar
             contactContent
         }
-        .safeAreaPadding(.horizontal, 16)
-        .safeAreaPadding(.top, 16)
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+        .safeAreaPadding(.top, ContactUsConstants.sheetTopPadding)
         .task {
             UIApplication.shared.hideKeyboard()
         }
@@ -38,23 +72,25 @@ struct ContactUsView: View {
             Button {
                 isModalPresented.toggle()
             } label: {
-                Image(.naviClose)
-                    .padding(8)
+                NavigationIcon.closeX.image
+                    .padding(NavigationIcon.closeX.paddingValue)
             }
             
             Spacer()
             
             Button {
-                viewModel.complete()
-                isModalPresented.toggle()
+                Task {
+                    isModalPresented.toggle()
+                    await viewModel.complete()
+                }
             } label: {
                 let icon = NavigationIcon.complete(type: .complete, isEmphasized: viewModel.isAllComplete)
                 
                 if let title = icon.title {
                     Text(title)
                         .foregroundStyle(icon.foregroundColor)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, ContactUsConstants.completedTextHorizonPadding)
+                        .padding(.vertical, ContactUsConstants.completedTextVerticalPadding)
                 }
             }
             .disabled(!viewModel.isAllComplete)
@@ -63,8 +99,8 @@ struct ContactUsView: View {
     
     /// 모달의 컨텐츠 내용 부분 전부
     private var contactContent: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(contactDescriptionText)
+        VStack(alignment: .leading, spacing: ContactUsConstants.contactContentsVStackPadding) {
+            Text(ContactUsConstants.contactDescriptionText)
                 .font(.h2)
                 .foregroundStyle(.gray80)
             
@@ -74,7 +110,7 @@ struct ContactUsView: View {
     
     /// 모달에서 이메일, 문의내용 입력을 받는 부분
     private var textInputComponents: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ContactUsConstants.textInputComponentsStackPadding) {
             emailTextArea
             
             contactTextField
@@ -85,22 +121,22 @@ struct ContactUsView: View {
     @ViewBuilder
     private var emailTextArea: some View {
         
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: .zero) {
             warningMessage
                 .animation(.easeInOut, value: viewModel.isEmailComplete)
             
             emailTextField
         }
-        .frame(maxHeight: 88, alignment: .bottom)
+        .frame(maxHeight: ContactUsConstants.emailTextAreaHeight, alignment: .bottom)
     }
     
     /// 이메일 검증 오류 메시지
     @ViewBuilder
     private var warningMessage: some View {
         if !viewModel.isEmailComplete {
-            Text(warningMessageText)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 4)
+            Text(ContactUsConstants.warningMessageText)
+                .padding(.horizontal, ContactUsConstants.emailTextFieldPadding)
+                .padding(.vertical, ContactUsConstants.warningTextVerticalPadding)
                 .font(.cap2)
                 .foregroundStyle(.red30)
         }
@@ -110,9 +146,8 @@ struct ContactUsView: View {
     private var emailTextField: some View {
         ZStack {
             TextField("Email", text: $viewModel.emailText, prompt: emailPlaceholder(), )
-                .padding(.vertical, 16)
-                .padding(.horizontal , 16)
-                .padding(.trailing, 30)
+                .padding(ContactUsConstants.emailTextFieldPadding)
+                .padding(.trailing, ContactUsConstants.emailTextFieldTrailingPadding)
                 .keyboardType(.emailAddress)
                 .onChange(of: viewModel.emailText, { oldValue, newValue in
                     guard viewModel.isContactFocusedOnce else { return }
@@ -126,11 +161,11 @@ struct ContactUsView: View {
                     
                     Image(.error)
                 }
-                .padding(.trailing, 12)
+                .padding(.trailing, ContactUsConstants.emailCompleteImageTrailingPadding)
             }
         }
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: ContactUsConstants.emailTextFieldCornerRadius)
                 .inset(by: 0.5)
                 .fill(Color.background)
                 .stroke(returnCompleted().0, style: .init(lineWidth: returnCompleted().1))
@@ -150,9 +185,9 @@ struct ContactUsView: View {
     /// 문의 내용 텍스트 필드
     private var contactTextField: some View {
         TextEditor(text: $viewModel.contactText)
-            .contactTextEditorStyle(text: $viewModel.contactText, placeholder: contactPlaceHolderText)
+            .contactTextEditorStyle(text: $viewModel.contactText, placeholder: ContactUsConstants.contactPlaceHolderText)
             .focused($isFocusedContactText)
-            .padding(.bottom, 10)
+            .padding(.bottom, ContactUsConstants.contactTextFieldBottomPadding)
             .onChange(of: isFocusedContactText) { oldValue, newValue in
                 /* 문의 내용 한 번 이상 왔는가?,  문의 내용 작성 전, 이메일 입력 하자마자 오류 검증 하는 것을 막기 위함 */
                 if viewModel.isContactFocusedOnce == false {
@@ -169,21 +204,8 @@ struct ContactUsView: View {
     /// 이메일 placeholder Text 생성 함수 (focus 되었을 때 placeholder가 안보이게 커스텀)
     /// - Returns: 이메일 placeholder
     private func emailPlaceholder() -> Text {
-        Text(emailPlaceHolderText)
+        Text(ContactUsConstants.emailPlaceHolderText)
             .font(.b1)
             .foregroundStyle(Color.gray40)
     }
-    
-}
-
-extension ContactUsView {
-    private var completeButtonText: String { "완료" }
-    private var contactDescriptionText: String { "위디에게 궁금한 점이나 전하고 싶은\n이야기를 적어주세요!" }
-    private var emailPlaceHolderText: String { "이메일" }
-    private var contactPlaceHolderText: String { "문의 내용을 적어주세요" }
-    private var warningMessageText: String { "존재하지 않는 이메일입니다" }
-}
-
-#Preview {
-    ContactUsView(isModalPresented: .constant(true))
 }

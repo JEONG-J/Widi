@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct CharacterFloatingScene: View {
-    @State private var allCharacters: [CharacterState] = []
-    @State private var isLoaded = false
+    @Binding var allCharacters: [CharacterState]
+    @Binding var isLoaded: Bool
     let friends: [FriendResponse]
     
     var body: some View {
@@ -30,12 +30,18 @@ struct CharacterFloatingScene: View {
             }
         }
         .task {
-            let screenWidth = getScreenSize().width
-            let screenHeight = getScreenSize().height
+            let screenSize = getScreenSize()
+            let screenWidth = screenSize.width
+            let screenHeight = screenSize.height
 
             var usedPositions: [CGPoint] = []
 
-            let initializedCharacters = friends.map { friend -> CharacterState in
+            let initializedCharacters: [CharacterState] = friends.compactMap { friend in
+                guard let documentId = friend.documentId else {
+                    print("documentId가 없습니다. 캐릭터를 초기화할 수 없습니다.")
+                    return nil
+                }
+
                 var position: CGPoint
                 repeat {
                     position = CGPoint(
@@ -47,7 +53,7 @@ struct CharacterFloatingScene: View {
                 usedPositions.append(position)
 
                 return CharacterState(
-                    id: friend.documentId,
+                    id: documentId,
                     position: position,
                     direction: CGVector(
                         dx: Double.random(in: -1.5...1.5),
@@ -56,43 +62,13 @@ struct CharacterFloatingScene: View {
                 )
             }
 
-            allCharacters = initializedCharacters
-            isLoaded = true
+            await MainActor.run {
+                self.allCharacters = initializedCharacters
+                self.isLoaded = true
+            }
         }
     }
 }
-
-#Preview {
-    CharacterFloatingScene(friends: [
-        .init(
-            documentId: "11",
-            friendId: "11",
-            name: "루카",
-            experienceDTO: .init(
-                experiencePoint: 4,
-                characterInfo: .init(
-                    imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelFourF.png?alt=media&token=ee6de20d-423b-4765-b82f-ec9c50677080",
-                    x: 120,
-                    y: 100
-                )
-            )
-        ),
-        .init(
-            documentId: "121",
-            friendId: "22",
-            name: "지나",
-            experienceDTO: .init(
-                experiencePoint: 4,
-                characterInfo: .init(
-                    imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelFourC.png?alt=media&token=75e96b0f-68db-47d7-82b2-228920b3957f",
-                    x: 300,
-                    y: 10
-                )
-            )
-        )
-    ])
-}
-
 
 struct CharacterState: Identifiable {
     let id: String

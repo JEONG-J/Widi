@@ -40,7 +40,12 @@ struct DetailFriendsView: View {
         .detailFriendViewBG()
         .navigationBarBackButtonHidden(true)
         .task {
-            await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
+            guard let documentId = viewModel.friendResponse.documentId else {
+                print("documentId가 nil입니다. 친구 정보를 불러올 수 없습니다.")
+                return
+            }
+
+            await viewModel.loadFriend(documentId: documentId)
             await viewModel.fetchDiaries(for: viewModel.friendResponse)
         }
         .loadingOverlay(
@@ -79,7 +84,11 @@ struct DetailFriendsView: View {
         )
         .sheet(isPresented: $viewModel.showFriendEdit, onDismiss: {
             Task {
-                await viewModel.loadFriend(documentId: viewModel.friendResponse.documentId)
+                guard let documentId = viewModel.friendResponse.documentId else {
+                    print("documentId가 nil입니다. 친구 정보를 불러올 수 없습니다.")
+                    return
+                }
+                await viewModel.loadFriend(documentId: documentId)
             }
         }, content: {
             DetailFriendUpdateView(container: container,

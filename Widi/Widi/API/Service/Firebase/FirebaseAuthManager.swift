@@ -61,14 +61,13 @@ class FirebaseAuthManager {
         
         let name = fullName?.givenName ?? "사용자"
         
-        let data: [String: Any] = [
-            "name": name,
-            "toggle": true,
-            "createdAt": FieldValue.serverTimestamp()
-        ]
+        let setting = await UNUserNotificationCenter.current().notificationSettings()
+        let isPublished = setting.authorizationStatus == .authorized
+        
+        let newUser = UserRequest(name: name, toogle: isPublished)
         
         do {
-            try await userRef.setData(data, merge: true)
+            try userRef.setData(from: newUser, merge: true)
         } catch let error as NSError {
             switch error.code {
             case FirestoreErrorCode.permissionDenied.rawValue:
@@ -87,7 +86,7 @@ class FirebaseAuthManager {
     
     func deleteAccount() async {
         guard let user = Auth.auth().currentUser else {
-            print("❌ 현재 로그인된 사용자가 없습니다.")
+            print("현재 로그인된 사용자가 없습니다.")
             return
         }
         

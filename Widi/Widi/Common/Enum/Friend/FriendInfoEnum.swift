@@ -40,9 +40,9 @@ enum FriendInfoItem {
     
     static func makeItems(from response: FriendResponse) -> [FriendInfoItem] {
         return [
-            .diaryCount(response.experienceDTO.experiencePoint),
+            .diaryCount(response.experienceDTO.exp),
             .birthday(response.birthday ?? ""),
-            .hatchProgress(response.experienceDTO.experiencePoint)
+            .hatchProgress(response.experienceDTO.exp)
         ]
     }
 }

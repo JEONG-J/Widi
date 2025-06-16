@@ -112,11 +112,10 @@ struct DetailDiaryScreenvView: View {
                 viewModel.photoImages.remove(at: index)
             })
         })
-        
         .sheet(isPresented: $viewModel.isShowCalendar, content: {
             SheetCalendarView(viewModel: viewModel)
                 .presentationCornerRadius(DetailDiaryConstants.calendarCornerRadius)
-                .presentationDetents([.medium])
+                .presentationDetents([.fraction(0.55)])
         })
         
         .photosPicker(

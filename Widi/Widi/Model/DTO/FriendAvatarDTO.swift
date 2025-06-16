@@ -16,6 +16,8 @@ struct CharacterDTO: Codable, Hashable {
 
 /// 경험치
 struct ExperienceDTO: Codable, Hashable {
-    var experiencePoint: Int
-    var characterInfo: CharacterDTO
+    let userId: String
+    let friendId: String
+    let exp: Int
+    let characterInfo: CharacterDTO
 }

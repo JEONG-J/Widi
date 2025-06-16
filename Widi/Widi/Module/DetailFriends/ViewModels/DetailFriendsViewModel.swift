@@ -44,17 +44,24 @@ final class DetailFriendsViewModel {
     // MARK: - API
     
     /// 친구 삭제
-    /// - Parameter friend: 친구 정보 입력
     @MainActor
     func deleteFriend() async {
         deleteLoading = true
-        do {
-            try await container.firebaseService.friends.deleteFriend(documentId: self.friendResponse.documentId)
+        
+        guard let documentId = friendResponse.documentId else {
+            print("documentId가 nil입니다. 친구를 삭제할 수 없습니다.")
             deleteLoading = false
+            return
+        }
+        
+        do {
+            try await container.firebaseService.friends.deleteFriend(documentId: documentId)
+            print("친구 삭제 성공")
         } catch {
             print("친구 삭제 실패: \(error.localizedDescription)")
-            deleteLoading = false
         }
+        
+        deleteLoading = false
     }
     
     func returnFriendInfo() -> FriendRequest {
@@ -62,11 +69,16 @@ final class DetailFriendsViewModel {
     }
     
     /// 일기 삭제
-    /// - Parameter diary: 일기 삭제 데이터
     func deleteDiary(_ diary: DiaryResponse) async {
+        guard let documentId = diary.documentId else {
+            print("documentId가 nil입니다. 일기를 삭제할 수 없습니다.")
+            return
+        }
+        
         do {
-            try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            try await container.firebaseService.diary.deleteDiary(documentId: documentId)
             diaries?.removeAll { $0.id == diary.id }
+            print("일기 삭제 성공")
         } catch {
             print("일기 삭제 실패: \(error.localizedDescription)")
         }

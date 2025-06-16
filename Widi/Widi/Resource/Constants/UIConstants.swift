@@ -10,4 +10,5 @@ import SwiftUI
 
 struct UIConstants {
     static let defaultHorizontalPadding: CGFloat = 16
+    static let defaultBottomPadding: CGFloat = 51
 }

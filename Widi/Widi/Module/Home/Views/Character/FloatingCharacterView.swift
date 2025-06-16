@@ -34,7 +34,7 @@ struct FloatingCharacterView: View {
                     }
                 }
                 .onChange(of: context.date) { _, _ in
-                    guard friend.experienceDTO.experiencePoint >= 4 else { return }
+                    guard friend.experienceDTO.exp >= 4 else { return }
                     updatePosition()
                     updateSharedState()
                 }

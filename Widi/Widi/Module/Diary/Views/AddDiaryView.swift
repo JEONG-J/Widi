@@ -225,8 +225,3 @@ struct AddDiaryView: View {
         viewModel.diaryImages.remove(at: index)
     }
 }
-
-#Preview {
-    AddDiaryView(friendsRequest: .init(name: "11"), friendId: "11", container: DIContainer())
-        .environmentObject(DIContainer())
-}

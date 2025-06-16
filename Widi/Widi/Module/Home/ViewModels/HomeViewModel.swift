@@ -15,6 +15,7 @@ class HomeViewModel {
     var container: DIContainer
     var isLoading: Bool = false
     
+    var allCharacters: [CharacterState] = []
     
     init(container: DIContainer) {
         self.container = container

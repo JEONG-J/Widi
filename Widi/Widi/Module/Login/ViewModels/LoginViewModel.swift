@@ -30,6 +30,7 @@ class LoginViewModel {
     }
     
     /// 애플 로그인
+    @MainActor
     func appleLogin()  {
         if let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -46,7 +47,6 @@ class LoginViewModel {
                                     fullName: credential.fullName
                                 )
                                 self?.saveKeychain(user: user)
-                                print()
                                 self?.appFlowViewModel.appState = .home
                             }
                         } catch let error as FirebaseServiceError {
