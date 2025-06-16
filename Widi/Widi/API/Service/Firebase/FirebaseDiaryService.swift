@@ -22,10 +22,11 @@ class FirebaseDiaryService {
             
             let snapshop = try await query.getDocuments()
             
-            let diaries = try snapshop.documents.compactMap { document in
-                try document.data(as: DiaryResponse.self)
+            let diaries = try snapshop.documents.compactMap { document -> DiaryResponse in
+                var diary = try document.data(as: DiaryResponse.self)
+                diary.documentId = document.documentID
+                return diary
             }
-            
             return diaries
             
         } catch let error as NSError {

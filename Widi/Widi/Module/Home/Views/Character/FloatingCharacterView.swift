@@ -62,7 +62,7 @@ struct FloatingCharacterView: View {
             KFImage(URL(string: friend.experienceDTO.characterInfo.imageURL))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 120, height: 110)
+                .frame(width: 70, height: 60)
             
             Text(friend.name)
                 .font(.cap1)

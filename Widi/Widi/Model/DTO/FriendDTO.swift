@@ -30,4 +30,18 @@ struct FriendResponse: Codable, Identifiable, Hashable {
     var birthday: String?
     var experienceDTO: ExperienceDTO
     var id: String { documentId ?? UUID().uuidString }
+    
+    enum CodingKeys: String, CodingKey {
+        case friendId
+        case name
+        case birthday
+        case experienceDTO
+    }
+    
+}
+
+struct RawFriend: Codable {
+    var friendId: String
+    var name: String
+    var birthday: String?
 }

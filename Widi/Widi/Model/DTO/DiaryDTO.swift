@@ -33,10 +33,23 @@ struct DiaryRequest: Codable, DiaryDTO {
 struct DiaryResponse: Codable, DiaryDTO, Identifiable, Hashable {
     @DocumentID var documentId: String?
     var id: UUID = .init()
-    var title: String?
     var content: String
-    var pictures: [String]?
+    var createdAt: Timestamp
     var diaryDate: String
+    var friendId: String
+    var pictures: [String]?
+    var title: String?
+    var userId: String
+    
+    enum CodingKeys: String, CodingKey {
+        case content
+        case createdAt
+        case diaryDate
+        case friendId
+        case pictures
+        case title
+        case userId
+    }
 }
 
 struct DiaryUpdateRequest: Codable, DiaryDTO {

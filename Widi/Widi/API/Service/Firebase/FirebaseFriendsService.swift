@@ -26,17 +26,24 @@ class FirebaseFriendsService {
             var friends: [FriendResponse] = []
             
             for doc in snapshot.documents {
-                guard let friendModel = try? doc.data(as: FriendResponse.self) else { continue }
-                let experienceDTO = try await fetchExperience(for: userId, friendId: friendModel.friendId)
-                
-                let friend = FriendResponse(
-                    documentId: doc.documentID,
-                    friendId: friendModel.friendId,
-                    name: friendModel.name,
-                    birthday: friendModel.birthday,
-                    experienceDTO: experienceDTO
-                )
-                friends.append(friend)
+                do {
+                    let raw = try doc.data(as: RawFriend.self)
+                    
+                    let experienceDTO = try await fetchExperience(for: userId, friendId: raw.friendId)
+                    
+                    let friend = FriendResponse(
+                        documentId: doc.documentID,
+                        friendId: raw.friendId,
+                        name: raw.name,
+                        birthday: raw.birthday,
+                        experienceDTO: experienceDTO
+                    )
+                    
+                    friends.append(friend)
+                } catch {
+                    print("디코딩 또는 experience fetch 실패: \(error.localizedDescription)")
+                    continue
+                }
             }
             
             return friends
@@ -190,10 +197,11 @@ class FirebaseFriendsService {
         )
         
         let experience = ExperienceDTO(
-            userId: userId,
-            friendId: generatedFriendId,
+            characterInfo: character,
             exp: 0,
-            characterInfo: character
+            friendId: generatedFriendId,
+            userId: userId
+            
         )
         
         do {

@@ -18,27 +18,11 @@ struct HomeDragView: View {
     var body: some View {
             VStack(alignment: .center, spacing: 20, content: {
                 dragIndicator
-                
                 VStack(alignment: .center, spacing: 16, content: {
                     topController
                     
-                    if !viewModel.isLoading {
-                        ScrollView(.vertical, content: {
-                            bottomContents
-                        })
-                        .padding(.bottom, 48)
-                    } else {
-                        Spacer()
-                        
-                        ProgressView()
-                            .controlSize(.large)
-                            .tint(Color.orange30)
-                        
-                        Spacer()
-                            .frame(height: 400)
-                    }
+                    scrollOrLoadingView
                 })
-                
                 Spacer()
             })
             .safeAreaPadding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
@@ -53,9 +37,7 @@ struct HomeDragView: View {
                     .ignoresSafeArea()
             }
             .task {
-                Task {
-                    await viewModel.getMyFriends()
-                }
+                await viewModel.getMyFriends()
             }
     }
     
@@ -82,20 +64,36 @@ struct HomeDragView: View {
         .padding(.bottom, 20)
     }
     
-    /// 하단 친구리스트 영역
+    /// 하단 친구 리스트 영역
     @ViewBuilder
     private var bottomContents: some View {
-        if let data = viewModel.friendsData {
-            LazyVStack(alignment: .center, spacing: 8, content: {
-                ForEach(data, id: \.id) { data in
-                    FriendsCard(friendsData: data)
+        switch viewModel.friendsData {
+        case .some(let data) where !data.isEmpty:
+            LazyVStack(alignment: .center, spacing: 8) {
+                ForEach(data, id: \.id) { friend in
+                    FriendsCard(friendsData: friend)
                         .onTapGesture {
-                            container.navigationRouter.push(to: .detailFriendView(friendResponse: data))
+                            container.navigationRouter.push(to: .detailFriendView(friendResponse: friend))
                         }
                 }
-            })
-        } else {
+            }
+        case .some:
             notContents
+
+        case .none:
+            EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private var scrollOrLoadingView: some View {
+        if viewModel.isLoading {
+            progressView
+        } else {
+            ScrollView(.vertical) {
+                bottomContents
+            }
+            .padding(.bottom, 48)
         }
     }
     
@@ -120,6 +118,18 @@ struct HomeDragView: View {
         }
         
         Spacer()
+    }
+    
+    @ViewBuilder
+    private var progressView: some View {
+        Spacer()
+        
+        ProgressView()
+            .controlSize(.large)
+            .tint(Color.orange30)
+        Spacer()
+        
+            .frame(height: 400)
     }
 }
 

@@ -18,7 +18,7 @@ struct WidiSplashView: View {
         }
         let url = URL(fileURLWithPath: path)
         let player = AVPlayer(url: url)
-        player.isMuted = true // 필요 시 음소거
+        player.isMuted = true
         return player
     }()
 

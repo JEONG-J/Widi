@@ -48,48 +48,9 @@ struct HomeView: View {
                 HomeDragView(viewModel: viewModel)
                     .environmentObject(container)
                     .offset(y: offset + dragOffset)
-                    .gesture(
-                        DragGesture()
-                            .updating($dragOffset, body: { value, state, _ in
-                                let newOffset = offset + value.translation.height
-                                if newOffset > minOffset {
-                                    state = minOffset - offset
-                                } else if newOffset < maxOffset {
-                                    state = maxOffset - offset
-                                } else {
-                                    state = value.translation.height
-                                }
-                            })
-                            .onEnded { value in
-                                let dragAmount = value.translation.height
-                                offset += dragAmount
-                                offset = offset.clamped(to: maxOffset...minOffset)
-                                
-                                let threshold: CGFloat = 5
-                                
-                                withAnimation(.easeInOut(duration: 0.4)) {
-                                    if dragAmount < -threshold {
-                                        offset = maxOffset
-                                    } else if dragAmount > threshold {
-                                        offset = minOffset
-                                    } else {
-                                        offset = (lastOffset < (maxOffset + minOffset) / 2) ? maxOffset : minOffset
-                                    }
-                                }
-                                
-                                lastOffset = offset
-                            }
-                    )
+                    .gesture(dragGesture(minOffset: minOffset, maxOffset: maxOffset, midPoint: midPoint))
                     .task {
-                        if !hasAppeared {
-                            hasAppeared = true
-                            offset = screenHeight
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                withAnimation(.spring(response: 1.4, dampingFraction: 0.8)) {
-                                    offset = minOffset
-                                }
-                            }
-                        }
+                        await initializeOffset(screenHeight: screenHeight, minOffset: minOffset)
                     }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity).ignoresSafeArea()
@@ -100,31 +61,9 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
             }
-            .loadingOverlay(isLoading: isCharacterLoaded, loadingType: .homeLoading)
+            .loadingOverlay(isLoading: !isCharacterLoaded, loadingType: .homeLoading)
             .overlay(alignment: .topTrailing, content: {
-                if !shouldHideOverlay {
-                        Button(action: {
-                            container.navigationRouter.push(to: .myPage)
-                        }, label: {
-                            Image(.naviSetting)
-                                .resizable()
-                                .frame(width: 19, height: 20)
-                                .padding(10)
-                                .background {
-                                    Circle()
-                                        .fill(
-                                            Color.white.opacity(0.7)
-                                                .shadow(.inner(color: Color.white.opacity(0.5), radius: 2, x: 2, y: 2))
-                                        )
-                                        .glass()
-                                }
-                                
-                        })
-                        .transition(.opacity)
-                        .animation(.easeInOut, value: shouldHideOverlay)
-                        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
-                        .offset(y: 25)
-                }
+                topNaviButton(shouldHideOverlay)
             })
             .navigationDestination(for: NavigationDestination.self) { destination in
                 NavigationRoutingView(destination: destination)
@@ -132,6 +71,86 @@ struct HomeView: View {
                     .environmentObject(appFlowViewModel)
             }
         }
+    }
+    
+    /// 상단 옵션 버튼
+    /// - Parameter shouldHideOverlay: 숨기기 보이기
+    /// - Returns: 뷰 반환
+    @ViewBuilder
+    private func topNaviButton(_ shouldHideOverlay: Bool) -> some View {
+        if !shouldHideOverlay {
+            Button(action: {
+                container.navigationRouter.push(to: .myPage)
+            }, label: {
+                Image(.naviSetting)
+                    .resizable()
+                    .frame(width: 19, height: 20)
+                    .padding(10)
+                    .background {
+                        Circle()
+                            .fill(
+                                Color.white.opacity(0.7)
+                                    .shadow(.inner(color: Color.white.opacity(0.5), radius: 2, x: 2, y: 2))
+                            )
+                            .glass()
+                    }
+                
+            })
+            .transition(.opacity)
+            .animation(.easeInOut, value: shouldHideOverlay)
+            .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+            .offset(y: 25)
+        }
+    }
+    
+    // MARK: - Offset 초기 애니메이션
+    
+    @MainActor
+    private func initializeOffset(screenHeight: CGFloat, minOffset: CGFloat) async {
+        if !hasAppeared {
+            hasAppeared = true
+            
+            offset = screenHeight
+            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3초
+            
+            withAnimation(.spring(response: 1.4, dampingFraction: 0.8)) {
+                offset = minOffset
+            }
+        }
+    }
+    
+    // MARK: - Drag Gesture
+    
+    private func dragGesture(minOffset: CGFloat, maxOffset: CGFloat, midPoint: CGFloat) -> some Gesture {
+        DragGesture()
+            .updating($dragOffset) { value, state, _ in
+                let newOffset = offset + value.translation.height
+                if newOffset > minOffset {
+                    state = minOffset - offset
+                } else if newOffset < maxOffset {
+                    state = maxOffset - offset
+                } else {
+                    state = value.translation.height
+                }
+            }
+            .onEnded { value in
+                let dragAmount = value.translation.height
+                offset += dragAmount
+                offset = offset.clamped(to: maxOffset...minOffset)
+                
+                let threshold: CGFloat = 5
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    if dragAmount < -threshold {
+                        offset = maxOffset
+                    } else if dragAmount > threshold {
+                        offset = minOffset
+                    } else {
+                        offset = (lastOffset < midPoint) ? maxOffset : minOffset
+                    }
+                }
+                
+                lastOffset = offset
+            }
     }
 }
 

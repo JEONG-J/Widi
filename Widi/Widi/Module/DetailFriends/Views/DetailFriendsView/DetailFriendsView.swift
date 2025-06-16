@@ -44,7 +44,7 @@ struct DetailFriendsView: View {
                 print("documentId가 nil입니다. 친구 정보를 불러올 수 없습니다.")
                 return
             }
-
+            
             await viewModel.loadFriend(documentId: documentId)
             await viewModel.fetchDiaries(for: viewModel.friendResponse)
         }
@@ -52,18 +52,18 @@ struct DetailFriendsView: View {
             isLoading: viewModel.deleteLoading,
             loadingType: .delete
         )
-        .loadingOverlay(isLoading: viewModel.isFriendInfoLoading, loadingType: .diaryFriendInfo)
+        .loadingOverlay(isLoading: viewModel.isFriendInfoLoading || viewModel.diaryInfoLoading, loadingType: .diaryFriendInfo)
         .alertModifier(
             show: viewModel.showFriendDeleteAlert,
             content: {
                 CustomAlert(alertButtonType: .friendsDelete, onCancel: {
-                        viewModel.showDiaryDeleteAlert.toggle()
+                    viewModel.showDiaryDeleteAlert.toggle()
                 }, onRight: {
-                        Task {
-                            viewModel.showFriendDeleteAlert.toggle()
-                            await viewModel.deleteFriend()
-                            container.navigationRouter.pop()
-                        }
+                    Task {
+                        viewModel.showFriendDeleteAlert.toggle()
+                        await viewModel.deleteFriend()
+                        container.navigationRouter.pop()
+                    }
                 })
             }
         )
@@ -194,11 +194,7 @@ struct DetailFriendsView: View {
     /// - Returns: 아이템 갯수 상관없이 바닥까지 높이가지는 일기 세션 반환
     func diarySection() -> some View {
         VStack {
-            if !viewModel.diaryInfoLoading {
-                diaryContetns
-            } else {
-                progressView
-            }
+            diaryContetns
         }
         .frame(minHeight: getScreenSize().height )
         .background(Color.whiteBlack.opacity(0.8))

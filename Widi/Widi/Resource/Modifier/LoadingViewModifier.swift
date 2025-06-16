@@ -21,7 +21,7 @@ struct LoadingModifier: ViewModifier {
         case delete = "친구를 삭제하는 중이에요. 잠시만 기다려주세요 🗑️"
         case diaryDelete = "일기를 삭제하는 중이에요. 잠시만 기다려주세요 🗑️"
         case diaryFriendInfo = "친구 및 일기 정보를 불러오는 중이에요 🤔"
-        case homeLoading = "캐릭터 친구들을 불러온느 중이에요! 👻"
+        case homeLoading = "캐릭터 친구들을 불러오는 중이에요! 👻"
     }
     
     fileprivate enum LoadingViewModifierConstants {
