@@ -18,8 +18,8 @@ struct FriendInfoView: View {
     
     /// FriendInfoView
     /// - Parameter friendInfoData: 친구 정보 조회 데이터
-    init(friendInfoData: FriendResponse) {
-        self.infoItems = FriendInfoItem.makeItems(from: friendInfoData)
+    init(friendInfoData: FriendResponse, diaryCount: Int) {
+        self.infoItems = FriendInfoItem.makeItems(from: friendInfoData, diaryCount: diaryCount)
     }
     
     // MARK: - Body

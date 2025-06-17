@@ -17,6 +17,26 @@ struct DetailFriendsView: View {
     @State private var headerOffsets: (CGFloat, CGFloat) = (0, 0)
     @State private var diariesOffsets: [UUID: CGFloat] = [:]
     
+
+    // MARK: - Constants
+    fileprivate enum DetailFriendsConstants {
+        // 레이아웃 높이
+        static let navigationBarHeight: CGFloat = 59
+        static let headerViewHeight: CGFloat = 209
+        static let diaryRowHeight: CGFloat = 171
+        static let pinnedHeaderHeight: CGFloat = 36
+        static let loadingSpacerHeight: CGFloat = 160
+        static let bottomSpacerHeight: CGFloat = 120
+        
+        static let buttonWidth: CGFloat = 56
+        
+        static let addButtonTrailingPadding: CGFloat = 20
+        static let addButtonBottomPadding: CGFloat = 12
+        
+        static let diaryListYOffset: CGFloat = -48
+        static let cornerRadius: CGFloat = 24
+    }
+    
     // MARK: - Init
     
     init(container: DIContainer, friendResponse: FriendResponse) {
@@ -75,9 +95,9 @@ struct DetailFriendsView: View {
                 }, onRight: {
                     Task {
                         guard let diary = viewModel.targetDiary else { return }
-                        await viewModel.deleteDiary(diary)
-                        diariesOffsets[diary.id] = nil
                         viewModel.showDiaryDeleteAlert.toggle()
+                        diariesOffsets[diary.id] = nil
+                        await viewModel.deleteDiary(diary)
                     }
                 })
             }
@@ -179,7 +199,11 @@ struct DetailFriendsView: View {
     func scrollContent(topSafeArea: CGFloat) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: .zero) {
-                HeaderView(friendResponse: viewModel.friendResponse, headerHeight: DetailFriendsConstants.headerViewHeight)
+                HeaderView(
+                    friendResponse: viewModel.friendResponse,
+                    headerHeight: DetailFriendsConstants.headerViewHeight,
+                    diaryCount: viewModel.diaryCount ?? 0
+                )
                 diarySection()
             }
         }
@@ -195,6 +219,9 @@ struct DetailFriendsView: View {
     func diarySection() -> some View {
         VStack {
             diaryContetns
+            
+            Spacer()
+                .frame(minHeight: 120)
         }
         .frame(minHeight: getScreenSize().height )
         .background(Color.whiteBlack.opacity(0.8))
@@ -220,9 +247,6 @@ struct DetailFriendsView: View {
                     .modifier(OffsetModifier(offset: $headerOffsets.1))
             }
         }
-        
-        Spacer()
-            .frame(minHeight: 120)
     }
     
     /// 스티키 헤더 뷰, 일기 리스트 상단 그라데이션 뷰
@@ -289,26 +313,4 @@ struct DetailFriendsView: View {
         
         Spacer()
     }
-}
-
-fileprivate enum DetailFriendsConstants {
-    // Layout Heights
-    static let navigationBarHeight: CGFloat = 59
-    static let headerViewHeight: CGFloat = 209
-    static let diaryRowHeight: CGFloat = 171
-    static let pinnedHeaderHeight: CGFloat = 36
-    static let loadingSpacerHeight: CGFloat = 160
-    static let bottomSpacerHeight: CGFloat = 120
-    
-    static let buttonWidth: CGFloat = 56
-    
-    // Button Padding
-    static let addButtonTrailingPadding: CGFloat = 20
-    static let addButtonBottomPadding: CGFloat = 12
-    
-    // Content Offset
-    static let diaryListYOffset: CGFloat = -48
-    
-    // CornerRadius
-    static let cornerRadius: CGFloat = 24
 }

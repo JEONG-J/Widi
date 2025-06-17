@@ -9,18 +9,28 @@ import SwiftUI
 import Kingfisher
 
 struct FloatingCharacterView: View {
+    
+    // MARK: - Property
     let friend: FriendResponse
     let screenSize: CGSize
     
-    @Binding var allCharacters: [CharacterState]
-    private let characterSize: CGSize = CGSize(width: 120, height: 110)
+    private let characterSize: CGSize = CGSize(width: FloatingCharacterViewConstants.characterSizeWidth, height: FloatingCharacterViewConstants.characterSizeHeight)
     
+    @Binding var allCharacters: [CharacterState]
     @State private var position: CGPoint = .zero
     @State private var direction: CGVector = .init(dx: CGFloat.random(in: -1.0...1.0), dy: CGFloat.random(in: -1.0...1.0))
     @State private var showHeart: Bool = false
     @State private var heartOffset: CGFloat = 0
     @State private var heartOpacity: Double = 1.0
     @State private var heartStates: [HeartState] = []
+    
+    // MARK: - Constants
+    fileprivate enum FloatingCharacterViewConstants {
+        static let characterSizeWidth: CGFloat = 120
+        static let characterSizeHeight: CGFloat = 110
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         TimelineView(.periodic(from: .now, by: 0.03)) { context in

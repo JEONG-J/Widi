@@ -21,6 +21,17 @@ struct HomeView: View {
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var appFlowViewModel: AppFlowViewModel
     
+    // MARK: - Constant
+    fileprivate enum HomeConstants {
+        static let minScreenHeight: CGFloat = 0.89
+        static let maxScreenHeight: CGFloat = 0.08
+        
+        static let topNaviWidth: CGFloat = 19
+        static let topNaviHeight: CGFloat = 20
+        static let topNaviPadding: CGFloat = 10
+        static let topOffset: CGFloat = 25
+    }
+    
     // MARK: - Init
     
     init(container: DIContainer) {
@@ -31,8 +42,8 @@ struct HomeView: View {
     
     var body: some View {
         let screenHeight = getScreenSize().height
-        let minOffset: CGFloat = screenHeight * 0.89
-        let maxOffset: CGFloat = screenHeight * 0.08
+        let minOffset: CGFloat = screenHeight * HomeConstants.minScreenHeight
+        let maxOffset: CGFloat = screenHeight * HomeConstants.maxScreenHeight
         let midPoint = (minOffset + maxOffset) / 2
         let shouldHideOverlay = offset < midPoint
         
@@ -84,8 +95,8 @@ struct HomeView: View {
             }, label: {
                 Image(.naviSetting)
                     .resizable()
-                    .frame(width: 19, height: 20)
-                    .padding(10)
+                    .frame(width: HomeConstants.topNaviWidth, height: HomeConstants.topNaviHeight)
+                    .padding(HomeConstants.topNaviPadding)
                     .background {
                         Circle()
                             .fill(
@@ -99,19 +110,18 @@ struct HomeView: View {
             .transition(.opacity)
             .animation(.easeInOut, value: shouldHideOverlay)
             .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
-            .offset(y: 25)
+            .offset(y: HomeConstants.topOffset)
         }
     }
     
     // MARK: - Offset 초기 애니메이션
-    
     @MainActor
     private func initializeOffset(screenHeight: CGFloat, minOffset: CGFloat) async {
         if !hasAppeared {
             hasAppeared = true
             
             offset = screenHeight
-            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3초
+            try? await Task.sleep(nanoseconds: 300_000_000)
             
             withAnimation(.spring(response: 1.4, dampingFraction: 0.8)) {
                 offset = minOffset
@@ -120,7 +130,6 @@ struct HomeView: View {
     }
     
     // MARK: - Drag Gesture
-    
     private func dragGesture(minOffset: CGFloat, maxOffset: CGFloat, midPoint: CGFloat) -> some Gesture {
         DragGesture()
             .updating($dragOffset) { value, state, _ in

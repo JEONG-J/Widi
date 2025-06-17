@@ -20,6 +20,7 @@ struct SheetCalendarView: View {
         
         static let topControllerVerticalPadding: CGFloat = 10
         static let topControllerHorizontalPadding: CGFloat = 20
+        static let calendarMinHeight: CGFloat = 410
         static let cornerRadius: CGFloat = 20
     }
     
@@ -31,7 +32,7 @@ struct SheetCalendarView: View {
         })
         .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
         .safeAreaPadding(.top, SheetCalendarViewConstants.topPadding)
-        .frame(maxHeight: .infinity, alignment: .top)
+        .frame(minHeight: SheetCalendarViewConstants.calendarMinHeight, maxHeight: .infinity, alignment: .top)
         .background(Color.white)
     }
     

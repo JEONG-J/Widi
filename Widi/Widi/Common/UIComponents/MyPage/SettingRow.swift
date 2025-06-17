@@ -65,12 +65,10 @@ struct SettingRow: View {
     @ViewBuilder
     private var rightContents: some View {
         switch type {
-        case .toggle(let isOn, _):
-            Toggle("", isOn: isOn)
-                .labelsHidden()
-                .toggleStyle(
-                    SwitchToggleStyle(tint: Color.orange30)
-                )
+        case .toggle:
+            Image(.chevronForward)
+                .resizable()
+                .frame(width: SettingRowConstants.iconFrame, height: SettingRowConstants.iconFrame)
             
         case .navigation:
             Image(.chevronForward)

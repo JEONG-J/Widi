@@ -31,6 +31,7 @@ final class DetailFriendsViewModel {
     var diaries: [DiaryResponse]?
     var friendResponse: FriendResponse
     var targetDiary: DiaryResponse? = nil
+    var diaryCount: Int?
     
     private var container: DIContainer
     
@@ -64,6 +65,8 @@ final class DetailFriendsViewModel {
         deleteLoading = false
     }
     
+    /// 친구 정보 반환
+    /// - Returns: 친구 정보 데이터
     func returnFriendInfo() -> FriendRequest {
         return .init(name: friendResponse.name, birthday: friendResponse.birthday)
     }
@@ -78,12 +81,15 @@ final class DetailFriendsViewModel {
         do {
             try await container.firebaseService.diary.deleteDiary(documentId: documentId)
             diaries?.removeAll { $0.id == diary.id }
+            await loadFriend(documentId: friendResponse.documentId ?? "")
             print("일기 삭제 성공")
         } catch {
             print("일기 삭제 실패: \(error.localizedDescription)")
         }
     }
     
+    /// 일기 데이터 조회
+    /// - Parameter friend: 친구 정보
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
         diaryInfoLoading = true
@@ -106,11 +112,18 @@ final class DetailFriendsViewModel {
         }
     }
     
+    /// 친구 단일 정보 조회
+    /// - Parameter documentId: 문서 아이디
     func loadFriend(documentId: String) async {
         isFriendInfoLoading = true
         do {
             let friend = try await container.firebaseService.friends.fetchFriend(documentId: documentId)
             self.friendResponse = friend
+
+            let count = try await container.firebaseService.diary.getDiaryCount(for: friend.friendId)
+            print("일기 개수 : \(count)")
+            self.diaryCount = count
+
             isFriendInfoLoading = false
         } catch {
             print("친구 정보 로드 실패: \(error.localizedDescription)")

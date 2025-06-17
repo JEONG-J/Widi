@@ -82,8 +82,8 @@ struct SelectedImagePreview: View {
                     .resizable()
             }
         }
-        .aspectRatio(1, contentMode: .fit)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(contentMode: .fill)
+        .frame(width: 132, height: 132)
         .clipShape(RoundedRectangle(cornerRadius: SelectedImagePreviewConstants.conerRadius))
     }
 }

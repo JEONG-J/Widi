@@ -11,6 +11,14 @@ import FirebaseStorage
 import SwiftUI
 
 class FirebaseDiaryService {
+    
+    // MARK: - 일기 조회
+    
+    /// 일기 조회
+    /// - Parameters:
+    ///   - userId: 일기 조회 유저 아이디
+    ///   - friendId: 친구 아이디
+    /// - Returns: 일기 데이터 조회
     func fetchDiaries(for userId: String, friendId: String) async throws -> [DiaryResponse] {
         let db = Firestore.firestore()
         
@@ -42,13 +50,25 @@ class FirebaseDiaryService {
             throw FirebaseServiceError.unknownError
         }
     }
+    // MARK: - 일기 삭제
     
+    /// 일기 삭제
+    /// - Parameter documentId: 일기 문서 아이디
     func deleteDiary(documentId: String) async throws {
         let db = Firestore.firestore()
         
         do {
-            try await db.collection("diaries").document(documentId).delete()
+            let diaryRef = db.collection("diaries").document(documentId)
+            let snapshot = try await diaryRef.getDocument()
+            
+            guard let data = snapshot.data(),
+                  let _ = data["friendId"] as? String else {
+                throw FirebaseServiceError.custom(message: "friendId를 찾을 수 없습니다.")
+            }
+
+            try await diaryRef.delete()
             print("일기 삭제 완료")
+
         } catch let error as NSError {
             switch error.code {
             case NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut:
@@ -63,6 +83,12 @@ class FirebaseDiaryService {
         }
     }
 
+    // MARK: - Search
+    /// 일기 검색
+    /// - Parameters:
+    ///   - keyword: 일기 검색 키워드
+    ///   - userId: 유저 아이디
+    /// - Returns: 일기 데이터 조회
     @MainActor
     func searchDiaries(keyword: String, userId: String) async throws -> [DiaryResponse] {
         let db = Firestore.firestore()
@@ -77,7 +103,14 @@ class FirebaseDiaryService {
                 .getDocuments()
             
             let allDiaries: [DiaryResponse] = snapshot.documents.compactMap { doc in
-                try? doc.data(as: DiaryResponse.self)
+                do {
+                    var diary = try doc.data(as: DiaryResponse.self)
+                    diary.documentId = doc.documentID
+                    return diary
+                } catch {
+                    print("일기 디코딩 실패: \(error.localizedDescription)")
+                    return nil
+                }
             }
             
             let filtered = allDiaries.filter { diary in
@@ -92,6 +125,12 @@ class FirebaseDiaryService {
         }
     }
     
+    // MARK: - Image
+    
+    /// 이미지 삭제
+    /// - Parameters:
+    ///   - diaryId: 이미지 속한 일기 아이디
+    ///   - imageUrl: 이미지 URL
     func deleteImage(from diaryId: String, imageUrl: String) async throws {
         let db = Firestore.firestore()
         let ref = db.collection("diaries").document(diaryId)
@@ -105,6 +144,11 @@ class FirebaseDiaryService {
         try await storageRef.delete()
     }
     
+    /// 이미지 서버 저장
+    /// - Parameters:
+    ///   - image: 이미지
+    ///   - diaryId: 일기 아이디
+    /// - Returns: 이미지 주소
     func uploadImageToStorage(image: UIImage, diaryId: String) async throws -> String {
         let storage = Storage.storage()
         let imageName = UUID().uuidString
@@ -119,6 +163,16 @@ class FirebaseDiaryService {
         return url.absoluteString
     }
     
+    // MARK: - 일기 추가 및 수정
+    
+    /// 일기 및 일기 내 이미지 변경
+    /// - Parameters:
+    ///   - diaryId: 일기 아이디
+    ///   - title: 일기 타이틀 변경
+    ///   - content: 일기 주 컨텐츠 내용
+    ///   - images: 일기 속 사진
+    ///   - originalServerImageURLs: 편집 전 일기 주소 모음
+    ///   - diaryDate: 일기 날짜 데이터
     @MainActor
     func updateDiaryWithImages(
         diaryId: String,
@@ -162,6 +216,14 @@ class FirebaseDiaryService {
         try ref.setData(from: request, merge: true)
     }
     
+    /// 일기 추가
+    /// - Parameters:
+    ///   - userId: 앱 사용자 유저 아이디
+    ///   - friendId: 일기 주인 친구 id
+    ///   - title: 일기 제목
+    ///   - content: 일기 컨텐츠
+    ///   - images: 일기 내부 사진
+    ///   - diaryDate: 일기 속 날짜
     @MainActor
     func addDiary(
         userId: String,
@@ -205,6 +267,11 @@ class FirebaseDiaryService {
         try await increaseExperience(userId: userId, friendId: friendId, by: 1)
     }
     
+    /// 경험치 증가
+    /// - Parameters:
+    ///   - userId: 경험치 증가 유저
+    ///   - friendId: 일기 친구 아이디
+    ///   - point: 증가 포인트
     @MainActor
     func increaseExperience(userId: String, friendId: String, by point: Int = 1) async throws {
         let db = Firestore.firestore()
@@ -247,7 +314,7 @@ class FirebaseDiaryService {
         
         do {
             let snapshot = try await db.collection("diaries")
-                .whereField("userId", isEqualTo: userId)
+                .whereField("friendId", isEqualTo: userId)
                 .getDocuments()
             
             return snapshot.count

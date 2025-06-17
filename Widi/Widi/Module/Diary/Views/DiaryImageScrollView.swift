@@ -51,7 +51,7 @@ struct DiaryImageScrollView: View {
         })
         .frame(height: DiaryImageScrollConstants.lazyHStackFrame)
         .contentMargins(.horizontal, UIConstants.defaultHorizontalPadding)
-        .contentMargins(.bottom, DiaryImageScrollConstants.lazyHStackBottomMargins)
+        .contentMargins([.bottom, .top], DiaryImageScrollConstants.lazyHStackBottomMargins)
     }
 }
 

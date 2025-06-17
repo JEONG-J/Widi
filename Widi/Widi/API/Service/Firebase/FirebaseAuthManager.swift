@@ -30,26 +30,29 @@ class FirebaseAuthManager {
             fullName: appleIDCredential.fullName
         )
         
-        return try await withCheckedThrowingContinuation { continuation in
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
             Auth.auth().signIn(with: credential) { authResult, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let user = authResult?.user {
-                    Messaging.messaging().token { token, error in
-                        if let token = token {
-                            Firestore.firestore().collection("users").document(user.uid).setData([
-                                "fcmToken": token
-                            ], merge: true)
-                            print("FCM 토큰 저장 완료")
-                        } else if let error = error {
-                            print("FCM 토큰 저장 실패: \(error.localizedDescription)")
-                        }
-                    }
-                    
+                    self?.storeFCMToken(user)
                     continuation.resume(returning: user)
                 } else {
                     continuation.resume(throwing: NSError(domain: "UnknownError", code: -1))
                 }
+            }
+        }
+    }
+    
+    func storeFCMToken(_ user: User) {
+        Messaging.messaging().token { token, error in
+            if let token = token {
+                Firestore.firestore().collection("users").document(user.uid).setData([
+                    "fcmToken": token
+                ], merge: true)
+                print("FCM 토큰 저장 완료")
+            } else if let error = error {
+                print("FCM 토큰 저장 실패: \(error.localizedDescription)")
             }
         }
     }

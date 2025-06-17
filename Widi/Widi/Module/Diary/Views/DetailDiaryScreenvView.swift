@@ -162,13 +162,15 @@ struct DetailDiaryScreenvView: View {
                 }
 
             case .edit:
-                ToolbarItemGroup(placement: .topBarTrailing, content: {
+                ToolbarItem(placement: .topBarLeading, content: {
                     CustomNavigationIcon(navigationIcon: .backArrow, action: {
                         withAnimation(.easeInOut) {
                             viewModel.isShowStopEditAlert.toggle()
                         }
                     })
+                })
                     
+                ToolbarItem(placement: .topBarTrailing, content: {
                     CustomNavigationIcon(navigationIcon: .complete(type: .complete, isEmphasized: true), action: {
                         Task {
                             await viewModel.saveEditContent()

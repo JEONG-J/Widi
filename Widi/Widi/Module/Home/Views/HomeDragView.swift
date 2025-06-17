@@ -102,20 +102,12 @@ struct HomeDragView: View {
     private var notContents: some View {
         Spacer().frame(height: 160)
         
-        ZStack(alignment: .center, content: {
-            Text(notContentsText)
-                .font(.b1)
-                .foregroundStyle(Color.gray50)
-                .lineLimit(2)
-                .lineSpacing(1.6)
-                .multilineTextAlignment(.center)
-        })
-        .frame(width: 240, height: 231)
-        .background {
-            Circle()
-                .fill(Color.white.opacity(0.7))
-                .blur(radius: 35)
-        }
+        Text(notContentsText)
+            .font(.b1)
+            .foregroundStyle(Color.gray50)
+            .lineLimit(2)
+            .lineSpacing(1.6)
+            .multilineTextAlignment(.center)
         
         Spacer()
     }

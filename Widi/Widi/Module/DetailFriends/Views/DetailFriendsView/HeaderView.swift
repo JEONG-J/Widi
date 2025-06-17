@@ -13,15 +13,17 @@ struct HeaderView: View {
     // MARK: - Property
     let friendResponse: FriendResponse
     let headerHeight: CGFloat
+    let diaryCount: Int
     
     // MARK: - init
     /// 친구 정보 init
     /// - Parameters:
     ///   - friendData: 친구
     ///   - headerHeight: 헤더 높이 지정
-    init(friendResponse: FriendResponse, headerHeight: CGFloat) {
+    init(friendResponse: FriendResponse, headerHeight: CGFloat, diaryCount: Int) {
         self.friendResponse = friendResponse
         self.headerHeight = headerHeight
+        self.diaryCount = diaryCount
     }
     
     // MARK: - Body
@@ -65,10 +67,12 @@ struct HeaderView: View {
     /// 친구 상세 정보
     @ViewBuilder
     private func friendsDetailInfo(_ minY: CGFloat, _ threshhold: CGFloat) -> some View {
-        FriendInfoView(friendInfoData: friendResponse)
-            .frame(maxWidth: .infinity)
-            .frame(height: 101)
-            .opacity(threshhold > minY ? 0 : 1)
-            .animation(.easeInOut(duration: 0.3), value: threshhold > minY)
+        Group {
+            FriendInfoView(friendInfoData: friendResponse, diaryCount: diaryCount)
+                .frame(maxWidth: .infinity)
+                .frame(height: 101)
+                .opacity(threshhold > minY ? 0 : 1)
+                .animation(.easeInOut(duration: 0.3), value: threshhold > minY)
+        }
     }
 }

@@ -21,7 +21,6 @@ struct DiaryContainerView<Content: View, ImageScroll: View> : View {
             
             content()
         })
-        .background(Color.background)
         .offset(y: 20)
     }
 }

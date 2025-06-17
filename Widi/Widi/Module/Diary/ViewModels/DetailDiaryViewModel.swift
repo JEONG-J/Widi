@@ -100,11 +100,11 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
         do {
             try await container.firebaseService.diary.updateDiaryWithImages(
                 diaryId: diaryId,
-                title: diaryTitle.isEmpty ? nil : diaryTitle,
+                title: diaryTitle,
                 content: diaryContents,
                 images: diaryImages,
                 originalServerImageURLs: diary.pictures ?? [],
-                diaryDate: dateString
+                diaryDate: diary.diaryDate
             )
             print("일기 수정 성공")
         } catch {

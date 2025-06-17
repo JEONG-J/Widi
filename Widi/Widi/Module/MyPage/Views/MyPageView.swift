@@ -15,6 +15,7 @@ struct MyPageView: View {
     @Bindable var viewModel: MyPageViewModel
     @EnvironmentObject var contaier: DIContainer
     @EnvironmentObject var appFlowViewModel: AppFlowViewModel
+    @Environment(\.scenePhase) private var scenePhase
     
     // MARK: - Init
     init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
@@ -24,7 +25,7 @@ struct MyPageView: View {
     fileprivate enum MyPageConstants {
         static let logoutText: String = "로그아웃"
         static let deleteAccountText: String = "탈퇴하기"
-        static let settingRowNavigationDescription: String = "모든 알림 전송이 일시 중단돼요"
+        static let settingRowNavigationDescription: String = "푸시 알림 설정을 변경합니다"
         
         static let viewTopPadding: CGFloat = 24
         static let sheetCornerRadius: CGFloat = 24
@@ -119,25 +120,14 @@ struct MyPageView: View {
     
     /// 중앙 컨텐츠 리스트 버트
     private var middleContents: some View {
-        let toggleBinding = Binding(
-            get: {
-                viewModel.userInfo?.toogle ?? true
-            },
-            set: { newValue in
-                viewModel.userInfo?.toogle = newValue
-                Task {
-                    await viewModel.toggleOnOff()
-                }
-            })
         
         let settings: [SettingRowType] = [
-                .toggle(
-                    isOn: toggleBinding,
-                    description: MyPageConstants.settingRowNavigationDescription
-                ),
-                .navigation,
-                .version(text: viewModel.appVersion ?? "")
-            ]
+            .toggle(
+                description: MyPageConstants.settingRowNavigationDescription
+            ),
+            .navigation,
+            .version(text: viewModel.appVersion ?? "")
+        ]
         
         return VStack(spacing: .zero) {
             
@@ -149,6 +139,13 @@ struct MyPageView: View {
                     SettingRow(type: rowType)
                         .onTapGesture {
                             viewModel.isModalPresented = true
+                        }
+                case .toggle:
+                    SettingRow(type: rowType)
+                        .onTapGesture {
+                            Task {
+                                viewModel.openSystemSettingNotification()
+                            }
                         }
                 default:
                     SettingRow(type: rowType)
@@ -209,8 +206,14 @@ struct MyPageView: View {
     private var progressView: some View {
         Spacer()
         
-        ProgressView()
-            .tint(Color.orange30)
+        HStack {
+            Spacer()
+            
+            ProgressView()
+                .tint(Color.orange30)
+            
+            Spacer()
+        }
         
         Spacer()
     }

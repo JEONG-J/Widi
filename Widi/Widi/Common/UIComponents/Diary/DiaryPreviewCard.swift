@@ -32,7 +32,7 @@ struct DiaryPreviewCard: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 28)
-        .frame(maxHeight: .infinity, alignment: .center)
+        .frame(maxHeight: .infinity, alignment: .top)
         .background(Color.white.opacity(0.8))
     }
     
