@@ -1,7 +1,8 @@
 # 🚀 프로젝트 이름
 
-<img src="https://github.com/user-attachments/assets/3fcb235a-eb64-4518-831a-6aefa98a6352
-" width="200"/>
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/80624315/455790138-3fcb235a-eb64-4518-831a-6aefa98a6352.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250617T024702Z&X-Amz-Expires=300&X-Amz-Signature=a81ef0ccf85fac050ba3ad8c6fd33595b47dd8ed0f4c85b286e2db87fe071ed1&X-Amz-SignedHeaders=host" width="200"/>
+<br>
+
 > 귀여운 캐릭터와 함께 다음 만남으로 자연스럽게 이어주는 친구 일기 앱
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)]()
