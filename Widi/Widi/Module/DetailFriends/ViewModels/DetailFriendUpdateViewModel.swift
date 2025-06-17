@@ -18,6 +18,7 @@ class DetailFriendUpdateViewModel {
     
     private var container: DIContainer
     
+    // MARK: - Init
     init(container: DIContainer, friendResponse: FriendResponse) {
         self.container = container
         self.nameText = friendResponse.name
@@ -25,20 +26,25 @@ class DetailFriendUpdateViewModel {
         self.friendResponse = friendResponse
     }
     
+    
+    // MARK: - API
+    /// 친구 정보 업데이트
     @MainActor
     func updateFriend() async {
+        guard let documentId = friendResponse.documentId else {
+            print("documentId가 nil입니다. 친구 정보를 수정할 수 없습니다.")
+            return
+        }
+        
         do {
             try await container.firebaseService.friends.updateFriendInfo(
-                documentId: friendResponse.documentId,
+                documentId: documentId,
                 name: nameText,
                 birthday: birthdayText.isEmpty ? nil : birthdayText
             )
+            print("친구 정보 수정 성공")
         } catch {
             print("친구 정보 수정 실패: \(error.localizedDescription)")
         }
-    }
-    
-    func returnOutsize() -> FriendResponse {
-        return .init(documentId: friendResponse.documentId, friendId: friendResponse.friendId, name: nameText, birthday: birthdayText, experienceDTO: friendResponse.experienceDTO)
     }
 }

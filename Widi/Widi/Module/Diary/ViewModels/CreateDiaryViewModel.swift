@@ -17,8 +17,8 @@ class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     var isShowCalendar: Bool = false
     var isShowImagePicker: Bool = false
     var checkBackView: Bool = false
+    
     var isLoading: Bool = false
-    var isLoadingFriend: Bool = false
     
     // MARK: - CreateFriend
     var friendsRequest: FriendRequest
@@ -49,16 +49,13 @@ class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     // MARK: - Function
     /// 일기 작성 후 생성 버튼 액션
     public func addFriends() async {
-        isLoadingFriend = true
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
-            isLoadingFriend = false
             return
         }
         do {
             let friendId = try await container.firebaseService.friends.addFriend(userId: userId, request: friendsRequest)
             await addDiary(targetFriendId: friendId)
-            isLoadingFriend = false
         } catch {
             print("친구 추가 실패: \(error.localizedDescription)")
         }
@@ -66,10 +63,8 @@ class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     }
     
     public func addDiary(targetFriendId: String) async {
-        isLoading = true
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 정보 없음")
-            isLoading = false
             return
         }
         
@@ -83,7 +78,6 @@ class CreateDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
                 diaryDate: dateString
             )
             print("일기 등록 완료")
-            isLoading = false
         } catch {
             print("일기 등록 실패: \(error.localizedDescription)")
         }

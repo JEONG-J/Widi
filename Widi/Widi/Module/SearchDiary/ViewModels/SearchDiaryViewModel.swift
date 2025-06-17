@@ -60,7 +60,6 @@ class SearchDiaryViewModel {
         do {
             let result = try await container.firebaseService.diary.searchDiaries(keyword: keyword, userId: uid)
             self.diaries = result
-            print("검색 결과", result)
         } catch {
             print("검색 실패: \(error.localizedDescription)")
             self.diaries = []
@@ -68,8 +67,13 @@ class SearchDiaryViewModel {
     }
     
     func deleteDiary(_ diary: DiaryResponse) async {
+        guard let documentId = diary.documentId else {
+            print("삭제할 일기의 documentId가 없습니다.")
+            return
+        }
+
         do {
-            try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            try await container.firebaseService.diary.deleteDiary(documentId: documentId)
             diaries.removeAll { $0.id == diary.id }
         } catch {
             print("일기 삭제 실패: \(error.localizedDescription)")

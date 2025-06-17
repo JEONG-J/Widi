@@ -15,97 +15,105 @@ struct MyPageView: View {
     @Bindable var viewModel: MyPageViewModel
     @EnvironmentObject var contaier: DIContainer
     @EnvironmentObject var appFlowViewModel: AppFlowViewModel
+    @Environment(\.scenePhase) private var scenePhase
     
+    // MARK: - Init
     init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
         self.viewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
+    }
+    
+    fileprivate enum MyPageConstants {
+        static let logoutText: String = "로그아웃"
+        static let deleteAccountText: String = "탈퇴하기"
+        static let settingRowNavigationDescription: String = "푸시 알림 설정을 변경합니다"
+        
+        static let viewTopPadding: CGFloat = 24
+        static let sheetCornerRadius: CGFloat = 24
+        static let topContentsSpacing: CGFloat = 46
+        static let nameLeadingPadding: CGFloat = 4
+        
+        static let bottomContentsHeight: CGFloat = 24
+        static let bottomContentSpacing: CGFloat = 29
+        static let bottomContentsHorizonPadding: CGFloat = 110
+        static let buttonCornerRadius: CGFloat = 8
+        static let buttonHeight: CGFloat = 44
     }
     
     // MARK: - Body
     var body: some View {
         VStack {
-            CustomNavigation(config: .backOnly, leftAction: { icon in
-                switch icon {
-                case .backArrow:
+            if viewModel.isLoading {
+                progressView
+            } else {
+                topContents
+                
+                Spacer()
+                
+                buttonContents
+            }
+        }
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+        .safeAreaPadding(.top, MyPageConstants.viewTopPadding)
+        .safeAreaPadding(.bottom, UIConstants.defaultBottomPadding)
+        .background(Color.background)
+        .navigationBarBackButtonHidden(true)
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarLeading, content: {
+                CustomNavigationIcon(navigationIcon: .backArrow, action: {
                     contaier.navigationRouter.pop()
-                default:
-                    break
-                }
-            }, rightAction: { icon in
-                switch icon {
-                default:
-                    break
+                })
+            })
+        })
+        .sheet(isPresented: $viewModel.isModalPresented) {
+            ContactUsView(container: contaier, isModalPresented: $viewModel.isModalPresented)
+                .presentationCornerRadius(MyPageConstants.sheetCornerRadius)
+        }
+        .alertModifier(show: viewModel.isShowLogoutAlert, content: {
+            CustomAlert(
+                alertButtonType: .logoutUser,
+                onCancel: {
+                    viewModel.isShowLogoutAlert.toggle()
+                },
+                onRight: {
+                    Task {
+                        await viewModel.logOutAction()
+                    }
+                })
+        })
+        .alertModifier(show: viewModel.isShowDrawAlert, content: {
+            CustomAlert(alertButtonType: .withdrawUser,
+                        onCancel: {
+                viewModel.isShowDrawAlert.toggle()
+            },
+                        onRight: {
+                Task {
+                    await viewModel.deleteAccountAction()
+                    self.viewModel.isShowDrawAlert.toggle()
                 }
             })
-            
-            topContents
-            
-            Spacer()
-            
-            buttonContetns
-            
+        })
+        .task {
+            await viewModel.getMyInfo()
         }
-        .safeAreaPadding(.horizontal, 16)
-        .safeAreaPadding(.bottom, 51)
-        .background(Color.background)
-        .sheet(isPresented: $viewModel.isModalPresented) {
-            ContactUsView(isModalPresented: $viewModel.isModalPresented)
-                .presentationCornerRadius(24)
-        }
-        .navigationBarBackButtonHidden(true)
-        
-        .overlay {
-            if viewModel.isShowLogoutAlert {
-                CustomAlertView {
-                    CustomAlert(
-                        alertButtonType: .logoutUser,
-                        onCancel: {
-                            viewModel.isShowLogoutAlert.toggle()
-                        },
-                        onRight: {
-                            Task {
-                                await viewModel.logOutAction()
-                            }
-                        })
-                }
-            }
-        }
-        .overlay {
-            if viewModel.isShowDrawAlert {
-                CustomAlertView(content: {
-                    CustomAlert(alertButtonType: .withdrawUser,
-                                onCancel: {
-                        viewModel.isShowDrawAlert.toggle()
-                    },
-                                onRight: {
-                        Task {
-                            await viewModel.deleteAccountAction()
-                            self.viewModel.isShowDrawAlert.toggle()
-                        }
-                    })
-                })
-            }
-        }
-        
     }
     
     // MARK: - Top
     
     /// 상단 + 중앙 컨텐츠
     private var topContents: some View {
-        VStack(spacing: 46) {
+        VStack(spacing: MyPageConstants.topContentsSpacing) {
             topName
             middleContents
         }
-        .padding(.top, 24)
     }
     
     
     /// 유저 이름 뷰
     private var topName: some View {
-        Text("zani0430")
+        Text(viewModel.userInfo?.name ?? "유저 이름 정보 없음")
             .font(.h1)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 4)
+            .padding(.leading, MyPageConstants.nameLeadingPadding)
     }
     
     // MARK: - Middle
@@ -115,15 +123,13 @@ struct MyPageView: View {
         
         let settings: [SettingRowType] = [
             .toggle(
-                isOn: $viewModel.toggleOption,
-                description: settingRowNavigationDescription,
-                onToggleChanged: viewModel.toggleOnOff
+                description: MyPageConstants.settingRowNavigationDescription
             ),
             .navigation,
-            .version(text: viewModel.appVersion!)
+            .version(text: viewModel.appVersion ?? "")
         ]
         
-        return VStack(spacing: 0) {
+        return VStack(spacing: .zero) {
             
             Divider()
             
@@ -133,6 +139,13 @@ struct MyPageView: View {
                     SettingRow(type: rowType)
                         .onTapGesture {
                             viewModel.isModalPresented = true
+                        }
+                case .toggle:
+                    SettingRow(type: rowType)
+                        .onTapGesture {
+                            Task {
+                                viewModel.openSystemSettingNotification()
+                            }
                         }
                 default:
                     SettingRow(type: rowType)
@@ -146,14 +159,14 @@ struct MyPageView: View {
     
     // MARK: - Bottom
     
-    private var buttonContetns: some View {
-        VStack(spacing: 29) {
+    private var buttonContents: some View {
+        VStack(spacing: MyPageConstants.bottomContentSpacing) {
             logOutButton
             
             deleteAccountButton
         }
-        .frame(height: 93)
-        .safeAreaPadding(.horizontal, 97)
+        .safeAreaPadding(.horizontal, MyPageConstants.bottomContentsHorizonPadding)
+        .frame(height: MyPageConstants.bottomContentsHeight)
     }
     
     /// 로그아웃 버튼
@@ -164,11 +177,11 @@ struct MyPageView: View {
             }
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: MyPageConstants.buttonCornerRadius)
                     .fill(Color.gray70)
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: MyPageConstants.buttonHeight)
                 
-                Text(logoutText)
+                Text(MyPageConstants.logoutText)
                     .font(.btn)
                     .foregroundStyle(.white)
             }
@@ -182,16 +195,32 @@ struct MyPageView: View {
                 viewModel.isShowDrawAlert.toggle()
             }
         } label: {
-            Text(deleteAccountText)
+            Text(MyPageConstants.deleteAccountText)
                 .font(.cap2)
                 .foregroundStyle(.black)
                 .underline(true, pattern: .solid)
         }
     }
+    
+    @ViewBuilder
+    private var progressView: some View {
+        Spacer()
+        
+        HStack {
+            Spacer()
+            
+            ProgressView()
+                .tint(Color.orange30)
+            
+            Spacer()
+        }
+        
+        Spacer()
+    }
 }
 
-extension MyPageView {
-    private var logoutText: String { "로그아웃" }
-    private var deleteAccountText: String { "탈퇴하기" }
-    private var settingRowNavigationDescription: String { "모든 알림 전송이 일시 중단돼요" }
+#Preview {
+    MyPageView(container: DIContainer(), appFlowViewModel: AppFlowViewModel())
+        .environmentObject(DIContainer())
+        .environmentObject(AppFlowViewModel())
 }

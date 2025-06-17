@@ -27,24 +27,28 @@ class AppFlowViewModel: ObservableObject {
     
     /// 세션 유효성 검사 + 키체인 확인 → 진입 상태 결정
     private func checkAuthStateAndDetermineInitialState() async -> AppFlowViewModel.AppState {
-        // 1. 키체인 세션 존재 여부 확인
         guard let _ = KeychainManager.standard.loadSession(for: "widiApp") else {
             print("🔓 키체인에 저장된 세션 없음 → 로그인으로 이동")
             return .login
         }
-        
-        // 2. Firebase 세션 유효성 확인
+
         guard let user = Auth.auth().currentUser else {
             print("❌ Firebase 사용자 없음 → 로그인으로 이동")
             return .login
         }
-        
+
         do {
-            _ = try await user.getIDToken()
-            print("✅ Firebase 세션 유효 - UID: \(user.uid) → 홈으로 이동")
+            try await user.reload()
+            guard let refreshedUser = Auth.auth().currentUser else {
+                print("🚫 사용자 없음 (삭제됨) → 로그인으로 이동")
+                return .login
+            }
+
+            _ = try await refreshedUser.getIDToken()
+            print("✅ Firebase 세션 유효 - UID: \(refreshedUser.uid) → 홈으로 이동")
             return .home
         } catch {
-            print("⚠️ Firebase 세션 만료 → 로그인으로 이동")
+            print("⚠️ Firebase 세션 만료 또는 삭제 → 로그인으로 이동")
             return .login
         }
     }

@@ -10,14 +10,32 @@ import SwiftUI
 /// 일기 읽기 뷰 및 수정 뷰
 struct DetailDiaryScreenvView: View {
     
+    
+    // MARK: - Property
     @EnvironmentObject var container: DIContainer
     @Bindable var viewModel: DetailDiaryViewModel
-    
     let friendName: String
     
-    init(friendName: String, diaryMode: DiaryMode, container: DIContainer, diaryResponse: DiaryResponse) {
+    // MARK: - Enum
+    fileprivate enum DetailDiaryConstants {
+        // 텍스트
+        static let titlePlaceholder = "제목"
+        static let contentsPlaceholder = "친구와의 기억을 적어주세요"
+        
+        // 레이아웃 수치
+        static let horizontalPadding: CGFloat = 16
+        static let bottomPadding: CGFloat = 100
+        static let contentSpacing: CGFloat = 28
+        static let fieldSpacing: CGFloat = 10
+        static let textEditorMinHeight: CGFloat = 200
+        
+        // 시트
+        static let calendarCornerRadius: CGFloat = 24
+    }
+    
+    init(friendName: String, container: DIContainer, diaryResponse: DiaryResponse) {
         self.friendName = friendName
-        self.viewModel = .init(diaryMode: diaryMode, container: container, diary: diaryResponse)
+        self.viewModel = .init(container: container, diary: diaryResponse)
     }
     
     var body: some View {
@@ -28,7 +46,7 @@ struct DetailDiaryScreenvView: View {
             
             if let diary = viewModel.diary {
                 
-                DiaryContainerView(header: { topController() }, imageScroll: {
+                DiaryContainerView(imageScroll: {
                     if !viewModel.diaryImages.isEmpty {
                         DiaryImageScrollView(images: viewModel.diaryImages, mode: viewModel.diaryMode,
                                              onDelete: { index in
@@ -52,42 +70,35 @@ struct DetailDiaryScreenvView: View {
         .overlay(alignment: .bottom, content: {
             if viewModel.diaryMode == .edit {
                 DiaryKeyboardControl(isShowCalendar: $viewModel.isShowCalendar, isShowImagePicker: $viewModel.isShowImagePicker)
-                    .safeAreaPadding(.horizontal, 16)
+                    .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
                     .zIndex(1)
             }
         })
-        
-        .overlay(content: {
-            if viewModel.isShowDeleteDiaryAlert {
-                CustomAlertView(content: {
-                    CustomAlert(
-                        alertButtonType: .diaryDelete,
-                        onCancel: {
-                            viewModel.isShowDeleteDiaryAlert = false
-                        },
-                        onRight: {
-                            Task {
-                                viewModel.isShowDeleteDiaryAlert = false
-                                await viewModel.deleteDiary()
-                                container.navigationRouter.pop()
-                            }
-                        }
-                    )
-                })
-            } else if viewModel.isShowStopEditAlert {
-                CustomAlertView(content: {
-                    CustomAlert(alertButtonType: .stopEdit,
-                                onCancel: {
-                        viewModel.isShowStopEditAlert = false
-                    },
-                                onRight: {
-                        viewModel.isShowStopEditAlert = false
-                        viewModel.diaryMode = .read
-                    })
-                })
-            }
+        .alertModifier(show: viewModel.isShowDeleteDiaryAlert, content: {
+            CustomAlert(
+                alertButtonType: .diaryDelete,
+                onCancel: {
+                    viewModel.isShowDeleteDiaryAlert = false
+                },
+                onRight: {
+                    Task {
+                        viewModel.isShowDeleteDiaryAlert = false
+                        await viewModel.deleteDiary()
+                        container.navigationRouter.pop()
+                    }
+                }
+            )
         })
-        
+        .alertModifier(show: viewModel.isShowStopEditAlert, content: {
+            CustomAlert(alertButtonType: .stopEdit,
+                        onCancel: {
+                viewModel.isShowStopEditAlert = false
+            },
+                        onRight: {
+                viewModel.isShowStopEditAlert = false
+                viewModel.diaryMode = .read
+            })
+        })
         .fullScreenCover(item: $viewModel.selectedImage, content: { _ in
             DetailImageView(images: $viewModel.diaryImages,
                             selectedImage: $viewModel.selectedImage,
@@ -101,11 +112,10 @@ struct DetailDiaryScreenvView: View {
                 viewModel.photoImages.remove(at: index)
             })
         })
-        
         .sheet(isPresented: $viewModel.isShowCalendar, content: {
             SheetCalendarView(viewModel: viewModel)
-                .presentationCornerRadius(24)
-                .presentationDetents([.medium])
+                .presentationCornerRadius(DetailDiaryConstants.calendarCornerRadius)
+                .presentationDetents([.fraction(0.55)])
         })
         
         .photosPicker(
@@ -121,73 +131,57 @@ struct DetailDiaryScreenvView: View {
             })
         
         .navigationBarBackButtonHidden(true)
-    }
-    
-    // MARK: - topNavigation
-    
-    @ViewBuilder
-    private func topController() -> some View {
-        Group {
+        .toolbar {
             switch viewModel.diaryMode {
             case .read:
-                readNavigation
+                // 왼쪽: 뒤로가기
+                ToolbarItem(placement: .topBarLeading) {
+                    CustomNavigationIcon(navigationIcon: .backArrow, action: {
+                        container.navigationRouter.pop()
+                    })
+                }
+
+                // 가운데: 친구 이름
+                ToolbarItem(placement: .principal) {
+                    Text(friendName)
+                        .font(.h4)
+                        .foregroundStyle(Color.black)
+                }
+
+                // 오른쪽: 수정 & 삭제
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    CustomNavigationIcon(navigationIcon: .edit, action: {
+                        viewModel.diaryMode = .edit
+                    })
+
+                    CustomNavigationIcon(navigationIcon: .trash, action: {
+                        withAnimation(.easeInOut) {
+                            viewModel.isShowDeleteDiaryAlert.toggle()
+                        }
+                    })
+                }
+
             case .edit:
-                editNavigaation
-            default:
-                EmptyView()
+                ToolbarItem(placement: .topBarLeading, content: {
+                    CustomNavigationIcon(navigationIcon: .backArrow, action: {
+                        withAnimation(.easeInOut) {
+                            viewModel.isShowStopEditAlert.toggle()
+                        }
+                    })
+                })
+                    
+                ToolbarItem(placement: .topBarTrailing, content: {
+                    CustomNavigationIcon(navigationIcon: .complete(type: .complete, isEmphasized: true), action: {
+                        Task {
+                            await viewModel.saveEditContent()
+                            viewModel.diaryMode = .read
+                        }
+                    })
+                })
+            case .write:
+                EmptyToolbar()
             }
         }
-        .safeAreaPadding(.horizontal, 16)
-        .safeAreaPadding(.bottom, 12)
-        .safeAreaPadding(.top, 4)
-    }
-    
-    /// 읽기 네비게이션
-    private var readNavigation: some View {
-        CustomNavigation(config: .backTitleAndEditTrash(title: friendName), leftAction: { icon in
-            switch icon {
-            case .backArrow:
-                container.navigationRouter.pop()
-            default:
-                break
-            }
-            
-        }, rightAction: { icon in
-            switch icon {
-            case .edit:
-                viewModel.diaryMode = .edit
-            case .trash:
-                withAnimation(.easeInOut) {
-                    viewModel.isShowDeleteDiaryAlert.toggle()
-                }
-            default:
-                break
-            }
-        })
-    }
-    
-    private var editNavigaation: some View {
-        CustomNavigation(config: .backAndComplete(isEmphasized: true), leftAction: { icon in
-            switch icon {
-            case .backArrow:
-                withAnimation(.easeInOut) {
-                    viewModel.isShowStopEditAlert.toggle()
-                }
-            default:
-                break
-            }
-            
-        }, rightAction: { icon in
-            switch icon {
-            case .complete(type: .complete, isEmphasized: true):
-                    Task {
-                        await viewModel.saveEditContent()
-                        viewModel.diaryMode = .read
-                    }
-            default:
-                break
-            }
-        })
     }
     
     // MARK: - BottomContents
@@ -195,15 +189,15 @@ struct DetailDiaryScreenvView: View {
     private func bottomContents(data: DiaryResponse) -> some View {
         GeometryReader { geo in
             ScrollView(.vertical) {
-                VStack(alignment: .leading, spacing: 28) {
+                VStack(alignment: .leading, spacing: DetailDiaryConstants.contentSpacing) {
                     Group {
                         Text(data.diaryDate)
                             .font(.cap1)
                             .foregroundStyle(Color.gray40)
 
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: DetailDiaryConstants.fieldSpacing) {
                             if let _ = data.title {
-                                TextField(titlePlaceholder, text: $viewModel.diaryTitle, prompt: title())
+                                TextField(DetailDiaryConstants.titlePlaceholder, text: $viewModel.diaryTitle, prompt: title())
                                     .font(.h2)
                                     .foregroundStyle(Color.gray80)
                             }
@@ -212,15 +206,15 @@ struct DetailDiaryScreenvView: View {
                                 .font(.b1)
                                 .foregroundStyle(Color.gray80)
                                 .lineSpacing(1.6)
-                                .frame(minHeight: 200, alignment: .topLeading)
+                                .frame(minHeight: DetailDiaryConstants.textEditorMinHeight, alignment: .topLeading)
                                 .disabled(viewModel.diaryMode == .read)
                                 .scrollDisabled(true)
                         }
                         .disabled(viewModel.diaryMode == .read)
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, DetailDiaryConstants.horizontalPadding)
                 }
-                .padding(.bottom, 100)
+                .padding(.bottom, DetailDiaryConstants.bottomPadding)
                 .frame(minHeight: geo.size.height)
             }
             .frame(height: geo.size.height)
@@ -233,19 +227,23 @@ struct DetailDiaryScreenvView: View {
     /// 제목 placeholder
     /// - Returns: Text 값 반환
     private func title() -> Text {
-        Text(titlePlaceholder)
+        Text(DetailDiaryConstants.titlePlaceholder)
             .font(.h2)
             .foregroundStyle(Color.gray40)
     }
     
     private func subtitle() -> Text{
-        Text(contentsPlaceholder)
+        Text(DetailDiaryConstants.contentsPlaceholder)
             .font(.b1)
             .foregroundStyle(Color.gray40)
     }
 }
 
-extension DetailDiaryScreenvView {
-    var titlePlaceholder: String { "제목" }
-    var contentsPlaceholder: String { "친구와의 기억을 적어주세요" }
+
+struct EmptyToolbar: ToolbarContent {
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            EmptyView()
+        }
+    }
 }

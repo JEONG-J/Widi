@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import FirebaseFirestore
 
 /// 일기 공통 속성
 protocol DiaryDTO {
@@ -23,15 +24,38 @@ struct DiaryRequest: Codable, DiaryDTO {
     var content: String
     var pictures: [String]?
     var diaryDate: String
+    var userId: String
+    var friendId: String
+    @ServerTimestamp var createdAt: Timestamp?
 }
 
 /// 일기 조회
 struct DiaryResponse: Codable, DiaryDTO, Identifiable, Hashable {
+    @DocumentID var documentId: String?
     var id: UUID = .init()
-    var documentId: String
+    var content: String
+    var createdAt: Timestamp
+    var diaryDate: String
+    var friendId: String
+    var pictures: [String]?
+    var title: String?
+    var userId: String
+    
+    enum CodingKeys: String, CodingKey {
+        case content
+        case createdAt
+        case diaryDate
+        case friendId
+        case pictures
+        case title
+        case userId
+    }
+}
+
+struct DiaryUpdateRequest: Codable, DiaryDTO {
     var title: String?
     var content: String
     var pictures: [String]?
-    var diaryDate: String // 일기의 실제 날짜
+    var diaryDate: String
 }
 

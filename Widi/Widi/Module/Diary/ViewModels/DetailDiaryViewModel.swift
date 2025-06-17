@@ -37,39 +37,49 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     var photoImages: [PhotosPickerItem] = []
     var selectedImage: DiaryImage? = nil
     
-    var diaryMode: DiaryMode
+    var diaryMode: DiaryMode = .read
     private var container: DIContainer
     
     var diaryTitle: String = ""
     var diaryContents: String = ""
     
     // MARK: - Init
-    init(diaryMode: DiaryMode, container: DIContainer, diary: DiaryResponse) {
-        self.diaryMode = diaryMode
+    init(container: DIContainer, diary: DiaryResponse) {
         self.container = container
         self.diary = diary
         
-        if let pictures = diary.pictures {
-            self.diaryImages = pictures.map { DiaryImage.server($0) }
-        } else {
+        imageDestruction()
+    }
+    
+    func imageDestruction() {
+        guard let pictureURLs = diary?.pictures else {
             self.diaryImages = []
+            return
         }
+
+        self.diaryImages = pictureURLs.map { DiaryImage.server($0) }
     }
     
     // MARK: - Read
     /// 일기 삭제
-    
     func deleteDiary() async {
-        self.isDeleteLoading = true
-        if let diary = diary {
-            do {
-                try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
-                isDeleteLoading = false
-            } catch {
-                print("일기 삭제 실패: \(error.localizedDescription)")
-                isDeleteLoading = false
-            }
+        isDeleteLoading = true
+        
+        guard let diary = diary,
+              let documentId = diary.documentId else {
+            print("diary 또는 documentId가 nil입니다. 삭제할 수 없습니다.")
+            isDeleteLoading = false
+            return
         }
+        
+        do {
+            try await container.firebaseService.diary.deleteDiary(documentId: documentId)
+            print("일기 삭제 성공")
+        } catch {
+            print("일기 삭제 실패: \(error.localizedDescription)")
+        }
+        
+        isDeleteLoading = false
     }
     
     
@@ -79,24 +89,29 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     @MainActor
     func saveEditContent() async {
         isEditLoading = true
-        
-        guard let diary = diary else { return }
-        
+
+        guard let diary = diary,
+              let diaryId = diary.documentId else {
+            print("diary 또는 documentId가 nil입니다. 수정할 수 없습니다.")
+            isEditLoading = false
+            return
+        }
+
         do {
             try await container.firebaseService.diary.updateDiaryWithImages(
-                diaryId: diary.documentId,
-                title: diaryTitle.isEmpty ? nil : diaryTitle,
+                diaryId: diaryId,
+                title: diaryTitle,
                 content: diaryContents,
                 images: diaryImages,
                 originalServerImageURLs: diary.pictures ?? [],
-                diaryDate: dateString
+                diaryDate: diary.diaryDate
             )
             print("일기 수정 성공")
-            isEditLoading = false
         } catch {
             print("일기 수정 실패: \(error.localizedDescription)")
-            isEditLoading = false
         }
+
+        isEditLoading = false
     }
     
     /// 이미지 삭제
@@ -123,13 +138,16 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     
     @MainActor
     func deleteServerImage(url: String) async {
-        if let diary = diary {
-            let diaryId = diary.documentId
-            do {
-                try await container.firebaseService.diary.deleteImage(from: diaryId, imageUrl: url)
-            } catch {
-                print("이미지 삭제 실패: \(error.localizedDescription)")
-            }
+        guard let diary = diary,
+              let diaryId = diary.documentId else {
+            print("diary 또는 documentId가 nil입니다. 이미지 삭제를 건너뜁니다.")
+            return
+        }
+        
+        do {
+            try await container.firebaseService.diary.deleteImage(from: diaryId, imageUrl: url)
+        } catch {
+            print("이미지 삭제 실패: \(error.localizedDescription)")
         }
     }
     

@@ -6,25 +6,42 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
-/// 친구 공통 속성
-protocol FriendDTO {
-    var name: String { get set }
-    var birthday: String? { get set }
+struct FriendDTO: Codable {
+    let userId: String
+    let friendId: String
+    let name: String
+    let birthday: String?
+    @ServerTimestamp var createdAt: Timestamp? = nil
 }
 
 /// 친구 생성
-struct FriendRequest: Codable, FriendDTO, Hashable {
-    var name: String
-    var birthday: String?
+struct FriendRequest: Codable, Hashable {
+    let name: String
+    let birthday: String?
 }
 
 /// 친구 조회
 struct FriendResponse: Codable, Identifiable, Hashable {
-    var id: UUID = .init() // SwiftUI List 등에서 사용
-    var documentId: String // Firestore 문서 ID (삭제에 사용)
-    var friendId: String   // 친구 식별자 (UID 등)
+    @DocumentID var documentId: String?
+    var friendId: String
     var name: String
     var birthday: String?
-    let experienceDTO: ExperienceDTO
+    var experienceDTO: ExperienceDTO
+    var id: String { documentId ?? UUID().uuidString }
+    
+    enum CodingKeys: String, CodingKey {
+        case friendId
+        case name
+        case birthday
+        case experienceDTO
+    }
+    
+}
+
+struct RawFriend: Codable {
+    var friendId: String
+    var name: String
+    var birthday: String?
 }

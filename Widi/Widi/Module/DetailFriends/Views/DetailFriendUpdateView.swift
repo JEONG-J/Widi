@@ -23,29 +23,28 @@ struct DetailFriendUpdateView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            modalBar
-            
+        VStack(alignment: .leading, spacing: DetailFriendUpdate.detailFriendSpacing) {
+            topController
             friendDetailArea
             
             Spacer()
         }
-        .safeAreaPadding(.horizontal, 16)
-        .safeAreaPadding(.top, 16)
+        .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
+        .safeAreaPadding(.top, DetailFriendUpdate.detailFriendTopPadding)
         .task {
             UIApplication.shared.hideKeyboard()
         }
         .background(Color.whiteBlack)
     }
     
-    /// 상단 옵션 컨트롤러
-    private var modalBar: some View {
+    /// 상단 네비게이션 컨트롤러
+    private var topController: some View {
         HStack {
             Button {
-                showFriendEdit = false
+                showFriendEdit.toggle()
             } label: {
                 NavigationIcon.closeX.image
-                    .padding(8)
+                .padding(NavigationIcon.closeX.paddingValue)
             }
             
             Spacer()
@@ -53,7 +52,7 @@ struct DetailFriendUpdateView: View {
             Button {
                 Task {
                     await viewModel.updateFriend()
-                    showFriendEdit = false
+                    showFriendEdit.toggle()
                 }
             } label: {
                 let icon = NavigationIcon.complete(type: .complete, isEmphasized: !viewModel.nameText.isEmpty)
@@ -61,33 +60,39 @@ struct DetailFriendUpdateView: View {
                 if let title = icon.title {
                     Text(title)
                         .foregroundStyle(icon.foregroundColor)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, DetailFriendUpdate.detailFriendHorizontalPadding)
+                        .padding(.vertical, DetailFriendUpdate.detailFriendVerticalPadding)
                         .disabled(!viewModel.nameText.isEmpty)
                 }
             }
         }
     }
     
+    /// 수정 정보 컨텐츠
     private var friendDetailArea: some View {
-        VStack(alignment: .leading, spacing: 40) {
-            Text(friendDetailDescription)
+        VStack(alignment: .leading, spacing: DetailFriendUpdate.detailFriendSpacing) {
+            Text(DetailFriendUpdate.friendDetailDescription)
                 .font(.h2)
                 .foregroundStyle(.gray80)
             
             textFieldGroup
-            }
         }
+    }
     
+    /// 수정 정보 입력
     private var textFieldGroup: some View {
-        VStack(spacing: 20, content: {
-            
+        VStack(spacing: DetailFriendUpdate.detailFriendTextFieldGroupSpacing, content: {
             makeInfoArea(infoAreaType: .name, text: $viewModel.nameText)
             makeInfoArea(infoAreaType: .birthday, text: $viewModel.birthdayText)
         })
     }
     
     
+    /// 중복되는 텍스트 필드 생성
+    /// - Parameters:
+    ///   - infoAreaType: 텍스트 필드 타입 지정
+    ///   - text: 텍스트 필드 값 지정
+    /// - Returns: 텍스트 필드 반환
     @ViewBuilder
     private func makeInfoArea(infoAreaType: InfoAreaType, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: 10, content: {
@@ -106,9 +111,10 @@ struct DetailFriendUpdateView: View {
             
             
             TextField(infoAreaType.title, text: text, prompt: makePrompt(text: infoAreaType.placeholder))
-                .padding(16)
+                .padding(DetailFriendUpdate
+                    .detailFriendTextFieldInnerPadding)
                 .background {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: DetailFriendUpdate.textFieldCornerRadius)
                         .inset(by: 0.5)
                         .fill(Color.background)
                         .stroke(.gray10, style: .init(lineWidth: 1))
@@ -135,10 +141,23 @@ struct DetailFriendUpdateView: View {
     }
 }
 
-extension DetailFriendUpdateView {
-    private var friendDetailDescription: String { "위디 속 친구 정보를 다듬어보세요" }
-    private var nameTitleText: String { "이름" }
-    private var namePlaceHolderText: String { "이름" }
-    private var birthdayTitleText: String { "생일" }
-    private var birthdayPlaceHolderText: String { "mm / dd" }
+fileprivate enum DetailFriendUpdate {
+    // 텍스트
+    static let friendDetailDescription: String = "위디 속 친구 정보를 다듬어보세요"
+    static let nameText: String = "이름"
+    static let birthdayTitleText: String = "생일"
+    static let birthdayPlaceHolderText: String = "mm / dd"
+    
+    // 레이아웃 수치
+    static let detailFriendSpacing: CGFloat = 22
+    static let detailFriendTopPadding: CGFloat = 16
+    static let detailFriendHorizontalPadding: CGFloat = 20
+    static let detailFriendVerticalPadding: CGFloat = 20
+    
+    static let detailFriendAreaSpacing: CGFloat = 40
+    static let detailFriendTextFieldGroupSpacing: CGFloat = 20
+    
+    // TextField 스타일 관련
+    static let detailFriendTextFieldInnerPadding: CGFloat = 16
+    static let textFieldCornerRadius: CGFloat = 10
 }

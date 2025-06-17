@@ -11,14 +11,18 @@ import SwiftUI
 struct SettingRow: View {
     
     // MARK: - Property
-    
     private let type: SettingRowType
+    
+    fileprivate enum SettingRowConstants {
+        static var leftVerticalPadding: CGFloat = 20
+        static var leadingPadding: CGFloat = 4
+        static var trailingPadding: CGFloat = 12
+        static var stackSpacing: CGFloat = 3
+        static var iconFrame: CGFloat = 20
+    }
     
     // MARK: - Init
     
-    /// SettingRow
-    /// - Parameters:
-    ///   - type: toggle, navigation, version 중 택 1
     init(type: SettingRowType) {
         self.type = type
     }
@@ -26,17 +30,17 @@ struct SettingRow: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             HStack {
                 leftContents
-                    .padding(.vertical, 20)
+                    .padding(.vertical, SettingRowConstants.leftVerticalPadding)
                 
                 Spacer()
                 
                 rightContents
             }
-            .padding(.leading, 4)
-            .padding(.trailing, 12)
+            .padding(.leading, SettingRowConstants.leadingPadding)
+            .padding(.trailing, SettingRowConstants.trailingPadding)
         }
         .contentShape(Rectangle())
     }
@@ -44,7 +48,7 @@ struct SettingRow: View {
     /// 왼쪽 뷰(타이틀 텍스트, description 텍스트) 생성
     @ViewBuilder
     private var leftContents: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: SettingRowConstants.stackSpacing) {
             Text(type.title)
                 .font(.etc)
                 .foregroundStyle(.gray80)
@@ -61,68 +65,20 @@ struct SettingRow: View {
     @ViewBuilder
     private var rightContents: some View {
         switch type {
-        case .toggle(let option, _, _):
-            Toggle("", isOn: option.toggle)
-                .labelsHidden()
-                .toggleStyle(
-                    SwitchToggleStyle(tint: Color.orange30)
-                )
-                .onChange(of: option.toggle.wrappedValue) { oldValue, newValue in
-                    type.onToggleChanged?(oldValue, newValue)
-                }
+        case .toggle:
+            Image(.chevronForward)
+                .resizable()
+                .frame(width: SettingRowConstants.iconFrame, height: SettingRowConstants.iconFrame)
             
         case .navigation:
             Image(.chevronForward)
                 .resizable()
-                .frame(width: 20, height: 20)
+                .frame(width: SettingRowConstants.iconFrame, height: SettingRowConstants.iconFrame)
+            
         case .version(let text):
             Text(text)
                 .font(.b1)
                 .foregroundStyle(.gray40)
         }
-    }
-}
-
-
-#Preview {
-    @Previewable @State var toggleOption = ToggleOptionDTO(toggle: true)
-    @Previewable @State var isModalPresented = false
-    
-    let settings: [SettingRowType] = [
-        .toggle(
-            isOn: $toggleOption,
-            description: "모든 알림 전송이 일시 중단돼요",
-            onToggleChanged: { oldValue, newValue in
-                print("푸시알림 토글 변경 old: \(oldValue) -> new: \(newValue)")
-                toggleOption.toggle = newValue
-            }
-        ),
-        .navigation,
-        .version(text: "25.4.2")
-    ]
-    
-    VStack(spacing: 0) {
-        ForEach(Array(settings.enumerated()), id: \.offset) { index, rowType in
-            switch rowType {
-            case .navigation:
-                SettingRow(type: rowType)
-                    .onTapGesture {
-                        isModalPresented = true
-                    }
-            default:
-                SettingRow(type: rowType)
-            }
-            
-            if index < settings.count - 1 {
-                Divider()
-                    .foregroundStyle(.gray20)
-            }
-        }
-    }
-    .padding(.horizontal, 16)
-    .sheet(isPresented: $isModalPresented) {
-        Text("문의하기 모달 열림!")
-            .font(.largeTitle)
-            .padding()
     }
 }

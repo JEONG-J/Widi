@@ -17,34 +17,37 @@ struct FriendsAddButton: View {
         self.action = action
     }
     
+    fileprivate enum FriendAddButtonConstants {
+        static let buttonRoundedRectangleCornerRadius: CGFloat = 20
+        static let buttonFrame: CGFloat = 14
+        static let buttonVerticalPadding: CGFloat = 8
+        static let buttonTextHorizonPadding: CGFloat = 6
+    }
+    
     var body: some View {
         Button(action: {
             action()
         }, label: {
-            HStack(spacing: 0, content: {
+            HStack(spacing: .zero, content: {
                 Image(.plus)
                     .renderingMode(.template)
                     .resizable()
-                    .frame(width: 14, height: 14)
+                    .frame(width: FriendAddButtonConstants.buttonFrame, height: FriendAddButtonConstants.buttonFrame)
                 
                 Text(btnTitle)
                     .font(.btn)
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, FriendAddButtonConstants.buttonTextHorizonPadding)
             })
             .foregroundStyle(Color.orange30)
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
+            .padding(.vertical, FriendAddButtonConstants.buttonVerticalPadding)
+            .padding(.horizontal, UIConstants.defaultHorizontalPadding)
             .background {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: FriendAddButtonConstants.buttonRoundedRectangleCornerRadius)
                     .fill(Color.whiteBlack)
                     .shadow1()
             }
         })
+        .contentShape(Rectangle())
+        .highPriorityGesture(DragGesture().onChanged({ _ in }))
     }
-}
-
-#Preview {
-    FriendsAddButton(action: {
-        print("hello")
-    })
 }

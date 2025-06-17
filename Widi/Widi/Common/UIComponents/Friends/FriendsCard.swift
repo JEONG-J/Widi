@@ -40,7 +40,3 @@ struct FriendsCard: View {
         }
     }
 }
-
-#Preview {
-    FriendsCard(friendsData: .init(documentId: "0", friendId: "0", name: "지나", experienceDTO: .init(experiencePoint: 0, characterInfo: .init(imageURL: "https://i.namu.wiki/i/e0lH4DdMFmKDm2Pf6nZtxpXjrUAn6hJSv_ecLV9l3BCof60YlFP-AU2EanXKubX1mttxSeAG5DyxD0QW-qbZ-qxVGPPdqHsPSSx1fdTRkv-jFuQC5CdWCUBsWHblz-zzIrqYrgFhoYO4Hr1B-RymVQ.webp", x: 9, y: 9))))
-}

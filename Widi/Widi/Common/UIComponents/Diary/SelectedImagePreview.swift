@@ -8,18 +8,21 @@
 import SwiftUI
 import Kingfisher
 
-/// 이미지 미리보기
+/// 선택한 이미지 작은 사이즈로 미리보기
 struct SelectedImagePreview: View {
     
     // MARK: - Property
-    
     let diaryImage: DiaryImage
     let onDelete: () -> Void
     let showDeleteButton: Bool
     let onSelect: (DiaryImage) -> Void
     
-    // MARK: - Init
+    // MARK: - Constants
+    fileprivate enum SelectedImagePreviewConstants {
+        static let conerRadius: CGFloat = 20
+    }
     
+    // MARK: - Init
     /// 이미지 미리보기 초기화
     /// - Parameters:
     ///   - diaryImage: 사진 타입 설정
@@ -45,12 +48,14 @@ struct SelectedImagePreview: View {
             
             if showDeleteButton {
                 Button(action: {
-                    onDelete()
+                    withAnimation {
+                        onDelete()
+                    }
                 }, label: {
                     Image(.closeX)
                         .background(Color.whiteBlack.opacity(0.6))
                         .clipShape(Circle())
-                        .padding(8)
+                        .padding(NavigationIcon.closeX.paddingValue)
                 })
             }
         })
@@ -77,12 +82,12 @@ struct SelectedImagePreview: View {
                     .resizable()
             }
         }
-        .aspectRatio(1, contentMode: .fit)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .aspectRatio(contentMode: .fill)
+        .frame(width: 132, height: 132)
+        .clipShape(RoundedRectangle(cornerRadius: SelectedImagePreviewConstants.conerRadius))
     }
 }
 
 #Preview {
-    SelectedImagePreview(diaryImage: .server("https://i.namu.wiki/i/A5TusY_zlof64PzVQDhxI57klv7a3bS5BSaKQ4uuuUYXxE_Jlich7fladJ9IfGwdIdGfu6CgLwDNIXa9MBrFEzMAGYmlzi36RQEeS-kAgpGAixJplNgNWr_j-MMn_0-OATgGTQUjbX8tiQi13ze5ZQ.webp"), onDelete: {}, showDeleteButton: false, onSelect: {_ in })
+    SelectedImagePreview(diaryImage: .server("https://i.namu.wiki/i/A5TusY_zlof64PzVQDhxI57klv7a3bS5BSaKQ4uuuUYXxE_Jlich7fladJ9IfGwdIdGfu6CgLwDNIXa9MBrFEzMAGYmlzi36RQEeS-kAgpGAixJplNgNWr_j-MMn_0-OATgGTQUjbX8tiQi13ze5ZQ.webp"), onDelete: {}, showDeleteButton: true, onSelect: {_ in })
 }

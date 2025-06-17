@@ -38,11 +38,11 @@ enum FriendInfoItem {
         return progress
     }
     
-    static func makeItems(from response: FriendResponse) -> [FriendInfoItem] {
+    static func makeItems(from response: FriendResponse, diaryCount: Int) -> [FriendInfoItem] {
         return [
-            .diaryCount(response.experienceDTO.experiencePoint),
+            .diaryCount(diaryCount),
             .birthday(response.birthday ?? ""),
-            .hatchProgress(response.experienceDTO.experiencePoint)
+            .hatchProgress(response.experienceDTO.exp)
         ]
     }
 }

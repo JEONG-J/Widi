@@ -74,7 +74,9 @@ struct CustomAlert: View {
             
             ForEach(alertButtonType.buttons, id: \.self) { btn in
                 Button(action: {
-                    action(for: btn)()
+                    withAnimation(.easeInOut) {
+                        action(for: btn)()
+                    }
                 }, label: {
                     Text(btn.text)
                         .foregroundStyle(btn.color)

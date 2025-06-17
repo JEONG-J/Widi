@@ -12,12 +12,11 @@ struct SearchDiaryView: View {
     
     // MARK: - Property
     
-    @Bindable private var viewModel: SearchDiaryViewModel
+    @State private var viewModel: SearchDiaryViewModel
     @EnvironmentObject var container: DIContainer
-    
     @FocusState private var isTextFieldFocused: Bool
-    // MARK: - Init
     
+    // MARK: - Init
     /// SearchDiaryView
     /// - Parameter viewModel: SearchDiaryViewModel
     init(container: DIContainer, friendResponse: FriendResponse) {
@@ -27,37 +26,34 @@ struct SearchDiaryView: View {
     // MARK: - Body
     
     var body: some View {
-            VStack(spacing: 12) {
-                navigationBar
-                    .safeAreaPadding(.horizontal, 16)
-                
+        VStack(alignment: .leading, spacing: SearchDiaryConstants.sectionSpacing, content: {
                 searchBar
-                    .safeAreaPadding(.horizontal, 16)
+                    .safeAreaPadding(.horizontal, UIConstants.defaultHorizontalPadding)
                 
                 diaryList
-            }
-            .safeAreaPadding(.top, 16)
+            })
             .background(.whiteBlack)
             .task {
                 isTextFieldFocused = true
                 UIApplication.shared.hideKeyboard()
             }
             .navigationBarBackButtonHidden(true)
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarLeading, content: {
+                    navigationBar
+                })
+            })
     }
     
     // MARK: - Subviews
     
     /// 상단 x 버튼
-    @ViewBuilder
     var navigationBar: some View {
-        HStack {
-            Button {
-                container.navigationRouter.pop()
-            } label: {
-                NavigationIcon.closeX.image
-                    .padding(8)
-            }
-            Spacer()
+        Button {
+            container.navigationRouter.pop()
+        } label: {
+            NavigationIcon.closeX.image
+                .padding(NavigationIcon.closeX.paddingValue)
         }
     }
     
@@ -68,18 +64,19 @@ struct SearchDiaryView: View {
             Image(.search)
                 .resizable()
                 .foregroundStyle(.gray50)
-                .frame(width: 24, height: 24)
+                .frame(width: SearchDiaryConstants.searchIconSize, height: SearchDiaryConstants.searchIconSize)
             
             TextField(
                 "",
                 text: $viewModel.searchText,
-                prompt: Text("검색어를 입력해주세요")
+                prompt: Text(SearchDiaryConstants.textFieldPlaceholder)
                     .foregroundStyle(Color.gray30)
             )
             .font(.etc)
             .foregroundStyle(Color.gray80)
             .tint(Color.gray80)
             .focused($isTextFieldFocused)
+            .submitLabel(.search)
             
             if !viewModel.searchText.isEmpty {
                 Button(action: {
@@ -88,18 +85,18 @@ struct SearchDiaryView: View {
                     Image(.closeSmall)
                         .resizable()
                         .foregroundStyle(.gray30)
-                        .frame(width: 20, height: 20)
+                        .frame(width: SearchDiaryConstants.closeIconSize, height: SearchDiaryConstants.closeIconSize)
                 }
             }
         }
-        .padding(.leading, 20)
-        .padding(.trailing, 12)
-        .padding(.vertical, 12)
+        .padding(.leading, SearchDiaryConstants.searchBarLeadingPadding)
+        .padding(.trailing, SearchDiaryConstants.searchBarTrailingPadding)
+        .padding(.vertical, SearchDiaryConstants.searchBarVerticalPadding)
         .background(
-            RoundedRectangle(cornerRadius: 24)
+            RoundedRectangle(cornerRadius: SearchDiaryConstants.cornerRadius)
                 .fill(Color.gray10)
         )
-        .padding(.bottom, 4)
+        .padding(.bottom, SearchDiaryConstants.searchBarBottomPadding)
     }
     
     /// 일기 리스트
@@ -121,19 +118,40 @@ struct SearchDiaryView: View {
                             }
                         }
                     )
-                    .frame(height: 171)
+                    .frame(height: SearchDiaryConstants.rowHeight)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryMode: .read, diaryResponse: diary))
+                        container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryResponse: diary))
                     }
                     
                     if index < viewModel.diaries.count - 1 {
                         Divider()
                             .background(Color.gray20)
-                        
                     }
                 }
             }
         }
     }
+}
+
+/// 검색 뷰 상수 Enum
+fileprivate enum SearchDiaryConstants {
+    // 텍스트
+    static let textFieldPlaceholder = "검색어를 입력해주세요"
+
+    // 패딩
+    static let topSafeAreaPadding: CGFloat = 16
+    static let searchBarLeadingPadding: CGFloat = 20
+    static let searchBarTrailingPadding: CGFloat = 12
+    static let searchBarVerticalPadding: CGFloat = 12
+    static let searchBarBottomPadding: CGFloat = 4
+
+    // 아이콘
+    static let searchIconSize: CGFloat = 24
+    static let closeIconSize: CGFloat = 20
+
+    // 레이아웃
+    static let sectionSpacing: CGFloat = 12
+    static let rowHeight: CGFloat = 171
+    static let cornerRadius: CGFloat = 24
 }

@@ -12,16 +12,26 @@ import SwiftUI
 final class DetailFriendsViewModel {
     
     // MARK: - StatePropery
+    /// 친구 편집
     var showFriendEdit: Bool = false
+    /// 친구 삭제 Alert
     var showFriendDeleteAlert: Bool = false
+    /// 일기 삭제 Alert
     var showDiaryDeleteAlert: Bool = false
-    
+    /// 삭제 로딩
     var deleteLoading: Bool = false
-    var isLoading: Bool = false
+    /// 친구 일기 데이터 불러오기 로딩
+    var diaryInfoLoading: Bool = false
+    /// 상단 드롭 다운 메뉴 표시
+    var isDropDownPresented: Bool = false
+    /// 친구 정보 로딩 표시
+    var isFriendInfoLoading: Bool = false
     
     // MARK: - Property
     var diaries: [DiaryResponse]?
     var friendResponse: FriendResponse
+    var targetDiary: DiaryResponse? = nil
+    var diaryCount: Int?
     
     private var container: DIContainer
     
@@ -32,65 +42,92 @@ final class DetailFriendsViewModel {
         self.friendResponse = friendResponse
     }
     
-    // MARK: - Method
+    // MARK: - API
     
     /// 친구 삭제
-    /// - Parameter friend: 친구 정보 입력
     @MainActor
     func deleteFriend() async {
         deleteLoading = true
-        do {
-            try await container.firebaseService.friends.deleteFriend(documentId: self.friendResponse.documentId)
+        
+        guard let documentId = friendResponse.documentId else {
+            print("documentId가 nil입니다. 친구를 삭제할 수 없습니다.")
             deleteLoading = false
+            return
+        }
+        
+        do {
+            try await container.firebaseService.friends.deleteFriend(documentId: documentId)
+            print("친구 삭제 성공")
         } catch {
             print("친구 삭제 실패: \(error.localizedDescription)")
-            deleteLoading = false
         }
+        
+        deleteLoading = false
     }
     
+    /// 친구 정보 반환
+    /// - Returns: 친구 정보 데이터
     func returnFriendInfo() -> FriendRequest {
         return .init(name: friendResponse.name, birthday: friendResponse.birthday)
     }
     
-    // MARK: - API
-    
+    /// 일기 삭제
     func deleteDiary(_ diary: DiaryResponse) async {
+        guard let documentId = diary.documentId else {
+            print("documentId가 nil입니다. 일기를 삭제할 수 없습니다.")
+            return
+        }
+        
         do {
-            try await container.firebaseService.diary.deleteDiary(documentId: diary.documentId)
+            try await container.firebaseService.diary.deleteDiary(documentId: documentId)
             diaries?.removeAll { $0.id == diary.id }
+            await loadFriend(documentId: friendResponse.documentId ?? "")
+            print("일기 삭제 성공")
         } catch {
             print("일기 삭제 실패: \(error.localizedDescription)")
         }
     }
     
+    /// 일기 데이터 조회
+    /// - Parameter friend: 친구 정보
     @MainActor
     func fetchDiaries(for friend: FriendResponse) async {
-        isLoading = true
+        diaryInfoLoading = true
+        
         guard let userId = container.firebaseService.auth.currentUser?.uid else {
             print("로그인 유저 없음")
-            isLoading = false
+            diaryInfoLoading = false
             return
         }
-        
         do {
             let list = try await container.firebaseService.diary.fetchDiaries(
                 for: userId,
                 friendId: friend.friendId
             )
             self.diaries = list
-            isLoading = false
+            diaryInfoLoading = false
         } catch {
             print("일기 조회 실패: \(error.localizedDescription)")
-            isLoading = false
+            diaryInfoLoading = false
         }
     }
     
+    /// 친구 단일 정보 조회
+    /// - Parameter documentId: 문서 아이디
     func loadFriend(documentId: String) async {
+        isFriendInfoLoading = true
         do {
             let friend = try await container.firebaseService.friends.fetchFriend(documentId: documentId)
             self.friendResponse = friend
+
+            let count = try await container.firebaseService.diary.getDiaryCount(for: friend.friendId)
+            print("일기 개수 : \(count)")
+            self.diaryCount = count
+
+            isFriendInfoLoading = false
         } catch {
             print("친구 정보 로드 실패: \(error.localizedDescription)")
+            isFriendInfoLoading = false
         }
     }
 }

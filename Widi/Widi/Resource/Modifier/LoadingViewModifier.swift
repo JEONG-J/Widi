@@ -10,16 +10,33 @@ import SwiftUI
 
 struct LoadingModifier: ViewModifier {
     
-    enum LoadingTextType: String {
-        case diary = "친구와 일기를 생성하고 있어요! 잠시만 기다려주세요 💌"
-        case editDiary = "일기를 수정하고 있어요! 잠시만 기다려주세요 📝"
-        case delete = "친구를 삭제중입니다! 잠시만 기다려주세요 🗑️"
-        case diaryDelete = "일기를 삭제중입니다.! 잠시만 기다려주세요 🗑️"
-    }
-    
+    // MARK: - Property
     let isLoading: Bool
     let loadingType: LoadingTextType
     
+    enum LoadingTextType: String {
+        case createFriendDiary = "친구와의 일기를 생성 중이에요. 잠시만 기다려주세요 💌"
+        case createDiary = "일기를 생성 중이에요. 잠시만 기다려주세요 💌"
+        case editDiary = "일기를 수정 중이에요. 잠시만 기다려주세요 📝"
+        case delete = "친구를 삭제하는 중이에요. 잠시만 기다려주세요 🗑️"
+        case diaryDelete = "일기를 삭제하는 중이에요. 잠시만 기다려주세요 🗑️"
+        case diaryFriendInfo = "친구 및 일기 정보를 불러오는 중이에요 🤔"
+        case homeLoading = "캐릭터 친구들을 불러오는 중이에요! 👻"
+    }
+    
+    fileprivate enum LoadingViewModifierConstants {
+        static let lineLimit: Int = 2
+        static let lineSpacing: CGFloat = 2.5
+        static let zIndex: Double = 2
+    }
+    
+    // MARK: - Init
+    init(isLoading: Bool, loadingType: LoadingTextType) {
+        self.isLoading = isLoading
+        self.loadingType = loadingType
+    }
+    
+    // MARK: - Body
     func body(content: Content) -> some View {
         content
             .overlay(content: {
@@ -30,8 +47,8 @@ struct LoadingModifier: ViewModifier {
                         
                         ProgressView(label: {
                             Text(loadingType.rawValue)
-                                .lineLimit(2)
-                                .lineSpacing(2.5)
+                                .lineLimit(LoadingViewModifierConstants.lineLimit)
+                                .lineSpacing(LoadingViewModifierConstants.lineSpacing)
                                 .multilineTextAlignment(.center)
                                 .font(.b1)
                                 .foregroundStyle(Color.whiteBlack)
@@ -41,7 +58,7 @@ struct LoadingModifier: ViewModifier {
                         .controlSize(.large)
                     })
                     .ignoresSafeArea()
-                    .zIndex(2)
+                    .zIndex(LoadingViewModifierConstants.zIndex)
                 }
             })
     }
