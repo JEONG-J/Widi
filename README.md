@@ -1,7 +1,7 @@
 # 🚀 프로젝트 이름
 
-![배너 이미지 또는 로고](링크)
-
+<img src="https://github.com/user-attachments/assets/3fcb235a-eb64-4518-831a-6aefa98a6352
+" width="200"/>
 > 귀여운 캐릭터와 함께 다음 만남으로 자연스럽게 이어주는 친구 일기 앱
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)]()
