@@ -18,6 +18,8 @@ struct DetailDiaryScreenvView: View {
     
     // MARK: - Enum
     fileprivate enum DetailDiaryConstants {
+        
+        static let topNavigationVerticalPadding: CGFloat = 11
         // 텍스트
         static let titlePlaceholder = "제목"
         static let contentsPlaceholder = "친구와의 기억을 적어주세요"
@@ -139,7 +141,7 @@ struct DetailDiaryScreenvView: View {
                     CustomNavigationIcon(navigationIcon: .backArrow, action: {
                         container.navigationRouter.pop()
                     })
-                    .padding(.bottom, 12)
+                    .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
                 }
 
                 // 가운데: 친구 이름
@@ -154,14 +156,14 @@ struct DetailDiaryScreenvView: View {
                     CustomNavigationIcon(navigationIcon: .edit, action: {
                         viewModel.diaryMode = .edit
                     })
-                    .padding(.bottom, 12)
+                    .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
 
                     CustomNavigationIcon(navigationIcon: .trash, action: {
                         withAnimation(.easeInOut) {
                             viewModel.isShowDeleteDiaryAlert.toggle()
                         }
                     })
-                    .padding(.bottom, 12)
+                    .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
                 }
 
             case .edit:
@@ -171,7 +173,7 @@ struct DetailDiaryScreenvView: View {
                             viewModel.isShowStopEditAlert.toggle()
                         }
                     })
-                    .padding(.bottom, 12)
+                    .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
                 })
                     
                 ToolbarItem(placement: .topBarTrailing, content: {
@@ -181,7 +183,7 @@ struct DetailDiaryScreenvView: View {
                             viewModel.diaryMode = .read
                         }
                     })
-                    .padding(.bottom, 12)
+                    .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
                 })
             case .write:
                 EmptyToolbar()
@@ -215,7 +217,7 @@ struct DetailDiaryScreenvView: View {
                                 .disabled(viewModel.diaryMode == .read)
                                 .scrollDisabled(true)
                                 .scrollContentBackground(.hidden)
-                                .background(Color.blue)
+                                .background(Color.clear)
                         }
                         .disabled(viewModel.diaryMode == .read)
                     }

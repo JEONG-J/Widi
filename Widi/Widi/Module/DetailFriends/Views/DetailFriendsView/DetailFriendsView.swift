@@ -24,7 +24,7 @@ struct DetailFriendsView: View {
         static let navigationBarHeight: CGFloat = 59
         static let headerViewHeight: CGFloat = 209
         static let diaryRowHeight: CGFloat = 171
-        static let pinnedHeaderHeight: CGFloat = 36
+        static let pinnedHeaderHeight: CGFloat = 55
         static let loadingSpacerHeight: CGFloat = 160
         static let bottomSpacerHeight: CGFloat = 120
         
@@ -77,7 +77,7 @@ struct DetailFriendsView: View {
             show: viewModel.showFriendDeleteAlert,
             content: {
                 CustomAlert(alertButtonType: .friendsDelete, onCancel: {
-                    viewModel.showDiaryDeleteAlert.toggle()
+                    viewModel.showFriendDeleteAlert.toggle()
                 }, onRight: {
                     Task {
                         viewModel.showFriendDeleteAlert.toggle()
@@ -258,7 +258,6 @@ struct DetailFriendsView: View {
             endPoint: .bottom
         )
         .frame(height: DetailFriendsConstants.pinnedHeaderHeight)
-        .border(Color.red)
     }
     
     /// 일기 리스트

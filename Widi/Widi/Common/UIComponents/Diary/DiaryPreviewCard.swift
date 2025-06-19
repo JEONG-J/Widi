@@ -33,6 +33,7 @@ struct DiaryPreviewCard: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 28)
         .frame(maxHeight: .infinity, alignment: .top)
+        .contentShape(Rectangle()) // 터치 영역을 HStack 전체로 확장
     }
     
     var diaryTextContent: some View {

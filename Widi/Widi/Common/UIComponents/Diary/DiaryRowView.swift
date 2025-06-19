@@ -35,7 +35,6 @@ struct DiaryRowView: View {
                 }
             }
         }
-        .contentShape(Rectangle())
         .animation(.easeInOut, value: offset)
     }
     
