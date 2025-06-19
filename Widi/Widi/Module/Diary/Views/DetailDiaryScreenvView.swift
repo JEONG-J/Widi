@@ -113,7 +113,7 @@ struct DetailDiaryScreenvView: View {
             })
         })
         .sheet(isPresented: $viewModel.isShowCalendar, content: {
-            SheetCalendarView(viewModel: viewModel)
+            SheetCalendarView(viewModel: viewModel, isSelected: ConvertDataFormat.shared.date(from: viewModel.dateString) ?? Date())
                 .presentationCornerRadius(DetailDiaryConstants.calendarCornerRadius)
                 .presentationDetents([.fraction(0.55)])
         })
@@ -139,6 +139,7 @@ struct DetailDiaryScreenvView: View {
                     CustomNavigationIcon(navigationIcon: .backArrow, action: {
                         container.navigationRouter.pop()
                     })
+                    .padding(.bottom, 12)
                 }
 
                 // 가운데: 친구 이름
@@ -153,12 +154,14 @@ struct DetailDiaryScreenvView: View {
                     CustomNavigationIcon(navigationIcon: .edit, action: {
                         viewModel.diaryMode = .edit
                     })
+                    .padding(.bottom, 12)
 
                     CustomNavigationIcon(navigationIcon: .trash, action: {
                         withAnimation(.easeInOut) {
                             viewModel.isShowDeleteDiaryAlert.toggle()
                         }
                     })
+                    .padding(.bottom, 12)
                 }
 
             case .edit:
@@ -168,6 +171,7 @@ struct DetailDiaryScreenvView: View {
                             viewModel.isShowStopEditAlert.toggle()
                         }
                     })
+                    .padding(.bottom, 12)
                 })
                     
                 ToolbarItem(placement: .topBarTrailing, content: {
@@ -177,6 +181,7 @@ struct DetailDiaryScreenvView: View {
                             viewModel.diaryMode = .read
                         }
                     })
+                    .padding(.bottom, 12)
                 })
             case .write:
                 EmptyToolbar()
@@ -191,7 +196,7 @@ struct DetailDiaryScreenvView: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: DetailDiaryConstants.contentSpacing) {
                     Group {
-                        Text(data.diaryDate)
+                        Text(viewModel.dateString)
                             .font(.cap1)
                             .foregroundStyle(Color.gray40)
 
@@ -209,6 +214,8 @@ struct DetailDiaryScreenvView: View {
                                 .frame(minHeight: DetailDiaryConstants.textEditorMinHeight, alignment: .topLeading)
                                 .disabled(viewModel.diaryMode == .read)
                                 .scrollDisabled(true)
+                                .scrollContentBackground(.hidden)
+                                .background(Color.blue)
                         }
                         .disabled(viewModel.diaryMode == .read)
                     }
@@ -218,8 +225,8 @@ struct DetailDiaryScreenvView: View {
                 .frame(minHeight: geo.size.height)
             }
             .frame(height: geo.size.height)
+            .diaryContainerStyle()
         }
-        .diaryContainerStyle()
         .ignoresSafeArea(edges: .bottom)
         .sheet()
     }

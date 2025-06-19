@@ -88,6 +88,7 @@ struct AddDiaryView: View {
                         viewModel.checkBackView.toggle()
                     }
                 })
+                .padding(.bottom, 12)
             })
             ToolbarItem(placement: .principal, content: {
                 Text(viewModel.friendsRequest.name)
@@ -101,6 +102,7 @@ struct AddDiaryView: View {
                         await handleSubmitActoin()
                     }
                 })
+                .padding(.bottom, 12)
             })
         })
         .loadingOverlay(isLoading: viewModel.isLoading, loadingType: (friendId == nil) ? .createFriendDiary : .createDiary)
@@ -136,11 +138,11 @@ struct AddDiaryView: View {
                 viewModel.photoImages.remove(at: index)
             })
         })
-        .sheet(isPresented: $viewModel.isShowCalendar, content: {
-            SheetCalendarView(viewModel: viewModel)
-                .presentationDetents([.medium])
-                .presentationCornerRadius(AddDiaryViewConstants.sheetCornerRadius)
-        })
+//        .sheet(isPresented: $viewModel.isShowCalendar, content: {
+//            SheetCalendarView(viewModel: viewModel, isSelected: ConvertDataFormat.shared.date(from: viewModel.dateString))
+//                .presentationDetents([.medium])
+//                .presentationCornerRadius(AddDiaryViewConstants.sheetCornerRadius)
+//        })
         .photosPicker(
             isPresented: $viewModel.isShowImagePicker,
             selection: $viewModel.photoImages,

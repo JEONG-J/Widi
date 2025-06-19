@@ -258,6 +258,7 @@ struct DetailFriendsView: View {
             endPoint: .bottom
         )
         .frame(height: DetailFriendsConstants.pinnedHeaderHeight)
+        .border(Color.red)
     }
     
     /// 일기 리스트
@@ -282,7 +283,6 @@ struct DetailFriendsView: View {
                         }
                     )
                     .frame(height: DetailFriendsConstants.diaryRowHeight)
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         container.navigationRouter.push(to: .detailDiaryView(friendName: viewModel.friendResponse.name, diaryResponse: diary))
                     }

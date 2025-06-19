@@ -41,4 +41,14 @@ class ConvertDataFormat {
         
         return "\(year)년 \(month)월 \(day)일"
     }
+    
+    /// "yy년 M월 d일" 형식의 문자열을 Date로 변환
+    /// - Parameter string: "25년 6월 19일" 형식의 문자열
+    /// - Returns: Date 객체 (변환 실패 시 nil)
+    func date(from string: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yy년 M월 d일"
+        return formatter.date(from: string)
+    }
 }

@@ -11,7 +11,12 @@ import SwiftUI
 struct SheetCalendarView: View {
     // MARK: - Property
     @State var viewModel: CalendarControllable
-    @State var calendarViewModel: CalendarViewModel = .init()
+    @State var calendarViewModel: CalendarViewModel
+    
+    init(viewModel: CalendarControllable, isSelected: Date) {
+        self.viewModel = viewModel
+        self.calendarViewModel = .init(selectdDate: isSelected)
+    }
     
     // MARK: - Constants
     fileprivate enum SheetCalendarViewConstants {

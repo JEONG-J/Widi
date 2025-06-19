@@ -32,7 +32,6 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     }
     
     var dateString: String = ""
-    
     var diaryImages: [DiaryImage] = []
     var photoImages: [PhotosPickerItem] = []
     var selectedImage: DiaryImage? = nil
@@ -47,6 +46,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
     init(container: DIContainer, diary: DiaryResponse) {
         self.container = container
         self.diary = diary
+        self.dateString = diary.diaryDate
         
         imageDestruction()
     }
@@ -104,7 +104,7 @@ class DetailDiaryViewModel: DiaryViewModelProtocol, CalendarControllable {
                 content: diaryContents,
                 images: diaryImages,
                 originalServerImageURLs: diary.pictures ?? [],
-                diaryDate: diary.diaryDate
+                diaryDate: dateString
             )
             print("일기 수정 성공")
         } catch {

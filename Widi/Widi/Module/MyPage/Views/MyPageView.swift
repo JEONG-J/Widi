@@ -62,6 +62,7 @@ struct MyPageView: View {
                 CustomNavigationIcon(navigationIcon: .backArrow, action: {
                     contaier.navigationRouter.pop()
                 })
+                .padding(.bottom, 12)
             })
         })
         .sheet(isPresented: $viewModel.isModalPresented) {

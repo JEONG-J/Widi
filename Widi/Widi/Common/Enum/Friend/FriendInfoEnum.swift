@@ -17,8 +17,8 @@ enum FriendInfoItem {
             return "총 일기 개수"
         case .birthday:
             return "생일"
-        case .hatchProgress:
-            return "부화까지"
+        case .hatchProgress(let progress):
+            return progress >= 4 ? "부화 완료" : "부화까지"
         }
     }
     
