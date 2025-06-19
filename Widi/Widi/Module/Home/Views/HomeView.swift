@@ -29,7 +29,7 @@ struct HomeView: View {
         static let topNaviWidth: CGFloat = 19
         static let topNaviHeight: CGFloat = 20
         static let topNaviPadding: CGFloat = 10
-        static let topOffset: CGFloat = 25
+        static let topOffset: CGFloat = 10
     }
     
     // MARK: - Init
