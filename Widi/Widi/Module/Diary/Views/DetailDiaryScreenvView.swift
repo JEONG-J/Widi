@@ -144,6 +144,7 @@ struct DetailDiaryScreenvView: View {
                     .padding(.vertical, DetailDiaryConstants.topNavigationVerticalPadding)
                 }
 
+                
                 // 가운데: 친구 이름
                 ToolbarItem(placement: .principal) {
                     Text(friendName)

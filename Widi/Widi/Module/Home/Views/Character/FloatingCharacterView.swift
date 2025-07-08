@@ -70,9 +70,7 @@ struct FloatingCharacterView: View {
     private func characterImage() -> some View {
         VStack(spacing: 4) {
             KFImage(URL(string: friend.experienceDTO.characterInfo.imageURL))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 70, height: 60)
+                .fixedSize()
             
             Text(friend.name)
                 .font(.cap1)

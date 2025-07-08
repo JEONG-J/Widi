@@ -56,19 +56,19 @@ struct CustomProfileImage: View {
                         .controlSize(.small)
                 }).retry(maxCount: 2, interval: .seconds(2))
                 .resizable()
-                .clipShape(Circle())
-                .frame(width: 32, height: 32)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 26, height: 26)
         } else {
             Circle()
                 .fill(Color.gray10)
-                .frame(width: 32, height: 32)
+                .frame(width: 26, height: 26)
         }
     }
 }
 
 #Preview {
     CustomProfileImage(
-        imageURLString: "https://pimg.mk.co.kr/news/cms/202403/29/20240329_01110601000001_L01.jpg",
+        imageURLString: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelFourC.png?alt=media&token=a0a1568d-8234-431c-a957-35db52b43e25",
         size: 40
     )
 }
