@@ -120,7 +120,6 @@ class FirebaseFriendsService {
         guard let doc = snapshot.documents.first else {
             throw FirebaseServiceError.custom(message: "해당 친구의 경험치 데이터가 없습니다.")
         }
-
         return try doc.data(as: ExperienceDTO.self)
     }
     
@@ -216,7 +215,7 @@ class FirebaseFriendsService {
     
     private func makeRandomCharacter() -> CharacterDTO {
         return CharacterDTO(
-            imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelZero.png?alt=media&token=7fbd4597-5ce2-4e9d-b6ff-036cbae76a8b",
+            imageURL: "https://firebasestorage.googleapis.com/v0/b/hatchlog-e6a21.firebasestorage.app/o/Character%2FlevelZero.png?alt=media&token=9f22a1b0-1b61-4ec4-ad0e-c40cd8f97709",
             x: Int(CGFloat.random(in: 20...340)),
             y: Int(CGFloat.random(in: 40...820))
         )

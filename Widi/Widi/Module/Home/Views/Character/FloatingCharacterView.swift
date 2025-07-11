@@ -127,7 +127,6 @@ struct FloatingCharacterView: View {
         let minY = characterSize.height / 2
         let maxY = screenSize.height - characterSize.height / 2
         
-        // 벽 반사 처리
         if newX < minX || newX > maxX {
             current.direction.dx *= -1
             newX = min(max(newX, minX), maxX)
@@ -140,7 +139,6 @@ struct FloatingCharacterView: View {
         
         current.position = CGPoint(x: newX, y: newY)
         
-        // 상태 업데이트
         allCharacters[index] = current
         position = current.position
         direction = current.direction
